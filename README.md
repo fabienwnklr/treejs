@@ -40,6 +40,12 @@ When you use this template, try follow the checklist to update your info properl
 
 ## Usage
 
+### Install dependencies
+
+```bash
+yarn
+```
+
 Just run and visit [http://localhost:5173/](http://localhost:5173/)
 
 ```bash
