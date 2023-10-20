@@ -9,10 +9,10 @@ export default defineConfig({
     minify: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/MyClass.ts'),
-      name: 'MyClass', // for iife and umd
+      entry: resolve(__dirname, 'src/TreeJS.ts'),
+      name: 'TreeJS', // for iife and umd
       // the proper extensions will be added
-      fileName: 'myclass',
+      fileName: 'treejs',
       formats: ['iife', 'cjs', 'es', 'umd'],
     },
   },

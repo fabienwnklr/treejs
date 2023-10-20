@@ -7,11 +7,24 @@
     <title>Vite + TS</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <ul id="tree">
+        <li>First</li>
+        <li>Second</li>
+        <li>
+          Third
+          <ul>
+            <li>Child 1</li>
+            <li>Child 2</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
     <script type="module">
-      import { MyClass } from "/src/MyClass.ts";
+      import { TreeJS } from "/src/TreeJS.ts";
 
-      console.log(MyClass);
+      const TREE = new TreeJS(document.getElementById("tree"));
+      console.log(TREE)
     </script>
   </body>
 </html>

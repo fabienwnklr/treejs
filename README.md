@@ -31,7 +31,7 @@ Template using vitejs and typescript (and more) for create easily and quickly ni
 When you use this template, try follow the checklist to update your info properly
 
 - [ ] Change the class name file
-- [ ] Change the class name file in `src` then the class name in `index.html` / `vite.config.ts` / `src/MyClass.ts`
+- [ ] Change the class name file in `src` then the class name in `index.html` / `vite.config.ts` / `src/TreeJS.ts`
 - [ ] Change url for repo in `.versionrc.json`
 - [ ] Add your style to `src/scss/style.scss` (optionnal)
 - [ ] Add the favicon in `public` (optional)
