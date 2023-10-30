@@ -1,6 +1,9 @@
-$primary: #8c2e9e;
-$bg-primary: #8b2e9e82;
+$primary: #27603e;
+$bg-primary: darken($primary, 15%);
+$text-primary: lighten($primary, 40%);
 
 :root {
-    --treejs-primary: $primary;
+    --treejs-primary: #{$primary};
+    --treejs-bg-primary: #{$bg-primary};
+    --treejs-text-primary: #{$text-primary};
 }

@@ -23,19 +23,20 @@
   }
 
   .treejs-li {
-    margin: .2rem 0 .2rem 0;
+    margin-top: .3rem;
     .treejs-anchor {
-      color: $primary;
+      color: var(--treejs-primary);
       text-decoration: none;
       transition: background-color .2s ease;
       padding: .15rem;
       border-radius: .2rem;
 
       &:hover, &:focus {
-        background-color: $bg-primary;
+        background-color: var(--treejs-primary);
+        color: var(--treejs-text-primary);
       }
       &:focus {
-        outline: 2px solid $primary;
+        outline: 2px solid var(--treejs-primary);
       }
     }
   }
@@ -48,7 +49,6 @@
   .treejs-icon {
     margin-right: 0.2rem;
     display: inline;
-    vertical-align: middle;
   }
 
   .treejs-li.has-children {

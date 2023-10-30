@@ -1,5 +1,3 @@
-@import '../../scss/variables';
-
 .treejs {
     input[type="checkbox"] {
         height: 18px;
@@ -8,7 +6,7 @@
         padding: 0;
         opacity: 1;
         appearance: none;
-        border: 2px solid $primary;
+        border: 2px solid var(--treejs-primary);
         border-radius: 3px;
         background: #fff;
         position: relative;
@@ -17,8 +15,8 @@
     }
     
     input[type="checkbox"]:checked {
-        border: 2px solid $primary;
-        background: $primary;
+        border: 2px solid var(--treejs-primary);
+        background: var(--treejs-primary);
     }
     
     input[type="checkbox"]:checked:before,
