@@ -6,9 +6,10 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
-import { ChevronIcon, FileIcon, FolderIcon, createCheckbox, findNodeByType, stringToHTMLElement } from './utils/dom';
+import { ChevronIcon, FileIcon, FolderIcon, findNodeByType, stringToHTMLElement } from './utils/dom';
 
 import ContextMenu from './plugins/context-menu/plugin';
+import Checkbox from './plugins/checkbox/plugin';
 
 export declare interface TreeElement extends HTMLUListElement {
   treejs?: TreeJS;
@@ -77,13 +78,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
           throw new Error(`TreeJsError : Canot find textContent from textNode`);
         }
 
-        let $checkbox: HTMLInputElement | null = null;
-        if (this.options.checkbox) {
-          const name = $li.dataset.treejsName ?? textNode.textContent.trim().replace(/\W/g, '_').toLowerCase();
-          $checkbox = createCheckbox(name);
-          $li.prepend($checkbox);
-        }
-
         $li.classList.add('treejs-li');
         const $child = $li.querySelector('ul');
 
@@ -116,17 +110,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
           $li.replaceChild($link, textNode);
           $li.prepend(FileIcon());
         }
-
-        if ($checkbox) {
-          const $a = $checkbox;
-          $checkbox.addEventListener('change', () => {
-            if ($child) {
-              $child.querySelectorAll('input').forEach(($input) => {
-                $input.checked = $a.checked;
-              });
-            }
-          });
-        }
       });
     }
   }
@@ -153,3 +136,4 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 }
 
 TreeJS.define('context-menu', ContextMenu);
+TreeJS.define('checkbox', Checkbox);

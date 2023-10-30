@@ -6,5 +6,5 @@ export const TreeJSDefaultsOptions: TreeJSOptions = {
      */
     checkbox: true,
     showPath: true,
-    plugins: ["context-menu"]
+    plugins: ["context-menu", "checkbox"],
 }

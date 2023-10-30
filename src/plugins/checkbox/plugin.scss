@@ -1,0 +1,49 @@
+@import '../../scss/variables';
+
+.treejs {
+    input[type="checkbox"] {
+        height: 18px;
+        width: 18px;
+        margin: 0;
+        padding: 0;
+        opacity: 1;
+        appearance: none;
+        border: 2px solid $primary;
+        border-radius: 3px;
+        background: #fff;
+        position: relative;
+        margin-right: .4rem;
+        margin-left: .4rem;
+    }
+    
+    input[type="checkbox"]:checked {
+        border: 2px solid $primary;
+        background: $primary;
+    }
+    
+    input[type="checkbox"]:checked:before,
+    input[type="checkbox"]:checked:after {
+        content: "";
+        position: absolute;
+        height: 2px;
+        background: #fff;
+    }
+    
+    input[type="checkbox"]:checked:before {
+        width: 8px;
+        top: 11px;
+        left: 2px;
+        transform: rotate(44deg);
+    }
+    
+    input[type="checkbox"]:checked:after {
+        width: 14px;
+        top: 8px;
+        left: 5px;
+        transform: rotate(-55deg);
+    }
+    
+    input[type="checkbox"]:focus {
+        outline: none;
+    }
+}
