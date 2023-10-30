@@ -8,6 +8,8 @@ import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
 import { ChevronIcon, FileIcon, FolderIcon, createCheckbox, findNodeByType, stringToHTMLElement } from './utils/dom';
 
+import ContextMenu from './plugins/context-menu/plugin'
+
 export class TreeJS extends MicroPlugin(MicroEvent) {
   
   $list: HTMLUListElement;
@@ -21,11 +23,11 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     this._buildHtml();
     this._bindEvent();
 
-    console.log(this)
+    this.initializePlugins(this.options.plugins)
     // this.onInit = () => console.log("test");
 
     // this.on('init', this.onInit);
-    // this.trigger('init');
+    this.trigger('init');
   }
 
   _buildHtml() {
@@ -129,3 +131,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     return data;
   }
 }
+
+
+TreeJS.define('context-menu', ContextMenu)

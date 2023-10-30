@@ -1,0 +1,49 @@
+.contextmenu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  background-color: #fff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 1rem;
+  animation: open 0.3s;
+  transform-origin: top left;
+
+  button {
+    background: none;
+    padding: 1rem;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        background-color: #e9ecef;
+        border-radius: 0.5rem;
+      }
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: #b6b6b6;
+    margin-block: 0.5rem;
+    margin: .4rem 0 .4rem 0;
+  }
+
+  svg {
+    margin-right: 1rem;
+  }
+}
+
+@keyframes open {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
