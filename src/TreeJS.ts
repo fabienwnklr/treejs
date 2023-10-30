@@ -30,7 +30,9 @@ export class TreeJS {
       const $child = $li.querySelector('ul');
       if ($child) {
         $li.classList.add('has-children', 'hide');
-        $li.addEventListener('click', () => {
+        $li.addEventListener('click', (event) => {
+          event.stopPropagation();
+
           $li.classList.toggle('hide');
           $li.classList.toggle('show');
         });
@@ -39,10 +41,6 @@ export class TreeJS {
         $child.insertAdjacentElement('beforebegin', ChevronIcon());
       } else {
         $li.prepend(FileIcon());
-        $li.addEventListener('click', () => {
-          $li.classList.toggle('hide');
-          $li.classList.toggle('show');
-        });
       }
 
       if (this.options.checkbox) {
