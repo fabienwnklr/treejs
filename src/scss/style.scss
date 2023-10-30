@@ -1,31 +1,63 @@
-@import "./reset";
+@import './reset';
 
+.treejs {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  list-style: none;
+  cursor: pointer;
+  font-size: 1rem;
+  position: relative;
 
-.treejs-ul,
-.treejs-li {
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    list-style: none;
-    cursor: pointer;
-    font-size: 1.3rem;
-}
-
-.treejs-ul {
-
-    .treejs-li:not(.has-children) {
-        display: flex;
-        align-items: center;
+  .treejs-ul {
+    position: relative;
+    &.path::before {
+      position: absolute;
+      content: '';
+      left: 10px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: transparent;
+      border-left: dashed 1px #c2c2c2;
+      border-bottom: dashed 1px #c2c2c2;
     }
+  }
 
+  .treejs-li:not(.has-children) {
+    display: flex;
+    align-items: center;
+  }
 
-    .treejs-icon {
-        margin-right: .2rem;
-        display: inline;
+  .treejs-icon {
+    margin-right: 0.2rem;
+    display: inline;
+    vertical-align: middle;
+  }
 
-    }
-
-    .treejs-checkbox {}
-
+  .treejs-li.has-children {
     .treejs-child {
-        margin-left: 1rem;
+      padding-left: 1rem;
+      transition: max-height 0.3s ease;
     }
+
+    &.hide > .treejs-child {
+      max-height: 0;
+      overflow: hidden;
+    }
+
+    &.show > .treejs-child {
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    .treejs-icon-chevron svg {
+      transition: transform 0.4s ease;
+    }
+
+    &.hide .treejs-icon-chevron svg {
+      transform: rotate(0);
+    }
+    &.show .treejs-icon-chevron svg {
+      transform: rotate(180deg);
+    }
+  }
 }

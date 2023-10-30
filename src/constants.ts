@@ -1,5 +1,6 @@
 import type { TreeJSOptions } from "./@types";
 
 export const TreeJSDefaultsOptions: TreeJSOptions = {
-    checkbox: true
+    checkbox: true,
+    showPath: true,
 }
