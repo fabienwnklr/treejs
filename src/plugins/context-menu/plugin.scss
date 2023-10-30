@@ -15,20 +15,21 @@
     border: none;
     text-align: left;
     cursor: pointer;
-    color: #6c757d;
+    color: var(--treejs-text-primary);
     display: flex;
     align-items: center;
+    transition: background-color .2s ease;
+    border-radius: 0.5rem;
 
     &:hover {
-        background-color: #e9ecef;
-        border-radius: 0.5rem;
+        background-color: var(--treejs-bg-primary);
       }
   }
 
   hr {
     border: none;
     height: 1px;
-    background-color: #b6b6b6;
+    background-color: var(--treejs-bg-primary);
     margin-block: 0.5rem;
     margin: .4rem 0 .4rem 0;
   }

@@ -1,6 +1,6 @@
 $primary: #27603e;
-$bg-primary: darken($primary, 15%);
-$text-primary: lighten($primary, 40%);
+$bg-primary: rgba(darken($primary, 5%) , .2);
+$text-primary: darken($primary, 10%);
 
 :root {
     --treejs-primary: #{$primary};
