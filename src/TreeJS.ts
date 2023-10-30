@@ -2,28 +2,48 @@ import './scss/style.scss';
 
 import type { TreeJSOptions } from './@types';
 
-import MicroEvent from './lib/MicroEvent'
+import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
 import { ChevronIcon, FileIcon, FolderIcon, createCheckbox, findNodeByType, stringToHTMLElement } from './utils/dom';
 
-import ContextMenu from './plugins/context-menu/plugin'
+import ContextMenu from './plugins/context-menu/plugin';
+
+export declare interface TreeElement extends HTMLUListElement {
+  treejs?: TreeJS;
+}
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
-  
-  $list: HTMLUListElement;
+  $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
-  constructor($list: HTMLUListElement, options: Partial<TreeJSOptions>) {
+  constructor($list: TreeElement | string, options: Partial<TreeJSOptions> = {}) {
     super();
-    this.$list = $list;
+
+    if (typeof $list === 'string') {
+      const $ul = document.getElementById($list);
+
+      if (!$ul) {
+        throw new Error(`TreeJS Error: cannot find element with id ${$list}`);
+      }
+
+      if ($ul instanceof HTMLUListElement) {
+        this.$list = $ul as HTMLUListElement;
+      } else {
+        throw new Error(`TreeJS Error: target must be an instance of HTMLUListElement, actual is ${$ul.nodeType}`);
+      }
+    } else {
+      this.$list = $list;
+    }
+
+    this.$list.treejs = this;
     this.options = deepMerge<TreeJSOptions>(TreeJSDefaultsOptions, options);
 
     this._buildHtml();
     this._bindEvent();
 
-    this.initializePlugins(this.options.plugins)
+    this.initializePlugins(this.options.plugins);
     // this.onInit = () => console.log("test");
 
     // this.on('init', this.onInit);
@@ -59,14 +79,14 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
         let $checkbox: HTMLInputElement | null = null;
         if (this.options.checkbox) {
-          const name = $li.dataset.treejsName ?? textNode.textContent.trim().replace(/\W/g,'_').toLowerCase();
+          const name = $li.dataset.treejsName ?? textNode.textContent.trim().replace(/\W/g, '_').toLowerCase();
           $checkbox = createCheckbox(name);
           $li.prepend($checkbox);
         }
 
         $li.classList.add('treejs-li');
         const $child = $li.querySelector('ul');
-        
+
         const $link = stringToHTMLElement<HTMLAnchorElement>(
           `<a class="treejs-anchor" href="#">${textNode.textContent}</a>`
         );
@@ -98,7 +118,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         }
 
         if ($checkbox) {
-          const $a = $checkbox
+          const $a = $checkbox;
           $checkbox.addEventListener('change', () => {
             if ($child) {
               $child.querySelectorAll('input').forEach(($input) => {
@@ -123,8 +143,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     const $checkbox = this.$list.querySelectorAll('input');
     const data: object[] = [];
     if ($checkbox) {
-      $checkbox.forEach($c => {
-        data.push({name: $c.name, checked: $c.checked});
+      $checkbox.forEach(($c) => {
+        data.push({ name: $c.name, checked: $c.checked });
       });
     }
 
@@ -132,5 +152,4 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 }
 
-
-TreeJS.define('context-menu', ContextMenu)
+TreeJS.define('context-menu', ContextMenu);
