@@ -1,9 +1,9 @@
 @import './reset';
+@import './variables';
 
 .treejs {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   list-style: none;
-  cursor: pointer;
   font-size: 1rem;
   position: relative;
 
@@ -22,6 +22,24 @@
     }
   }
 
+  .treejs-li {
+    margin: .2rem 0 .2rem 0;
+    .treejs-anchor {
+      color: $primary;
+      text-decoration: none;
+      transition: background-color .2s ease;
+      padding: .15rem;
+      border-radius: .2rem;
+
+      &:hover, &:focus {
+        background-color: $bg-primary;
+      }
+      &:focus {
+        outline: 2px solid $primary;
+      }
+    }
+  }
+
   .treejs-li:not(.has-children) {
     display: flex;
     align-items: center;
@@ -36,27 +54,28 @@
   .treejs-li.has-children {
     .treejs-child {
       padding-left: 1rem;
-      transition: max-height 0.3s ease;
+      overflow: hidden;
     }
 
     &.hide > .treejs-child {
-      max-height: 0;
-      overflow: hidden;
+      height: 0;
     }
 
     &.show > .treejs-child {
-      max-height: 100vh;
-      overflow: hidden;
+      height: min-content;
     }
 
+    .treejs-icon-chevron {
+      cursor: pointer;
+    }
     .treejs-icon-chevron svg {
       transition: transform 0.4s ease;
     }
 
-    &.hide .treejs-icon-chevron svg {
+    &.hide > .treejs-icon-chevron svg {
       transform: rotate(0);
     }
-    &.show .treejs-icon-chevron svg {
+    &.show > .treejs-icon-chevron svg {
       transform: rotate(180deg);
     }
   }

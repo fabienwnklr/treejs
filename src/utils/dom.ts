@@ -1,3 +1,16 @@
+/**
+ * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references
+ * @param list 
+ * @param type 
+ * @returns {Node | undefined}
+ */
+export function findNodeByType(list: NodeList, type: string): Node | undefined {
+  for (const node of list) {
+    if (node.nodeName.toLowerCase() === type || node.nodeName === type) {
+      return node;
+    }
+  }
+}
 export function createCheckbox(name: string): HTMLInputElement {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';

@@ -47,8 +47,8 @@
     <script type="module">
       import { TreeJS } from "/src/TreeJS.ts";
 
-      const TREE = new TreeJS(document.getElementById("tree"));
-      console.log(TREE)
+      window.TREE = new TreeJS(document.getElementById("tree"));
+      window.TreeJS = TreeJS;
     </script>
   </body>
 </html>
