@@ -81,34 +81,35 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         $li.classList.add('treejs-li');
         const $child = $li.querySelector('ul');
 
-        const $link = stringToHTMLElement<HTMLAnchorElement>(
-          `<a class="treejs-anchor" href="#">${textNode.textContent}</a>`
+        const $anchorWrapper = stringToHTMLElement<HTMLSpanElement>(
+          `<span class="treejs-anchor-wrapper">
+            <a class="treejs-anchor" href="#">${textNode.textContent}</a>
+          </span>`
         );
 
-        $link.addEventListener('click', () => {
-          $li.classList.add('selected');
-        });
-        $link.addEventListener('focusout', () => {
-          $li.classList.remove('selected');
-        });
         if ($child) {
+          $anchorWrapper.prepend(FolderIcon());
+          $anchorWrapper.append(ChevronIcon());
           $li.classList.add('has-children', 'hide');
-          $li.replaceChild($link, textNode);
-          const $chevronIcon = ChevronIcon();
+          $li.replaceChild($anchorWrapper, textNode);
 
-          $chevronIcon.addEventListener('click', (event) => {
+          $anchorWrapper.querySelector('.treejs-anchor')?.addEventListener('click', (event) => {
             event.stopImmediatePropagation();
             event.stopPropagation();
 
             $li.classList.toggle('hide');
             $li.classList.toggle('show');
+
+            this.trigger('click', {
+              target: $li,
+              event: event,
+            });
           });
           $child.classList.add('treejs-child');
-          $child.insertAdjacentElement('beforebegin', $chevronIcon);
-          $li.prepend(FolderIcon());
+          // $li.prepend(FolderIcon());
         } else {
-          $li.replaceChild($link, textNode);
-          $li.prepend(FileIcon());
+          $anchorWrapper.prepend(FileIcon());
+          $li.replaceChild($anchorWrapper, textNode);
         }
       });
     }

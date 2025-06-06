@@ -25,6 +25,7 @@ type TPlugins = {
   settings: TSettings;
   requested: { [key: string]: boolean };
   loaded: { [key: string]: any };
+  data: { [key: string]: any };
 };
 
 export type TPluginItem = { name: string; options: object };
@@ -39,6 +40,7 @@ export default function MicroPlugin(Interface: any) {
       settings: {},
       requested: {},
       loaded: {},
+      data: {},
     };
 
     /**

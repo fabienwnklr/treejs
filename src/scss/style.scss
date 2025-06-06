@@ -1,13 +1,13 @@
-@import './reset';
-@import './variables';
+@use 'reset' as *;
+@use 'variables' as *;
 
-.treejs {
+.#{$prefix} {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   list-style: none;
   font-size: 1rem;
   position: relative;
 
-  .treejs-ul {
+  .#{$prefix}-ul {
     position: relative;
     &.path::before {
       position: absolute;
@@ -22,61 +22,69 @@
     }
   }
 
-  .treejs-li {
-    margin-top: .3rem;
-    .treejs-anchor {
-      color: var(--treejs-primary);
-      text-decoration: none;
-      transition: background-color .2s ease;
-      padding: .15rem;
-      border-radius: .2rem;
+  .#{$prefix}-li {
+    margin-top: 0.3rem;
 
-      &:hover, &:focus {
-        background-color: var(--treejs-bg-primary);
-        color: var(--treejs-text-primary);
+    .#{$prefix}-anchor-wrapper {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      .#{$prefix}-anchor {
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        padding: 0.15rem;
+        border-radius: 0.2rem;
+
+        &:hover,
+        &:focus {
+          background-color: var(--#{$prefix}-bg-primary)!important;
+          color: var(--#{$prefix}-text-primary)!important;
+        }
+        &:focus {
+          outline: 2px solid var(--#{$prefix}-primary);
+        }
       }
-      &:focus {
-        outline: 2px solid var(--treejs-primary);
+    }
+
+    &.has-children {
+      &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-anchor {
+        background-color: $bg-primary-selected;
+      }
+
+      .#{$prefix}-child {
+        padding-left: 1rem;
+        overflow: hidden;
+      }
+
+      &.hide > .#{$prefix}-child {
+        display: none;
+      }
+
+      &.show > .#{$prefix}-child {
+        display: block;
+        padding-bottom: 0.4rem;
+        padding-right: 0.4rem;
+      }
+
+      .#{$prefix}-icon-chevron {
+        margin-left: 0.3rem;
+      }
+      .#{$prefix}-icon-chevron svg {
+        transition: transform 0.4s ease;
+      }
+
+      &.hide > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
+        transform: rotate(0);
+      }
+      &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
+        transform: rotate(180deg);
       }
     }
   }
 
-  .treejs-li:not(.has-children) {
-    display: flex;
-    align-items: center;
-  }
-
-  .treejs-icon {
+  .#{$prefix}-icon {
     margin-right: 0.2rem;
     display: inline;
-  }
-
-  .treejs-li.has-children {
-    .treejs-child {
-      padding-left: 1rem;
-      overflow: hidden;
-    }
-
-    &.hide > .treejs-child {
-      height: 0;
-    }
-
-    &.show > .treejs-child {
-      height: min-content;
-    }
-
-    .treejs-icon-chevron {
-      cursor: pointer;
-    }
-    .treejs-icon-chevron svg {
-      transition: transform 0.4s ease;
-    }
-
-    &.hide > .treejs-icon-chevron svg {
-      transform: rotate(0);
-    }
-    &.show > .treejs-icon-chevron svg {
-      transform: rotate(180deg);
-    }
   }
 }

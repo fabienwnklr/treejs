@@ -1,4 +1,6 @@
-.contextmenu {
+@use '../../scss/variables' as *;
+
+.#{$prefix}-contextmenu {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -11,7 +13,7 @@
 
   button {
     background: none;
-    padding: 1rem;
+    padding: 0.5rem;
     border: none;
     text-align: left;
     cursor: pointer;

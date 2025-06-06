@@ -1,8 +1,8 @@
 {
-  "name": "ts-vitejs-template",
-  "author": "Winkler Fabien <fabienwinkler@outlook.fr>",
-  "description": "Small description of your lib",
-  "contributors": [],
+  "name": "treejs",
+  "author": "Winkler Fabien <fabien.winkler@outlook.fr>",
+  "description": "TreeJS is a TypeScript library for creating and manipulating tree structures in JavaScript applications. It provides a simple and efficient way to manage hierarchical data, making it easy to build features like file explorers, organizational charts, and more.",
+  "contributors": ["Winkler Fabien <fabien.winkler@outlook.fr>"],
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fabwcie/ts-vitejs-template.git"
+    "url": "git://github.com/fabienwklr/treejs.git"
   },
   "keywords": [
     "typescript"

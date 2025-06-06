@@ -1,9 +1,11 @@
-$primary: #27603e;
+$primary: #c5652e;
 $bg-primary: rgba(darken($primary, 5%) , .2);
+$bg-primary-selected: rgba(darken($primary, 10%), .4);
 $text-primary: darken($primary, 10%);
+$prefix: 'treejs';
 
 :root {
-    --treejs-primary: #{$primary};
-    --treejs-bg-primary: #{$bg-primary};
-    --treejs-text-primary: #{$text-primary};
+    --#{$prefix}-primary: #{$primary};
+    --#{$prefix}-bg-primary: #{$bg-primary};
+    --#{$prefix}-text-primary: #{$text-primary};
 }

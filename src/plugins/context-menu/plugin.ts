@@ -42,7 +42,7 @@ export default function (this: TreeJS, opts: myType = {}) {
     const body = document.body;
 
     const contextMenu = document.createElement('div');
-    contextMenu.classList.add('contextmenu');
+    contextMenu.classList.add('treejs-contextmenu');
 
     contextMenu.innerHTML = `
 <button>${createfolderIcon}</i>Create folder</button>

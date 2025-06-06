@@ -1,47 +1,50 @@
-.treejs {
-    input[type="checkbox"] {
-        height: 18px;
-        width: 18px;
-        margin: 0;
-        padding: 0;
-        opacity: 1;
-        appearance: none;
-        border: 2px solid var(--treejs-primary);
-        border-radius: 3px;
-        background: #fff;
-        position: relative;
-        margin-right: .4rem;
-        margin-left: .4rem;
-    }
-    
-    input[type="checkbox"]:checked {
-        border: 2px solid var(--treejs-primary);
-        background: var(--treejs-primary);
-    }
-    
-    input[type="checkbox"]:checked:before,
-    input[type="checkbox"]:checked:after {
-        content: "";
-        position: absolute;
-        height: 2px;
-        background: #fff;
-    }
-    
-    input[type="checkbox"]:checked:before {
+@use '../../scss/variables' as *;
+
+.#{$prefix} {
+  input[type='checkbox'] {
+    height: 18px;
+    width: 18px;
+    margin: 0;
+    padding: 0;
+    opacity: 1;
+    appearance: none;
+    border: 1px solid var(--#{$prefix}-primary);
+    border-radius: 3px;
+    background: #fff;
+    position: relative;
+    margin-right: 0.4rem;
+    margin-left: 0.4rem;
+
+    &:checked {
+      border: 2px solid var(--#{$prefix}-primary);
+      background: var(--#{$prefix}-primary);
+
+      &::before {
         width: 8px;
         top: 11px;
         left: 2px;
         transform: rotate(44deg);
-    }
-    
-    input[type="checkbox"]:checked:after {
+      }
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        height: 2px;
+        background: #fff;
+      }
+
+      &:after {
         width: 14px;
         top: 8px;
         left: 5px;
         transform: rotate(-55deg);
+      }
     }
-    
-    input[type="checkbox"]:focus {
-        outline: none;
+
+    &:focus {
+      outline: 2px solid var(--#{$prefix}-primary);
+      outline-offset: 2px;
     }
+  }
 }

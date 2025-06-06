@@ -17,26 +17,36 @@ export default function (this: TreeJS, opts: myType = {}) {
   const defaultOpts: myType = { prop1: '' };
   opts = deepMerge<myType>(opts, defaultOpts);
 
-  console.log(opts);
   this.on('init', () => {
-    console.log("checkboxplugin")
     if (this.$liList) {
       this.$liList.forEach(($li) => {
         const $child = $li.querySelector('ul');
         let $checkbox: HTMLInputElement | null = null;
-        const anchor = findNodeByType($li.childNodes, 'a') as HTMLAnchorElement;
-        if (!anchor || !anchor.textContent) return;
-        const name = $li.dataset.treejsName ?? anchor.textContent.trim().replace(/\W/g, '_').toLowerCase();
+        const anchorWrapper = findNodeByType($li.childNodes, 'span') as HTMLSpanElement;
+        if (!anchorWrapper || !anchorWrapper.textContent) return;
+        const name = $li.dataset.treejsName ?? anchorWrapper.textContent.trim().replace(/\W/g, '_').toLowerCase();
         $checkbox = createCheckbox(name);
-        anchor.before($checkbox);
+        anchorWrapper.prepend($checkbox);
 
+        const checked: { [key: string]: boolean } = {};
         const $a = $checkbox;
         $checkbox.addEventListener('change', () => {
+          checked[$a.name] = $a.checked;
           if ($child) {
             $child.querySelectorAll('input').forEach(($input) => {
               $input.checked = $a.checked;
+              checked[$input.name] = $a.checked;
             });
           }
+
+          this.plugins.data.checked = checked;
+
+          this.trigger('checkbox-change', {
+            target: $li,
+            checked: $a.checked,
+          });
+
+          
         });
       });
     }
