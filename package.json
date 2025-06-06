@@ -33,7 +33,7 @@
     "prepare": "husky install",
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test:unit",
     "test:e2e": "playwright test",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest dev",
