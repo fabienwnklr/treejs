@@ -9,11 +9,6 @@ import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
 import { findNodeByType, getIcon, stringToHTMLElement } from './utils/dom';
 
-// !! Icons !! \\
-import FolderIcon from './icons/folder.svg?raw';
-import FileIcon from './icons/file.svg?raw';
-import ChevronIcon from './icons/chevron.svg?raw';
-
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
 import Checkbox from './plugins/checkbox/plugin';
@@ -106,7 +101,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
           $li.replaceChild($anchorWrapper, textNode);
           $child.classList.add('treejs-child');
         } else {
-          const fileIcon = getIcon('file', this.options.icons?.file ?? FileIcon);
+          const fileIcon = getIcon('file', this.options.icons?.file ?? '');
           $anchorWrapper.prepend(fileIcon);
           $li.replaceChild($anchorWrapper, textNode);
         }
