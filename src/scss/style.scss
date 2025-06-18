@@ -36,10 +36,14 @@
         padding: 0.15rem;
         border-radius: 0.2rem;
 
+        &:active {
+          color: var(--#{$prefix}-text-primary) !important;
+        }
+
         &:hover,
         &:focus {
-          background-color: var(--#{$prefix}-bg-primary)!important;
-          color: var(--#{$prefix}-text-primary)!important;
+          background-color: var(--#{$prefix}-bg-primary) !important;
+          color: var(--#{$prefix}-text-primary) !important;
         }
         &:focus {
           outline: 2px solid var(--#{$prefix}-primary);
@@ -50,6 +54,7 @@
     &.has-children {
       &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-anchor {
         background-color: $bg-primary-selected;
+        color: inherit;
       }
 
       .#{$prefix}-child {
