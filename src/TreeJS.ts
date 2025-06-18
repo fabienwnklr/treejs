@@ -1,12 +1,18 @@
 import './scss/style.scss';
 
+// !! Types !! \\
 import type { TreeJSOptions } from './@types';
 
 import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
-import { ChevronIcon, FileIcon, FolderIcon, findNodeByType, stringToHTMLElement } from './utils/dom';
+import { findNodeByType, getIcon, stringToHTMLElement } from './utils/dom';
+
+// !! Icons !! \\
+import FolderIcon from './icons/folder.svg?raw';
+import FileIcon from './icons/file.svg?raw';
+import ChevronIcon from './icons/chevron.svg?raw';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
@@ -92,13 +98,16 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         );
 
         if ($child) {
-          $anchorWrapper.prepend(FolderIcon());
-          $anchorWrapper.append(ChevronIcon());
+          const folderIcon = getIcon('folder', this.options.icons?.folder ?? '');
+          const chevronIcon = getIcon('chevron');
+          $anchorWrapper.prepend(folderIcon);
+          $anchorWrapper.append(chevronIcon);
           $li.classList.add('has-children', 'hide');
           $li.replaceChild($anchorWrapper, textNode);
           $child.classList.add('treejs-child');
         } else {
-          $anchorWrapper.prepend(FileIcon());
+          const fileIcon = getIcon('file', this.options.icons?.file ?? FileIcon);
+          $anchorWrapper.prepend(fileIcon);
           $li.replaceChild($anchorWrapper, textNode);
         }
 
