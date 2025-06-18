@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="#" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>TreeJS</title>
 
     <style>
       #app {
@@ -13,6 +13,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        background-image: url('/images/logo.jpg');
       }
     </style>
   </head>
@@ -40,14 +41,35 @@
           <ul>
             <li>Fourth Child 1</li>
             <li>Fourth Child 2</li>
+
+            <li>
+              Fourth Child 3
+              <ul>
+                <li>Fourth Child 3.1</li>
+                <li>
+                  Fourth Child 3.2
+                  <ul>
+                    <li>Fourth Child 3.2.1</li>
+                    <li>Fourth Child 3.2.2</li>
+                    <li>
+                      Fourth Child 3.2.3
+                      <ul>
+                        <li>Fourth Child 3.3.2.1</li>
+                        <li>Fourth Child 3.3.2.2</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
     </div>
     <script type="module">
-      import { TreeJS } from "/src/TreeJS.ts";
+      import { TreeJS } from '/src/TreeJS.ts';
 
-      const tree = new TreeJS(document.getElementById("tree"));
+      const tree = new TreeJS(document.getElementById('tree'));
       window.TREE = tree;
       window.TreeJS = TreeJS;
     </script>
