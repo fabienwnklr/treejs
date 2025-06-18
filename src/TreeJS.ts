@@ -8,6 +8,7 @@ import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
 import { ChevronIcon, FileIcon, FolderIcon, findNodeByType, stringToHTMLElement } from './utils/dom';
 
+// !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
 import Checkbox from './plugins/checkbox/plugin';
 
@@ -70,6 +71,9 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     if (this.$liList) {
       this.$liList.forEach(($li) => {
         const textNode = findNodeByType($li.childNodes, '#text');
+        const name = $li.dataset.treejsName
+          ? $li.dataset.treejsName
+          : textNode?.textContent?.trim().replace(/\W/g, '_').toLowerCase();
 
         if (!textNode) {
           throw new Error(`TreeJsError : Canot find textNode from li element`);
@@ -92,31 +96,61 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
           $anchorWrapper.append(ChevronIcon());
           $li.classList.add('has-children', 'hide');
           $li.replaceChild($anchorWrapper, textNode);
-
-          $anchorWrapper.querySelector('.treejs-anchor')?.addEventListener('click', (event) => {
-            event.stopImmediatePropagation();
-            event.stopPropagation();
-
-            $li.classList.toggle('hide');
-            $li.classList.toggle('show');
-
-            this.trigger('click', {
-              target: $li,
-              event: event,
-            });
-          });
           $child.classList.add('treejs-child');
-          // $li.prepend(FolderIcon());
         } else {
           $anchorWrapper.prepend(FileIcon());
           $li.replaceChild($anchorWrapper, textNode);
         }
+
+        $li.setAttribute('data-treejs-name', name || '');
       });
     }
   }
 
   _bindEvent() {
-    this.$list.querySelectorAll('treejs-child');
+    this.$list.querySelectorAll('.treejs-li.has-children .treejs-anchor').forEach(($anchor) => {
+      $anchor.addEventListener('click', (event) => {
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+
+        const $li = $anchor.closest('.treejs-li');
+        if ($li) {
+          $li.classList.toggle('hide');
+          $li.classList.toggle('show');
+        }
+
+        this.trigger('click', {
+          target: $li,
+          event: event,
+        });
+      });
+    });
+  }
+
+  toggle(name: string) {
+    const $li = this.$list.querySelector(`.treejs-li[data-treejs-name="${name}"]`);
+    if (!$li) {
+      throw new Error(`TreeJS Error: cannot find element with name ${name}`);
+    }
+
+    if (!$li.classList.contains('has-children')) {
+      throw new Error(`TreeJS Error: element with name ${name} is not a parent node`);
+    }
+
+    $li.classList.toggle('hide');
+    $li.classList.toggle('show');
+
+    this.trigger('toggle', {
+      target: $li,
+      name: name,
+    });
+  }
+
+  toggleAll() {
+    this.$list.querySelectorAll('.treejs-li.has-children').forEach(($li) => {
+      $li.classList.toggle('hide');
+      $li.classList.toggle('show');
+    });
   }
 
   getSelected() {
@@ -124,15 +158,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   getChecked() {
-    const $checkbox = this.$list.querySelectorAll('input');
-    const data: object[] = [];
-    if ($checkbox) {
-      $checkbox.forEach(($c) => {
-        data.push({ name: $c.name, checked: $c.checked });
-      });
-    }
-
-    return data;
+    return this.plugins.data.checked;
   }
 }
 
