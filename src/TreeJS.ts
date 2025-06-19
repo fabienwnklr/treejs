@@ -21,6 +21,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
+
   constructor($list: TreeElement | string, options: Partial<TreeJSOptions> = {}) {
     super();
 
@@ -163,6 +164,37 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   getChecked() {
     return this.plugins.data.checked;
+  }
+
+  toJSON(): Record<string, any> {
+    const json: Record<string, any> = {};
+
+    this.$liList.forEach(($li) => {
+      const name = $li.dataset.treejsName;
+      // if is children, skip
+      if ($li.classList.contains('treejs-child')) {
+        return;
+      }
+      if (name) {
+        json[name] = {
+          name: name,
+          children: [],
+        };
+
+        const $childUl = $li.querySelector('ul');
+        if ($childUl) {
+          const $childrenLi = $childUl.querySelectorAll('li');
+          $childrenLi.forEach(($childLi) => {
+            const childName = $childLi.dataset.treejsName;
+            if (childName) {
+              json[name].children.push(childName);
+            }
+          });
+        }
+      }
+    });
+
+    return json;
   }
 }
 
