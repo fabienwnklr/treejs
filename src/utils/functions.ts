@@ -37,5 +37,8 @@ export function deepMerge<T extends object>(target: T, source: Partial<T> | T): 
  * @returns - The serialized string
  */
 export function serialize(string: string): string {
-  return string.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/\s+/g, '_').trim();
+  return string
+    .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
+    .replace(/\s+/g, '_')
+    .trim().toLowerCase();
 }

@@ -86,12 +86,15 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
  */
 export function JSONToHTML(json: Record<string, any>): HTMLLIElement {
   // first create LI as root element
-  const $li = document.createElement('li');
-  $li.classList.add('treejs-li');
-  $li.setAttribute('data-treejs-name', serialize(json.label || ''));
-  $li.textContent = json.label || '';
+  const $li = stringToHTMLElement<HTMLLIElement>(`<li class="treejs-item" data-treejs-name="${serialize(json.label)}">
+  <span class="treejs-anchor-wrapper">
+    <span class="treejs-anchor">
+      ${json.label || ''}
+    </span>
+  </li>`);
 
   if (json.children && Array.isArray(json.children) && json.children.length > 0) {
+    $li.querySelector('.treejs-anchor-wrapper')?.prepend(getIcon('folder'));
     const $ul = document.createElement('ul');
     $ul.classList.add('treejs-child');
 
@@ -102,6 +105,8 @@ export function JSONToHTML(json: Record<string, any>): HTMLLIElement {
 
     $li.appendChild($ul);
     $li.classList.add('has-children', 'hide');
+  } else {
+    $li.querySelector('.treejs-anchor-wrapper')?.prepend(getIcon('file'));
   }
 
   return $li;

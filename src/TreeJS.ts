@@ -129,7 +129,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   toggle(name: string) {
-    const $li = this.$list.querySelector(`.treejs-li[data-treejs-name="${name}"]`);
+    const $li = this.$list.querySelector(`.treejs-li[data-treejs-name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new Error(`TreeJS Error: cannot find element with name ${name}`);
     }
@@ -139,35 +139,10 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     if ($li.classList.contains('has-children')) {
-      const fetchUrl = $li.getAttribute('data-treejs-fetch-url') || '';
+      const uri = $li.getAttribute('data-treejs-fetch-url') || '';
       // if fetch set for his children, we will fetch data
-      if (fetchUrl) {
-        // append loader to ul
-        const $ul = $li.querySelector('ul');
-        if (!$ul) {
-          throw new Error(`TreeJS Error: cannot find child ul for element with name ${name}`);
-        }
-        const $loader = stringToHTMLElement<HTMLDivElement>(
-          `<div class="treejs-loader">
-            <span class="treejs-loader-icon"></span>
-          </div>`
-        );
-        $ul.prepend($loader);
-
-        fetch(fetchUrl)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`TreeJS Error: failed to fetch data from ${fetchUrl}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            const html = JSONToHTML(data);
-
-            // replace ul with new html
-            $ul.innerHTML = '';
-            $ul.appendChild(html);
-          });
+      if (uri && ! this._data[name]) {
+        this._loadFromURI(uri, $li);
       }
     }
 
@@ -219,6 +194,45 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     });
 
     return result;
+  }
+
+  private _loadFromURI(uri: string, $li: HTMLLIElement) {
+    if (!uri) {
+      throw new Error(
+        `TreeJS Error: cannot find data-treejs-fetch-url attribute for element with name ${$li.getAttribute(
+          'data-treejs-name'
+        )}`
+      );
+    }
+
+    const name = $li.getAttribute('data-treejs-name');
+    // append loader to ul
+    const $ul = $li.querySelector('ul');
+    if (!$ul) {
+      throw new Error(`TreeJS Error: cannot find child ul for element with name ${name}`);
+    }
+    const $loader = stringToHTMLElement<HTMLDivElement>(
+      `<div class="treejs-loader">
+            <span class="treejs-loader-icon"></span>
+          </div>`
+    );
+    $ul.prepend($loader);
+
+    fetch(uri)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`TreeJS Error: failed to fetch data from ${uri}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const html = JSONToHTML(data);
+        this._data[name || ''] = data;
+
+        // replace ul with new html
+        $ul.innerHTML = '';
+        $ul.appendChild(html);
+      });
   }
 }
 
