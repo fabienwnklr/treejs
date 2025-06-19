@@ -2,7 +2,9 @@
   "name": "treejs",
   "author": "Winkler Fabien <fabien.winkler@outlook.fr>",
   "description": "TreeJS is a TypeScript library for creating and manipulating tree structures in JavaScript applications. It provides a simple and efficient way to manage hierarchical data, making it easy to build features like file explorers, organizational charts, and more.",
-  "contributors": ["Winkler Fabien <fabien.winkler@outlook.fr>"],
+  "contributors": [
+    "Winkler Fabien <fabien.winkler@outlook.fr>"
+  ],
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -33,10 +35,8 @@
     "prepare": "husky install",
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "npm run test:unit",
-    "test:e2e": "playwright test",
-    "test:unit": "vitest run",
-    "test:unit:watch": "vitest dev",
+    "test": "vitest run",
+    "test:watch": "vitest dev",
     "lint": "npx eslint src/**",
     "format": "prettier src/**/*.ts --write",
     "docs": "cd docs && yarn start",
@@ -51,7 +51,6 @@
   "devDependencies": {
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
-    "@playwright/test": "^1.39.0",
     "@types/node": "^20.8.7",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
