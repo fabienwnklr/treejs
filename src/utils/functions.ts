@@ -30,3 +30,12 @@ export function deepMerge<T extends object>(target: T, source: Partial<T> | T): 
   }
   return output;
 }
+/**
+ * Serialize a string by escaping special characters, replace spaces with underscores,
+ * and trimming leading/trailing whitespace.
+ * @param string - The string to be serialized
+ * @returns - The serialized string
+ */
+export function serialize(string: string): string {
+  return string.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/\s+/g, '_').trim();
+}

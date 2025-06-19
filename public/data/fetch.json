@@ -1,0 +1,17 @@
+{
+  "label": "Fetched data",
+  "children": [
+    {
+      "label": "Fetched data 1",
+      "children": []
+    },
+    {
+      "label": "Fetched data 2",
+      "children": []
+    },
+    {
+      "label": "Fetched data 3",
+      "children": []
+    }
+  ]
+}

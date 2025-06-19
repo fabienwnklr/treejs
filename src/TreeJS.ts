@@ -7,7 +7,7 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { deepMerge } from './utils/functions';
-import { findNodeByType, getIcon, stringToHTMLElement } from './utils/dom';
+import { findNodeByType, getIcon, JSONToHTML, stringToHTMLElement } from './utils/dom';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
@@ -21,6 +21,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
+
+  _data: Record<string, any> = {};
 
   constructor($list: TreeElement | string, options: Partial<TreeJSOptions> = {}) {
     super();
@@ -120,14 +122,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
         const $li = $anchor.closest('.treejs-li');
         if ($li) {
-          $li.classList.toggle('hide');
-          $li.classList.toggle('show');
+          this.toggle($li.getAttribute('data-treejs-name') || '');
         }
-
-        this.trigger('click', {
-          target: $li,
-          event: event,
-        });
       });
     });
   }
@@ -140,6 +136,39 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     if (!$li.classList.contains('has-children')) {
       throw new Error(`TreeJS Error: element with name ${name} is not a parent node`);
+    }
+
+    if ($li.classList.contains('has-children')) {
+      const fetchUrl = $li.getAttribute('data-treejs-fetch-url') || '';
+      // if fetch set for his children, we will fetch data
+      if (fetchUrl) {
+        // append loader to ul
+        const $ul = $li.querySelector('ul');
+        if (!$ul) {
+          throw new Error(`TreeJS Error: cannot find child ul for element with name ${name}`);
+        }
+        const $loader = stringToHTMLElement<HTMLDivElement>(
+          `<div class="treejs-loader">
+            <span class="treejs-loader-icon"></span>
+          </div>`
+        );
+        $ul.prepend($loader);
+
+        fetch(fetchUrl)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`TreeJS Error: failed to fetch data from ${fetchUrl}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const html = JSONToHTML(data);
+
+            // replace ul with new html
+            $ul.innerHTML = '';
+            $ul.appendChild(html);
+          });
+      }
     }
 
     $li.classList.toggle('hide');
@@ -167,34 +196,29 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   toJSON(): Record<string, any> {
-    const json: Record<string, any> = {};
+    const result: Record<string, any>[] = [];
 
-    this.$liList.forEach(($li) => {
-      const name = $li.dataset.treejsName;
-      // if is children, skip
-      if ($li.classList.contains('treejs-child')) {
-        return;
-      }
-      if (name) {
-        json[name] = {
-          name: name,
-          children: [],
-        };
+    function parseNode(li: HTMLLIElement): Record<string, any> {
+      const name = li.getAttribute('data-treejs-name') || '';
+      const children: Record<string, any>[] = [];
 
-        const $childUl = $li.querySelector('ul');
-        if ($childUl) {
-          const $childrenLi = $childUl.querySelectorAll('li');
-          $childrenLi.forEach(($childLi) => {
-            const childName = $childLi.dataset.treejsName;
-            if (childName) {
-              json[name].children.push(childName);
-            }
-          });
-        }
+      const subUl = li.querySelector(':scope > ul');
+      if (subUl) {
+        const subLis = subUl.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
+        subLis.forEach((childLi) => {
+          children.push(parseNode(childLi));
+        });
       }
+
+      return { name, children };
+    }
+
+    const topLevelLis = this.$list.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
+    topLevelLis.forEach((li) => {
+      result.push(parseNode(li));
     });
 
-    return json;
+    return result;
   }
 }
 

@@ -1,6 +1,7 @@
 import folder from '../icons/folder.svg?raw';
 import file from '../icons/file.svg?raw';
 import chevron from '../icons/chevron.svg?raw';
+import { serialize } from './functions';
 
 /**
  * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references
@@ -61,4 +62,47 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
   }
 
   return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon treejs-icon-${type}">${icon}</span>`);
+}
+
+/**
+ * generate HTML li list from this JSON object
+ * {
+ * "label": "Fetched data",
+ * "children": [
+ * {
+ *  "label": "Fetched data 1",
+ * "children": []
+ * },
+ * {
+ *   "label": "Fetched data 2",
+ * "children": []
+ * },
+ * {
+ *  "label": "Fetched data 3",
+ *  "children": []
+ * }
+ * ]
+ * }
+ */
+export function JSONToHTML(json: Record<string, any>): HTMLLIElement {
+  // first create LI as root element
+  const $li = document.createElement('li');
+  $li.classList.add('treejs-li');
+  $li.setAttribute('data-treejs-name', serialize(json.label || ''));
+  $li.textContent = json.label || '';
+
+  if (json.children && Array.isArray(json.children) && json.children.length > 0) {
+    const $ul = document.createElement('ul');
+    $ul.classList.add('treejs-child');
+
+    json.children.forEach((child) => {
+      const childLi = JSONToHTML(child);
+      $ul.appendChild(childLi);
+    });
+
+    $li.appendChild($ul);
+    $li.classList.add('has-children', 'hide');
+  }
+
+  return $li;
 }
