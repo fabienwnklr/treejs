@@ -1,6 +1,6 @@
-import type { TreeJSOptions } from "./@types";
+import type { TreeJSOptions } from './@types';
 
 export const TreeJSDefaultsOptions: TreeJSOptions = {
-    showPath: true,
-    plugins: [],
-}
+  showPath: true,
+  plugins: [],
+};

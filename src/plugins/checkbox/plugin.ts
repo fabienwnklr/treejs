@@ -1,7 +1,7 @@
 import { TreeJS } from '../../TreeJS';
 import { createCheckbox, findNodeByType } from '../../utils/dom';
 // import { ... } from '../../utils/dom'
-import { deepMerge } from '../../utils/functions';
+import { _getLiName, deepMerge } from '../../utils/functions';
 import type { myType } from './@types';
 
 // importing style
@@ -24,7 +24,7 @@ export default function (this: TreeJS, opts: myType = {}) {
         let $checkbox: HTMLInputElement | null = null;
         const anchorWrapper = findNodeByType($li.childNodes, 'span') as HTMLSpanElement;
         if (!anchorWrapper || !anchorWrapper.textContent) return;
-        const name = $li.dataset.treejsName ?? anchorWrapper.textContent.trim().replace(/\W/g, '_').toLowerCase();
+        const name = _getLiName($li, anchorWrapper);
         $checkbox = createCheckbox(name);
         anchorWrapper.prepend($checkbox);
 
@@ -45,8 +45,6 @@ export default function (this: TreeJS, opts: myType = {}) {
             target: $li,
             checked: $a.checked,
           });
-
-          
         });
       });
     }

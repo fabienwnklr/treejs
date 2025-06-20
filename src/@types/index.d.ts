@@ -1,3 +1,7 @@
+export interface TreeElement extends HTMLUListElement {
+  treejs?: TreeJS;
+}
+
 export interface TreeJSOptions {
   // checkbox: boolean;
   showPath: boolean;
@@ -17,6 +21,6 @@ export interface TreeJSPlugin {
 
 export interface TreeJSJSON {
   label: string;
+  name?: string;
   children: TreeJSJSON[];
-  [key: string]: any;
 }

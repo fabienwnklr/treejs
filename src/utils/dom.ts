@@ -1,7 +1,7 @@
 import folder from '../icons/folder.svg?raw';
 import file from '../icons/file.svg?raw';
 import chevron from '../icons/chevron.svg?raw';
-import { serialize } from './functions';
+import { sanitizeString } from './functions';
 import type { TreeJSJSON } from '../@types';
 
 /**
@@ -17,6 +17,7 @@ export function findNodeByType(list: NodeList, type: string): Node | undefined {
     }
   }
 }
+
 export function createCheckbox(name: string): HTMLInputElement {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -85,18 +86,21 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
  * ]
  * }
  */
-export function JSONToHTML(json: TreeJSJSON | Array<TreeJSJSON>): HTMLLIElement | DocumentFragment {
+export function JSONToHTML(
+  json: TreeJSJSON | Array<TreeJSJSON>,
+  path: boolean = true
+): HTMLLIElement | DocumentFragment {
   if (Array.isArray(json)) {
     const fragment = document.createDocumentFragment();
     json.forEach((item) => {
-      const li = JSONToHTML(item) as HTMLLIElement;
+      const li = JSONToHTML(item, path) as HTMLLIElement;
       fragment.appendChild(li);
     });
     return fragment;
   }
 
   const label = json.label || '';
-  const safeLabel = serialize(label);
+  const safeLabel = sanitizeString(label);
   const $li = stringToHTMLElement<HTMLLIElement>(`
     <li class="treejs-li" data-treejs-name="${safeLabel}">
       <span class="treejs-anchor-wrapper">
@@ -111,10 +115,10 @@ export function JSONToHTML(json: TreeJSJSON | Array<TreeJSJSON>): HTMLLIElement 
     $wrapper?.append(getIcon('chevron'));
 
     const $ul = document.createElement('ul');
-    $ul.classList.add('treejs-ul', 'path', 'treejs-child');
+    $ul.classList.add('treejs-ul', path ? 'path' : '', 'treejs-child');
 
     json.children.forEach((child: TreeJSJSON) => {
-      const childLi = JSONToHTML(child) as HTMLLIElement;
+      const childLi = JSONToHTML(child, path) as HTMLLIElement;
       $ul.appendChild(childLi);
     });
 
@@ -125,4 +129,12 @@ export function JSONToHTML(json: TreeJSJSON | Array<TreeJSJSON>): HTMLLIElement 
   }
 
   return $li;
+}
+
+export function _createAnchorWrapper(text: string): HTMLSpanElement {
+  return stringToHTMLElement<HTMLSpanElement>(
+    `<span class="treejs-anchor-wrapper">
+      <a class="treejs-anchor" href="#">${text}</a>
+    </span>`
+  );
 }

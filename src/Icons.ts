@@ -1,3 +1,3 @@
 export default class Icons {
-    static readonly folder: string = ``
+  static readonly folder: string = ``;
 }

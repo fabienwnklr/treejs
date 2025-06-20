@@ -1,3 +1,3 @@
 export declare type myType = {
-    prop1?: any
-}
+  prop1?: any;
+};
