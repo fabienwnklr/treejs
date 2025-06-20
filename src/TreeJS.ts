@@ -57,23 +57,12 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   private _buildHtml(): void {
     this.$list.classList.add('treejs');
-    const $ulList = this.$list.querySelectorAll('ul');
-
-    for (const $ul of $ulList) {
-      const classes = ['treejs-ul'];
-
-      if (this.options.showPath) {
-        classes.push('path');
-      }
-      $ul.classList.add(...classes);
-      if ($ul.querySelector('ul')) {
-        $ul.classList.add('has-children');
-      }
-    }
-
     this.$liList = this.$list.querySelectorAll('li');
+    this._buildList(this.$liList);
+  }
 
-    for (const $li of this.$liList) {
+  private _buildList($liList: NodeListOf<HTMLLIElement>): void {
+    for (const $li of $liList) {
       const textNode = findNodeByType($li.childNodes, '#text');
       const name = _getLiName($li, textNode);
 
@@ -89,8 +78,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
       const $anchorWrapper = stringToHTMLElement<HTMLSpanElement>(
         `<span class="treejs-anchor-wrapper">
-            <a class="treejs-anchor" href="#">${textNode.textContent}</a>
-          </span>`
+              <a class="treejs-anchor" href="#">${textNode.textContent}</a>
+            </span>`
       );
 
       if ($child) {
@@ -217,15 +206,22 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     if (!data.ok) {
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
-    const contentType = data.headers.get('content-type');
-    const response = await data.json();
+    const isJSON = data.headers.get('content-type')?.includes('application/json');
+    const isHTML = data.headers.get('content-type')?.includes('text/html');
+    const response = isJSON ? await data.json() : await data.text();
+
     this._data[name || ''] = response;
 
     let html: HTMLLIElement | DocumentFragment = document.createDocumentFragment();
-    if (contentType && contentType.includes('application/json')) {
+    if (isJSON) {
       html = JSONToHTML(response as TreeJSJSON, this.options.showPath);
-    } else if (contentType && contentType.includes('text/html')) {
+    } else if (isHTML) {
       html = stringToHTMLElement<HTMLLIElement>(response as string);
+
+      const $liList = html.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
+      this._buildList($liList);
+    } else {
+      throw new TreeJSError(`Invalid response type from ${uri}. Expected JSON or HTML.`);
     }
 
     $ul.innerHTML = '';

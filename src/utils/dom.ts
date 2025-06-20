@@ -67,24 +67,7 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
 }
 
 /**
- * generate HTML li list from this JSON object
- * {
- * "label": "Fetched data",
- * "children": [
- * {
- *  "label": "Fetched data 1",
- * "children": []
- * },
- * {
- *   "label": "Fetched data 2",
- * "children": []
- * },
- * {
- *  "label": "Fetched data 3",
- *  "children": []
- * }
- * ]
- * }
+ * Generate HTML list from TreeJSJSON object
  */
 export function JSONToHTML(
   json: TreeJSJSON | Array<TreeJSJSON>,
@@ -92,40 +75,49 @@ export function JSONToHTML(
 ): HTMLLIElement | DocumentFragment {
   if (Array.isArray(json)) {
     const fragment = document.createDocumentFragment();
-    json.forEach((item) => {
+    for (const item of json) {
       const li = JSONToHTML(item, path) as HTMLLIElement;
       fragment.appendChild(li);
-    });
+    }
     return fragment;
   }
 
   const label = json.label || '';
   const safeLabel = sanitizeString(label);
-  const $li = stringToHTMLElement<HTMLLIElement>(`
-    <li class="treejs-li" data-treejs-name="${safeLabel}">
-      <span class="treejs-anchor-wrapper">
-        <a class="treejs-anchor" href="#">${label}</a>
-      </span>
-    </li>
-  `);
 
-  const $wrapper = $li.querySelector('.treejs-anchor-wrapper');
+  const $li = document.createElement('li');
+  $li.classList.add('treejs-li');
+  $li.setAttribute('data-treejs-name', safeLabel);
+
+  const $wrapper = document.createElement('span');
+  $wrapper.classList.add('treejs-anchor-wrapper');
+
+  const $anchor = document.createElement('a');
+  $anchor.classList.add('treejs-anchor');
+  $anchor.href = '#';
+  $anchor.textContent = label;
+
+  $wrapper.appendChild($anchor);
+
   if (json.children?.length) {
-    $wrapper?.prepend(getIcon('folder'));
-    $wrapper?.append(getIcon('chevron'));
+    $wrapper.prepend(getIcon('folder'));
+    $wrapper.append(getIcon('chevron'));
 
     const $ul = document.createElement('ul');
-    $ul.classList.add('treejs-ul', path ? 'path' : '', 'treejs-child');
+    $ul.classList.add('treejs-ul', 'treejs-child');
+    if (path) $ul.classList.add('path');
 
-    json.children.forEach((child: TreeJSJSON) => {
+    for (const child of json.children) {
       const childLi = JSONToHTML(child, path) as HTMLLIElement;
       $ul.appendChild(childLi);
-    });
+    }
 
+    $li.appendChild($wrapper);
     $li.appendChild($ul);
     $li.classList.add('has-children', 'hide');
   } else {
-    $wrapper?.prepend(getIcon('file'));
+    $wrapper.prepend(getIcon('file'));
+    $li.appendChild($wrapper);
   }
 
   return $li;
