@@ -1,7 +1,7 @@
 import './scss/style.scss';
 
 // !! Types !! \\
-import type { TreeJSOptions } from './@types';
+import type { TreeJSJSON, TreeJSOptions } from './@types';
 
 import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
@@ -223,15 +223,21 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         if (!response.ok) {
           throw new Error(`TreeJS Error: failed to fetch data from ${uri}`);
         }
-        return response.json();
+
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          return response.json();
+        }
       })
-      .then((data) => {
+      .then((data: TreeJSJSON | TreeJSJSON[]) => {
         const html = JSONToHTML(data);
         this._data[name || ''] = data;
 
         // replace ul with new html
         $ul.innerHTML = '';
         $ul.appendChild(html);
+
+        // bind event to new html
+        this._bindEvent();
       });
   }
 }
