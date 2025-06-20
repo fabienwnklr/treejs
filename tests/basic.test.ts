@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { TreeElement, TreeJS } from '../src/TreeJS';
+import { TreeJS } from '../src/TreeJS';
+import type { TreeElement } from '../src/@types';
 
 describe('TreeJS', () => {
   document.body.innerHTML = `<ul id="tree"></ul>`;
@@ -9,6 +10,6 @@ describe('TreeJS', () => {
     const $tree = document.getElementById('tree') as TreeElement;
     expect(Tree).toBeInstanceOf(TreeJS);
     expect($tree.treejs).toBeInstanceOf(TreeJS);
-    expect($tree.classList.contains('treejs')).toBe(true);
+    expect($tree.classList.contains('treejs-ul')).toBe(true);
   });
 });

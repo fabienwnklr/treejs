@@ -6,6 +6,7 @@ export interface TreeJSOptions {
   // checkbox: boolean;
   showPath: boolean;
   plugins: AvailablePlugins[];
+  openOnDblClick: boolean;
   icons?: {
     folder?: string;
     file?: string;

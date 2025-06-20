@@ -1,27 +1,27 @@
 [
   {
-    "label": "Fetched data",
+    "label": "Fetched data from json",
     "children": [
       {
-        "label": "Fetched data 1",
+        "label": "Fetched data from json 1",
         "children": []
       },
       {
-        "label": "Fetched data 2",
+        "label": "Fetched data from json 2",
         "children": []
       },
       {
-        "label": "Fetched data 3",
+        "label": "Fetched data from json 3",
         "children": []
       }
     ]
   },
   {
-    "label": "Fetched data 4",
+    "label": "Fetched data from json 4",
     "children": []
   },
   {
-    "label": "Fetched data 5",
+    "label": "Fetched data from json 5",
     "children": []
   }
 ]

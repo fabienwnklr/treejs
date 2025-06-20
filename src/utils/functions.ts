@@ -48,7 +48,7 @@ export function _throwError(message: string) {
   new Error(`TreeJS Error: ${message}`);
 }
 
-export function _getLiName($li: HTMLLIElement, textNode: Node | undefined | null): string {
+export function _getLiName($li: HTMLLIElement, textNode?: Node | undefined | null): string {
   return $li.dataset.treejsName ? $li.dataset.treejsName : sanitizeString(textNode?.textContent || '');
 }
 

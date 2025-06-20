@@ -9,18 +9,18 @@
     <style>
       #app {
         height: 100vh;
-        width: 100vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-image: url('/images/logo.jpg');
+        width: 100%;
+        /* display: flex; */
+        /* justify-content: center; */
+        /* align-items: center; */
+        background: url('/images/logo.jpg') no-repeat center center fixed;
       }
     </style>
   </head>
   <body>
     <div id="app">
       <ul id="tree">
-        <li>First</li>
+        <li data-treejs-onselect="console.log('First')">First</li>
         <li>Second</li>
         <li>
           Third
@@ -64,16 +64,17 @@
             </li>
           </ul>
         </li>
-        <li data-treejs-fetch-url="/data/fetch.html">
-          Fetch test
-          <ul></ul>
+        <li data-treejs-fetch-url="/data/fetch.json">
+          Fetch test from json
         </li>
+        <li data-treejs-fetch-url="/data/fetch.html">
+          Fetch test from html
       </ul>
     </div>
     <script type="module">
       import { TreeJS } from '/src/TreeJS.ts';
 
-      const tree = new TreeJS(document.getElementById('tree'), { test: "tt"});
+      const tree = new TreeJS(document.getElementById('tree'), { openOnDblClick: true });
       window.TREE = tree;
       window.TreeJS = TreeJS;
     </script>

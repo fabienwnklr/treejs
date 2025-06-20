@@ -1,135 +1,165 @@
 @use 'reset' as *;
 @use 'variables' as *;
 
-.#{$prefix} {
+.#{$prefix}-ul {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   list-style: none;
   font-size: 1rem;
   position: relative;
+  font-weight: 400;
+  line-height: 1.5;
+  padding-left: 5px;
+  position: relative;
+  width: fit-content;
 
-  .#{$prefix}-ul {
-    position: relative;
-    &.path::before {
-      position: absolute;
-      content: '';
-      left: 10px;
-      top: 0;
-      width: 2px;
-      height: 75%;
-      background-color: transparent;
-      border-left: dashed 1px #c2c2c2;
-      border-bottom: dashed 1px #c2c2c2;
-    }
+  &.path li:before {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 10px;
+    height: 1px;
+    margin: auto;
+    content: '';
+    background-color: transparent;
+    border-left: dashed 1px #c2c2c2;
+    border-bottom: dashed 1px #c2c2c2;
+  }
+  &.path li:after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    content: '';
+    background-color: transparent;
+    border-left: dashed 1px #c2c2c2;
+    // border-bottom: dashed 1px #c2c2c2;
   }
 
-  .#{$prefix}-li {
-    margin-top: 0.3rem;
-
-    .#{$prefix}-anchor-wrapper {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-
-      .#{$prefix}-anchor {
-        text-decoration: none;
-        transition: background-color 0.2s ease;
-        padding: 0.15rem;
-        border-radius: 0.2rem;
-
-        &:active {
-          color: var(--#{$prefix}-text-primary) !important;
-        }
-
-        &:hover,
-        &:focus {
-          background-color: var(--#{$prefix}-bg-primary) !important;
-          color: var(--#{$prefix}-text-primary) !important;
-        }
-        &:focus {
-          outline: 2px solid var(--#{$prefix}-primary);
-        }
-      }
-    }
-
-    &.has-children {
-      &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-anchor {
-        background-color: $bg-primary-selected;
-        color: inherit;
-      }
-
-      .#{$prefix}-child {
-        padding-left: 1rem;
-        overflow: hidden;
-      }
-
-      &.hide > .#{$prefix}-child {
-        display: none;
-      }
-
-      &.show > .#{$prefix}-child {
-        display: block;
-        padding-bottom: 0.4rem;
-        padding-right: 0.4rem;
-      }
-
-      .#{$prefix}-icon-chevron {
-        margin-left: 0.3rem;
-      }
-      .#{$prefix}-icon-chevron svg {
-        transition: transform 0.4s ease;
-      }
-
-      &.hide > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
-        transform: rotate(0);
-      }
-      &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
-        transform: rotate(180deg);
-      }
-    }
+  &.path li:last-child:after {
+    height: 15px;
   }
+}
 
-  .#{$prefix}-icon {
-    margin-right: 0.2rem;
-    display: inline;
-  }
+.#{$prefix}-li {
+  position: relative;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 
-  .#{$prefix}-loader {
+  .#{$prefix}-anchor-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 0.5rem;
-    
-    .#{$prefix}-loader-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: inline-block;
-      position: relative;
-      background: linear-gradient(0deg, rgba(255, 61, 0, 0.2) 33%, $primary 100%);
-      box-sizing: border-box;
-      animation: rotation 1s linear infinite;
+    text-decoration: none;
 
-      &:after {
-        content: '';
-        box-sizing: border-box;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #fff;
+    .#{$prefix}-anchor {
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+      padding: 0.15rem;
+      border-radius: 0.2rem;
+
+      &:active {
+        color: var(--#{$prefix}-text-primary) !important;
+      }
+
+      &:hover,
+      &:focus {
+        background-color: var(--#{$prefix}-bg-primary) !important;
+        color: var(--#{$prefix}-text-primary) !important;
+      }
+      &:focus {
+        outline: 2px solid var(--#{$prefix}-primary);
       }
     }
   }
 
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
+  &.has-children {
+    &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-anchor {
+      background-color: $bg-primary-selected;
+      color: inherit;
     }
-    100% {
-      transform: rotate(360deg);
+
+    // .#{$prefix}-child {
+    //   padding-left: 1rem;
+    //   overflow: hidden;
+    // }
+
+    &.hide > .#{$prefix}-child {
+      display: none;
     }
+
+    &.show > .#{$prefix}-child {
+      display: block;
+      // padding-bottom: 0.2rem;
+      // padding-right: 0.2rem;
+    }
+
+    .#{$prefix}-icon-chevron {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      margin-left: 0.3rem;
+    }
+    .#{$prefix}-icon-chevron svg {
+      transition: transform 0.4s ease;
+    }
+
+    &.hide > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
+      transform: rotate(0);
+    }
+    &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.#{$prefix}-icon {
+  margin-right: 0.2rem;
+  display: inline;
+}
+
+.#{$prefix}-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem;
+
+  .#{$prefix}-loader-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    background: linear-gradient(0deg, rgba(255, 61, 0, 0.2) 33%, $primary 100%);
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+
+    &:after {
+      content: '';
+      box-sizing: border-box;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+    }
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

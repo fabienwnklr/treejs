@@ -37,8 +37,8 @@ export function stringToHTMLElement<T>(string: string): T {
  * @param content svg string
  * @returns
  */
-export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): HTMLSpanElement {
-  if (!['folder', 'file', 'chevron'].includes(type)) {
+export function getIcon(type: 'folder' | 'file' | 'chevron' | 'loader', content?: string): HTMLSpanElement {
+  if (!['folder', 'file', 'chevron', 'loader'].includes(type)) {
     throw new Error(`Invalid icon type: ${type}. Expected 'folder', 'file', or 'chevron'.`);
   }
 
@@ -53,6 +53,11 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
         break;
       case 'chevron':
         icon = chevron;
+        break;
+      case 'loader':
+        icon = `<div class="treejs-loader">
+            <span class="treejs-loader-icon"></span>
+          </div>`;
         break;
       default:
         throw new Error(`Unknown icon type: ${type}`);
@@ -69,64 +74,30 @@ export function getIcon(type: 'folder' | 'file' | 'chevron', content?: string): 
 /**
  * Generate HTML list from TreeJSJSON object
  */
-export function JSONToHTML(
-  json: TreeJSJSON | Array<TreeJSJSON>,
-  path: boolean = true
-): HTMLLIElement | DocumentFragment {
-  if (Array.isArray(json)) {
-    const fragment = document.createDocumentFragment();
-    for (const item of json) {
-      const li = JSONToHTML(item, path) as HTMLLIElement;
-      fragment.appendChild(li);
-    }
-    return fragment;
+export function JSONToHTMLElement<T>(data: TreeJSJSON | Array<TreeJSJSON>): T {
+  function render(items: TreeJSJSON[]): string {
+    return items
+      .map(
+        (item) =>
+          `<li>${item.label}${
+            item.children && item.children.length > 0 ? `<ul>${render(item.children)}</ul>` : ''
+          }</li>`
+      )
+      .join('');
   }
 
-  const label = json.label || '';
-  const safeLabel = sanitizeString(label);
-
-  const $li = document.createElement('li');
-  $li.classList.add('treejs-li');
-  $li.setAttribute('data-treejs-name', safeLabel);
-
-  const $wrapper = document.createElement('span');
-  $wrapper.classList.add('treejs-anchor-wrapper');
-
-  const $anchor = document.createElement('a');
-  $anchor.classList.add('treejs-anchor');
-  $anchor.href = '#';
-  $anchor.textContent = label;
-
-  $wrapper.appendChild($anchor);
-
-  if (json.children?.length) {
-    $wrapper.prepend(getIcon('folder'));
-    $wrapper.append(getIcon('chevron'));
-
-    const $ul = document.createElement('ul');
-    $ul.classList.add('treejs-ul', 'treejs-child');
-    if (path) $ul.classList.add('path');
-
-    for (const child of json.children) {
-      const childLi = JSONToHTML(child, path) as HTMLLIElement;
-      $ul.appendChild(childLi);
-    }
-
-    $li.appendChild($wrapper);
-    $li.appendChild($ul);
-    $li.classList.add('has-children', 'hide');
+  if (Array.isArray(data)) {
+    return stringToHTMLElement(render(data));
   } else {
-    $wrapper.prepend(getIcon('file'));
-    $li.appendChild($wrapper);
+    // data est un objet simple, on l'encapsule dans un tableau pour réutiliser render
+    return stringToHTMLElement(render([data]));
   }
-
-  return $li;
 }
 
 export function _createAnchorWrapper(text: string): HTMLSpanElement {
   return stringToHTMLElement<HTMLSpanElement>(
     `<span class="treejs-anchor-wrapper">
-      <a class="treejs-anchor" href="#">${text}</a>
+      <a class="treejs-anchor">${text}</a>
     </span>`
   );
 }

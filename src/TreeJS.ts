@@ -7,7 +7,7 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { _getLiName, deepMerge, isValidOptions } from './utils/functions';
-import { findNodeByType, getIcon, JSONToHTML, stringToHTMLElement } from './utils/dom';
+import { findNodeByType, getIcon, JSONToHTMLElement, stringToHTMLElement } from './utils/dom';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
@@ -20,6 +20,20 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   $liList!: NodeListOf<HTMLLIElement>;
 
   _data: { [key: string]: TreeJSJSON | string } = {};
+  _data_attribute = 'data-treejs-';
+  _available_attributes = [
+    { name: 'name', description: 'Name of the node, used to identify the node in the tree.', type: 'string' },
+    {
+      name: 'fetch-url',
+      description: 'URL to fetch data for the node. The data can be in JSON or HTML format.',
+      type: 'string',
+    },
+    {
+      name: 'icon',
+      description: 'Custom icon for the node. It can be an SVG string or a URL to an image.',
+      type: 'string',
+    },
+  ];
 
   constructor($list: TreeElement | string, options: Partial<TreeJSOptions> = {}) {
     super();
@@ -42,21 +56,29 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     // Validate options, inform user if options are invalid with warning message in console
     isValidOptions(options, TreeJSDefaultsOptions);
+
     this.$list.treejs = this;
     this.options = deepMerge<TreeJSOptions>(TreeJSDefaultsOptions, options);
 
+    this._bindThis();
     this._buildHtml();
-    this._bindEvent();
+    this._attachEvents();
 
     this.initializePlugins(this.options.plugins);
-    // this.onInit = () => console.log("test");
-
-    // this.on('init', this.onInit);
     this.trigger('init');
   }
 
+  /**
+   * Bind `this` to event handlers
+   * used to ensure that `this` refers to the TreeJS instance when the event handler is called
+   */
+  private _bindThis(): void {
+    this._handleToggle = this._handleToggle.bind(this);
+    this._handleSelect = this._handleSelect.bind(this);
+  }
+
   private _buildHtml(): void {
-    this.$list.classList.add('treejs');
+    this.$list.classList.add('treejs-ul', this.options.showPath ? 'path' : 'no-path');
     this.$liList = this.$list.querySelectorAll('li');
     this._buildList(this.$liList);
   }
@@ -78,44 +100,79 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
       const $anchorWrapper = stringToHTMLElement<HTMLSpanElement>(
         `<span class="treejs-anchor-wrapper">
-              <a class="treejs-anchor" href="#">${textNode.textContent}</a>
+              <a class="treejs-anchor" tabindex="0">${textNode.textContent}</a>
             </span>`
       );
 
-      if ($child) {
+      if ($child || $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
         const folderIcon = getIcon('folder', this.options.icons?.folder ?? '');
         const chevronIcon = getIcon('chevron');
         $anchorWrapper.prepend(folderIcon);
         $anchorWrapper.append(chevronIcon);
         $li.classList.add('has-children', 'hide');
         $li.replaceChild($anchorWrapper, textNode);
-        $child.classList.add('treejs-child');
+        $child?.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
       } else {
         const fileIcon = getIcon('file', this.options.icons?.file ?? '');
         $anchorWrapper.prepend(fileIcon);
         $li.replaceChild($anchorWrapper, textNode);
       }
 
-      $li.setAttribute('data-treejs-name', name || '');
+      $li.setAttribute(`${this._data_attribute}name`, name || '');
     }
   }
 
-  private _bindEvent(): void {
-    this.$list.querySelectorAll('.treejs-li.has-children .treejs-anchor').forEach(($anchor) => {
-      $anchor.addEventListener('click', (event) => {
-        event.stopImmediatePropagation();
-        event.stopPropagation();
-
-        const $li = $anchor.closest('.treejs-li');
-        if ($li) {
-          this.toggle($li.getAttribute('data-treejs-name') || '');
+  private _attachEvents(): void {
+    this.$list
+      .querySelectorAll('.treejs-li.has-children > .treejs-anchor-wrapper > .treejs-anchor')
+      .forEach(($anchor) => {
+        if (this.options.openOnDblClick) {
+          $anchor.removeEventListener('dblclick', this._handleToggle);
+          $anchor.addEventListener('dblclick', this._handleToggle);
+        } else {
+          $anchor.removeEventListener('click', this._handleToggle);
+          $anchor.addEventListener('click', this._handleToggle);
         }
       });
+
+    this.$list.querySelectorAll('.treejs-li .treejs-anchor').forEach(($anchor) => {
+      $anchor.removeEventListener('click', this._handleSelect);
+      $anchor.addEventListener('click', this._handleSelect);
     });
   }
 
+  private _handleToggle(event: Event): void {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+
+    const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
+    if ($li) {
+      const name = $li.getAttribute(`${this._data_attribute}name`) || '';
+      this.toggle(name);
+    }
+  }
+  private _handleSelect(event: Event): void {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
+    if ($li) {
+      const name = $li.getAttribute(`${this._data_attribute}name`) || '';
+      if ($li.hasAttribute(`${this._data_attribute}onselect`)) {
+        const onSelect = $li.getAttribute(`${this._data_attribute}onselect`);
+        if (onSelect) {
+          const fn = new Function('event', onSelect);
+          fn(event, this, $li);
+        }
+      }
+      this.trigger('select', {
+        target: $li,
+        name: name,
+      });
+    }
+  }
+
   toggle(name: string): void {
-    const $li = this.$list.querySelector(`.treejs-li[data-treejs-name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -125,15 +182,15 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       throw new TreeJSError(`element with name ${name} is not a parent node`);
     }
 
-    if ($li.classList.contains('has-children') && $li.hasAttribute('data-treejs-fetch-url')) {
-      const uri = $li.getAttribute('data-treejs-fetch-url') || '';
+    $li.classList.toggle('hide');
+    $li.classList.toggle('show');
+
+    if ($li.classList.contains('has-children') && $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
+      const uri = $li.getAttribute(`${this._data_attribute}fetch-url`) || '';
       if (isHidden && !this._data[name]) {
         this._loadFromURI(uri, $li);
       }
     }
-
-    $li.classList.toggle('hide');
-    $li.classList.toggle('show');
 
     this.trigger('toggle', {
       target: $li,
@@ -142,9 +199,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   toggleAll(): void {
-    this.$list.querySelectorAll('.treejs-li.has-children').forEach(($li) => {
-      $li.classList.toggle('hide');
-      $li.classList.toggle('show');
+    this.$list.querySelectorAll<HTMLAnchorElement>('.treejs-li.has-children .treejs-anchor').forEach(($link) => {
+      $link.click();
     });
   }
 
@@ -159,16 +215,16 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   toJSON(): TreeJSJSON[] {
     const result: TreeJSJSON[] = [];
 
-    function parseNode(li: HTMLLIElement): TreeJSJSON {
+    function parseNode(li: HTMLLIElement, _data_attribute: string): TreeJSJSON {
       const label = li.querySelector('.treejs-anchor')?.textContent || '';
-      const name = li.getAttribute('data-treejs-name') || '';
+      const name = li.getAttribute(`${_data_attribute}name`) || '';
       const children: TreeJSJSON[] = [];
 
       const subUl = li.querySelector(':scope > ul');
       if (subUl) {
         const subLis = subUl.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
         for (const childLi of subLis) {
-          children.push(parseNode(childLi));
+          children.push(parseNode(childLi, _data_attribute));
         }
       }
 
@@ -177,7 +233,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     const topLevelLis = this.$list.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
     for (const li of topLevelLis) {
-      result.push(parseNode(li));
+      result.push(parseNode(li, this._data_attribute));
     }
 
     return result;
@@ -186,21 +242,23 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   private async _loadFromURI(uri: string, $li: HTMLLIElement): Promise<void> {
     if (!uri) {
       throw new TreeJSError(
-        `Invalid URI for element with name ${$li.getAttribute('data-treejs-name')}. Please provide a valid URI.`
+        `Invalid URI for element with name ${$li.getAttribute(
+          `${this._data_attribute}name`
+        )}. Please provide a valid URI.`
       );
     }
 
-    const name = $li.getAttribute('data-treejs-name');
-    const $ul = $li.querySelector('ul');
+    const name = $li.getAttribute(`${this._data_attribute}name`);
+    let $ul = $li.querySelector('ul');
     if (!$ul) {
-      throw new TreeJSError(`cannot find child ul for element with name ${name}`);
+      // create empty ul if not exists
+      $ul = document.createElement('ul');
+
+      $li.appendChild($ul);
     }
-    const $loader = stringToHTMLElement<HTMLDivElement>(
-      `<div class="treejs-loader">
-            <span class="treejs-loader-icon"></span>
-          </div>`
-    );
-    $ul.prepend($loader);
+
+    $ul.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
+    $ul.prepend(getIcon('loader'));
 
     const data = await fetch(uri);
     if (!data.ok) {
@@ -214,20 +272,21 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     let html: HTMLLIElement | DocumentFragment = document.createDocumentFragment();
     if (isJSON) {
-      html = JSONToHTML(response as TreeJSJSON, this.options.showPath);
+      html = JSONToHTMLElement<HTMLLIElement>(response);
     } else if (isHTML) {
       html = stringToHTMLElement<HTMLLIElement>(response as string);
-
-      const $liList = html.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
-      this._buildList($liList);
     } else {
       throw new TreeJSError(`Invalid response type from ${uri}. Expected JSON or HTML.`);
     }
 
+    const $liList = html.parentElement?.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
+
+    this._buildList($liList);
+
     $ul.innerHTML = '';
     $ul.appendChild(html);
-    // bind event to new html
-    this._bindEvent();
+
+    this._attachEvents();
   }
 }
 
