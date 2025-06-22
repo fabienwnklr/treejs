@@ -7,19 +7,20 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { _getLiName, deepMerge, isValidOptions } from './utils/functions';
-import { findNodeByType, getIcon, JSONToHTMLElement, stringToHTMLElement } from './utils/dom';
+import { findNodeByType, JSONToHTMLElement, stringToHTMLElement } from './utils/dom';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
 import Checkbox from './plugins/checkbox/plugin';
 import { TreeJSError } from './utils/error';
+import { Icons } from './Icons';
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
 
-  _data: { [key: string]: TreeJSJSON | string } = {};
+  _data: Record<string, TreeJSJSON | string> = {};
   _data_attribute = 'data-treejs-';
   _available_attributes = [
     { name: 'name', description: 'Name of the node, used to identify the node in the tree.', type: 'string' },
@@ -105,15 +106,15 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       );
 
       if ($child || $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
-        const folderIcon = getIcon('folder', this.options.icons?.folder ?? '');
-        const chevronIcon = getIcon('chevron');
+        const folderIcon = Icons.get('folder', this.options.icons?.folder ?? '');
+        const chevronIcon = Icons.get('chevron', this.options.icons?.chevron ?? '');
         $anchorWrapper.prepend(folderIcon);
         $anchorWrapper.append(chevronIcon);
         $li.classList.add('has-children', 'hide');
         $li.replaceChild($anchorWrapper, textNode);
         $child?.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
       } else {
-        const fileIcon = getIcon('file', this.options.icons?.file ?? '');
+        const fileIcon = Icons.get('file', this.options.icons?.file ?? '');
         $anchorWrapper.prepend(fileIcon);
         $li.replaceChild($anchorWrapper, textNode);
       }
@@ -180,6 +181,31 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     const isHidden = $li.classList.contains('hide');
     if (!$li.classList.contains('has-children')) {
       throw new TreeJSError(`element with name ${name} is not a parent node`);
+    }
+
+    const iconEl = $li.querySelector('.treejs-icon');
+    if (iconEl) {
+      iconEl.classList.remove('animate-out', 'animate-in');
+      iconEl.classList.add('animate-in');
+      iconEl.addEventListener(
+        'transitionend',
+        function handler(this: TreeJS) {
+          iconEl.removeEventListener('transitionend', handler as EventListener);
+          const newIcon = isHidden
+            ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
+            : Icons.get('folder', this.options.icons?.folder ?? '');
+          iconEl.replaceWith(newIcon);
+          newIcon.classList.add('animate-out');
+        }.bind(this),
+        { once: true }
+      );
+    } else {
+      // fallback if no icon found
+      const newIcon = isHidden
+        ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
+        : Icons.get('folder', this.options.icons?.folder ?? '');
+      newIcon.classList.add('treejs-icon');
+      $li.querySelector('.treejs-anchor-wrapper')?.prepend(newIcon);
     }
 
     $li.classList.toggle('hide');
@@ -258,7 +284,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     $ul.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
-    $ul.prepend(getIcon('loader'));
+    $ul.prepend(Icons.get('loader', this.options.icons?.loader ?? ''));
 
     const data = await fetch(uri);
     if (!data.ok) {

@@ -122,6 +122,17 @@
 .#{$prefix}-icon {
   margin-right: 0.2rem;
   display: inline;
+  scale: 0.9;
+  transition: scale 0.15s ease;
+
+  &.animate-in {
+    scale: 1;
+    transition: scale 0.15s ease;
+  }
+  &.animate-out {
+    scale: 0.9;
+    transition: scale 0.15s ease;
+  }
 }
 
 .#{$prefix}-loader {

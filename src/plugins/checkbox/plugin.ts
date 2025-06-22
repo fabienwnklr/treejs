@@ -28,7 +28,7 @@ export default function (this: TreeJS, opts: myType = {}) {
         $checkbox = createCheckbox(name);
         anchorWrapper.prepend($checkbox);
 
-        const checked: { [key: string]: boolean } = {};
+        const checked: Record<string, boolean> = {};
         const $a = $checkbox;
         $checkbox.addEventListener('change', () => {
           checked[$a.name] = $a.checked;

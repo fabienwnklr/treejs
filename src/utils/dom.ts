@@ -1,7 +1,3 @@
-import folder from '../icons/folder.svg?raw';
-import file from '../icons/file.svg?raw';
-import chevron from '../icons/chevron.svg?raw';
-import { sanitizeString } from './functions';
 import type { TreeJSJSON } from '../@types';
 
 /**
@@ -32,46 +28,6 @@ export function stringToHTMLElement<T>(string: string): T {
 }
 
 /**
- * Get html with icon svg
- * @param type 'folder' | 'file' | 'chevron'
- * @param content svg string
- * @returns
- */
-export function getIcon(type: 'folder' | 'file' | 'chevron' | 'loader', content?: string): HTMLSpanElement {
-  if (!['folder', 'file', 'chevron', 'loader'].includes(type)) {
-    throw new Error(`Invalid icon type: ${type}. Expected 'folder', 'file', or 'chevron'.`);
-  }
-
-  let icon: string;
-  if (type && (!content || typeof content !== 'string')) {
-    switch (type) {
-      case 'folder':
-        icon = folder;
-        break;
-      case 'file':
-        icon = file;
-        break;
-      case 'chevron':
-        icon = chevron;
-        break;
-      case 'loader':
-        icon = `<div class="treejs-loader">
-            <span class="treejs-loader-icon"></span>
-          </div>`;
-        break;
-      default:
-        throw new Error(`Unknown icon type: ${type}`);
-    }
-  } else if (content && typeof content === 'string') {
-    icon = content;
-  } else {
-    throw new Error(`Invalid content for icon type: ${type}. Expected a string.`);
-  }
-
-  return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon treejs-icon-${type}">${icon}</span>`);
-}
-
-/**
  * Generate HTML list from TreeJSJSON object
  */
 export function JSONToHTMLElement<T>(data: TreeJSJSON | Array<TreeJSJSON>): T {
@@ -92,12 +48,4 @@ export function JSONToHTMLElement<T>(data: TreeJSJSON | Array<TreeJSJSON>): T {
     // data est un objet simple, on l'encapsule dans un tableau pour réutiliser render
     return stringToHTMLElement(render([data]));
   }
-}
-
-export function _createAnchorWrapper(text: string): HTMLSpanElement {
-  return stringToHTMLElement<HTMLSpanElement>(
-    `<span class="treejs-anchor-wrapper">
-      <a class="treejs-anchor">${text}</a>
-    </span>`
-  );
 }

@@ -23,13 +23,13 @@ type TSettings = {
 type TPlugins = {
   names: string[];
   settings: TSettings;
-  requested: { [key: string]: boolean };
-  loaded: { [key: string]: any };
-  data: { [key: string]: any };
+  requested: Record<string, boolean>;
+  loaded: Record<string, any>;
+  data: Record<string, any>;
 };
 
 export type TPluginItem = { name: string; options: object };
-export type TPluginHash = { [key: string]: object };
+export type TPluginHash = Record<string, object>;
 
 export default function MicroPlugin(Interface: any) {
   Interface.plugins = {};

@@ -9,7 +9,10 @@ export interface TreeJSOptions {
   openOnDblClick: boolean;
   icons?: {
     folder?: string;
+    folderOpen?: string;
     file?: string;
+    chevron?: string;
+    loader?: string;
   };
 }
 

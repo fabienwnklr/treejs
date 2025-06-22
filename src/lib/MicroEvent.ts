@@ -21,7 +21,7 @@ function forEvents(events: string, callback: (event: string) => any) {
 }
 
 export default class MicroEvent {
-  public _events: { [key: string]: TCallback[] } = {};
+  public _events: Record<string, TCallback[]> = {};
 
   constructor() {
     this._events = {};
