@@ -76,5 +76,5 @@ export function getHiddenElementHeight(element: HTMLElement): number {
 }
 
 export function skeletonLoader(): HTMLDivElement {
-  return stringToHTMLElement<HTMLDivElement>('<div class="skeleton-box"></div>');
+  return stringToHTMLElement<HTMLDivElement>('<div class="treejs-skeleton-box"></div>');
 }

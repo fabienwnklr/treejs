@@ -138,13 +138,27 @@
       window.TreeJS = TreeJS;
 
       tree.on('select', (node) => {
+        console.log(node);
         const log = document.getElementById('log');
         log.appendChild(document.createTextNode(`Selected: ${node.name}\n`));
       });
 
       tree.on('toggle', (node) => {
+        console.log(node);
         const log = document.getElementById('log');
         log.appendChild(document.createTextNode(`Toggled: ${node.name}\n`));
+      });
+
+      tree.on('open', (node) => {
+        console.log(node);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Opened: ${node.name}\n`));
+      });
+
+      tree.on('close', (node) => {
+        console.log(node);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Closed: ${node.name}\n`));
       });
     </script>
   </body>

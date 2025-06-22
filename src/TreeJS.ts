@@ -7,13 +7,7 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { _getLiName, deepMerge, isValidOptions } from './utils/functions';
-import {
-  findNodeByType,
-  getHiddenElementHeight,
-  JSONToHTMLElement,
-  skeletonLoader,
-  stringToHTMLElement,
-} from './utils/dom';
+import { findNodeByType, JSONToHTMLElement, skeletonLoader, stringToHTMLElement } from './utils/dom';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
@@ -29,6 +23,11 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   _loading: Record<string, boolean> = {};
   _data: Record<string, TreeJSJSON | string> = {};
   _data_attribute = 'data-treejs-';
+  /**
+   * List of available attributes for the TreeJS nodes.
+   * These attributes can be used to configure the nodes in the tree.
+   * It's easier to use these attributes in HTML than to use the options object.
+   */
   _available_attributes = [
     { name: 'name', description: 'Name of the node, used to identify the node in the tree.', type: 'string' },
     {
@@ -37,9 +36,15 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       type: 'string',
     },
     {
-      name: 'icon',
-      description: 'Custom icon for the node. It can be an SVG string or a URL to an image.',
-      type: 'string',
+      name: 'onselect',
+      description:
+        'JavaScript function to execute when the node is selected. The function receives the event, the TreeJS instance, and the HTMLLIElement as arguments.',
+      type: 'function',
+    },
+    {
+      name: 'open',
+      description: 'Boolean attribute to indicate if the node is closed by default.',
+      type: 'boolean',
     },
   ];
 
@@ -120,9 +125,20 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         const chevronIcon = Icons.get('chevron', this.options.icons?.chevron ?? '');
         $anchor.append(chevronIcon);
 
-        $li.classList.add('has-children', 'hide');
+        const open = $child?.getAttribute(`${this._data_attribute}open`) || '';
+
+        if (open !== 'true') $li.classList.add('has-children', 'hide');
         $li.replaceChild($anchor, textNode);
-        $child?.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
+
+        if ($child) {
+          $child.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
+
+          if ($child.hasAttribute(`${this._data_attribute}fetch-url`)) {
+            if (open === 'true') {
+              $li.classList.remove('hide');
+            }
+          }
+        }
       } else {
         const fileIcon = Icons.get('file', this.options.icons?.file ?? '');
         $anchor.prepend(fileIcon);
@@ -163,6 +179,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   private _handleSelect(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
+
+    console.log('select', event);
 
     const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
     if ($li) {
@@ -268,6 +286,42 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       target: $li,
       name: name,
     });
+
+    if (isHidden) {
+      this.trigger('open', {
+        target: $li,
+        name: name,
+      });
+    } else {
+      this.trigger('close', {
+        target: $li,
+        name: name,
+      });
+    }
+  }
+
+  open(name: string): void {
+    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with name ${name}`);
+    }
+    if (!$li.classList.contains('has-children')) {
+      throw new TreeJSError(`element with name ${name} is not a parent node`);
+    }
+    $li.classList.remove('hide');
+    $li.classList.add('show');
+  }
+
+  close(name: string): void {
+    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with name ${name}`);
+    }
+    if (!$li.classList.contains('has-children')) {
+      throw new TreeJSError(`element with name ${name} is not a parent node`);
+    }
+    $li.classList.remove('show');
+    $li.classList.add('hide');
   }
 
   toggleAll(): void {
@@ -349,7 +403,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     // simulate a delay to show the loader icon
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
     const isJSON = data.headers.get('content-type')?.includes('application/json');
     const isHTML = data.headers.get('content-type')?.includes('text/html');
     const response = isJSON ? await data.json() : await data.text();
