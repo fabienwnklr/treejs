@@ -8,15 +8,30 @@
 
     <style>
       #app {
-        height: 100vh;
+        font-family: Arial, sans-serif;
+        height: 98vh;
         width: 100%;
         /* display: flex; */
         /* justify-content: center; */
         /* align-items: center; */
         background: url('/images/logo.jpg') no-repeat center center fixed;
       }
+
+      aside {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+        border-left: 2px solid #ccc;
+      }
     </style>
   </head>
+
   <body>
     <div id="app">
       <ul id="tree">
@@ -64,12 +79,13 @@
             </li>
           </ul>
         </li>
-        <li data-treejs-fetch-url="/data/fetch.json">
-          Fetch test from json
-        </li>
-        <li data-treejs-fetch-url="/data/fetch.html">
-          Fetch test from html
+        <li data-treejs-fetch-url="/data/fetch.json">Fetch test from json</li>
+        <li data-treejs-fetch-url="/data/fetch.html">Fetch test from html</li>
       </ul>
+      <aside>
+        <h2>TreeJS - Logs</h2>
+        <pre id="log"></pre>
+      </aside>
     </div>
     <script type="module">
       import { TreeJS } from '/src/TreeJS.ts';
@@ -77,6 +93,16 @@
       const tree = new TreeJS(document.getElementById('tree'), { openOnDblClick: false });
       window.TREE = tree;
       window.TreeJS = TreeJS;
+
+      tree.on('select', (node) => {
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Selected: ${node.name}\n`));
+      });
+
+      tree.on('toggle', (node) => {
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Toggled: ${node.name}\n`));
+      });
     </script>
   </body>
 </html>

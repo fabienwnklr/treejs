@@ -1,4 +1,3 @@
-@use 'reset' as *;
 @use 'variables' as *;
 
 .#{$prefix}-ul {
@@ -9,7 +8,6 @@
   font-weight: 400;
   line-height: 1.5;
   padding-left: 5px;
-  position: relative;
   width: fit-content;
 
   &.path li:before {
@@ -44,59 +42,63 @@
 
 .#{$prefix}-li {
   position: relative;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 2px;
+  padding-right: 5px;
+  padding-bottom: 2px;
   padding-left: 15px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 
-  .#{$prefix}-anchor-wrapper {
+  .#{$prefix}-anchor {
+    background-color: transparent;
+    border: none;
     display: flex;
     align-items: center;
     text-decoration: none;
+    padding: 0.2rem 0.4rem;
+    transition: background-color 0.4s;
+    cursor: pointer;
+    border-radius: 0.3rem;
 
-    .#{$prefix}-anchor {
-      cursor: pointer;
+    &:hover,
+    &:focus {
+      background-color: var(--#{$prefix}-bg-primary) !important;
+      color: var(--#{$prefix}-text-primary) !important;
+    }
+    &:focus {
+      // outline: 2px solid var(--#{$prefix}-primary);
+    }
+
+    .#{$prefix}-anchor-label {
       text-decoration: none;
-      transition: background-color 0.2s ease;
       padding: 0.15rem;
-      border-radius: 0.2rem;
 
       &:active {
         color: var(--#{$prefix}-text-primary) !important;
-      }
-
-      &:hover,
-      &:focus {
-        background-color: var(--#{$prefix}-bg-primary) !important;
-        color: var(--#{$prefix}-text-primary) !important;
-      }
-      &:focus {
-        outline: 2px solid var(--#{$prefix}-primary);
       }
     }
   }
 
   &.has-children {
-    &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-anchor {
+    &.show > .#{$prefix}-anchor {
       background-color: $bg-primary-selected;
       color: inherit;
     }
 
-    // .#{$prefix}-child {
-    //   padding-left: 1rem;
-    //   overflow: hidden;
-    // }
-
-    &.hide > .#{$prefix}-child {
-      display: none;
+    .#{$prefix}-child {
+      visibility: hidden;
+      overflow: hidden;
+      opacity: 0;
+      height: 0;
+      width: 100%;
+      transition:
+        height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     &.show > .#{$prefix}-child {
-      display: block;
-      // padding-bottom: 0.2rem;
-      // padding-right: 0.2rem;
+      visibility: visible;
+      // height: 150px; // Adjust as needed for your content
+      opacity: 1;
     }
 
     .#{$prefix}-icon-chevron {
@@ -110,18 +112,19 @@
       transition: transform 0.4s ease;
     }
 
-    &.hide > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
-      transform: rotate(0);
+    &.hide > .#{$prefix}-anchor .#{$prefix}-icon-chevron svg {
+      transform: rotate(90deg);
     }
-    &.show > .#{$prefix}-anchor-wrapper .#{$prefix}-icon-chevron svg {
+    &.show > .#{$prefix}-anchor .#{$prefix}-icon-chevron svg {
       transform: rotate(180deg);
     }
   }
 }
 
 .#{$prefix}-icon {
+  display: flex;
+  align-items: center;
   margin-right: 0.2rem;
-  display: inline;
   scale: 0.9;
   transition: scale 0.15s ease;
 
@@ -142,8 +145,8 @@
   margin: 0.5rem;
 
   .#{$prefix}-loader-icon {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     display: inline-block;
     position: relative;
@@ -172,5 +175,36 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.skeleton-box {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  height: 2.5em;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.3rem;
+  background-color: #dddbdd;
+  margin: 0.4rem 0 0.4rem 0;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(#fff, 0) 0, rgba(#fff, 0.2) 20%, rgba(#fff, 0.5) 60%, rgba(#fff, 0));
+    animation: shimmer 1s infinite;
+    content: '';
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 }

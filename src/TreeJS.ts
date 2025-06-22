@@ -7,7 +7,13 @@ import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
 import { _getLiName, deepMerge, isValidOptions } from './utils/functions';
-import { findNodeByType, JSONToHTMLElement, stringToHTMLElement } from './utils/dom';
+import {
+  findNodeByType,
+  getHiddenElementHeight,
+  JSONToHTMLElement,
+  skeletonLoader,
+  stringToHTMLElement,
+} from './utils/dom';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
@@ -20,6 +26,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
 
+  _loading: Record<string, boolean> = {};
   _data: Record<string, TreeJSJSON | string> = {};
   _data_attribute = 'data-treejs-';
   _available_attributes = [
@@ -99,24 +106,28 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       $li.classList.add('treejs-li');
       const $child = $li.querySelector('ul');
 
-      const $anchorWrapper = stringToHTMLElement<HTMLSpanElement>(
-        `<span class="treejs-anchor-wrapper">
-              <a class="treejs-anchor" tabindex="0">${textNode.textContent}</a>
-            </span>`
+      const $anchor = stringToHTMLElement<HTMLSpanElement>(
+        `<button class="treejs-anchor">
+             <span class="treejs-anchor-label">
+                  ${textNode.textContent}
+             </span>
+        </button>`
       );
 
       if ($child || $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
         const folderIcon = Icons.get('folder', this.options.icons?.folder ?? '');
+        $anchor.prepend(folderIcon);
+
         const chevronIcon = Icons.get('chevron', this.options.icons?.chevron ?? '');
-        $anchorWrapper.prepend(folderIcon);
-        $anchorWrapper.append(chevronIcon);
+        $anchor.append(chevronIcon);
+
         $li.classList.add('has-children', 'hide');
-        $li.replaceChild($anchorWrapper, textNode);
+        $li.replaceChild($anchor, textNode);
         $child?.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
       } else {
         const fileIcon = Icons.get('file', this.options.icons?.file ?? '');
-        $anchorWrapper.prepend(fileIcon);
-        $li.replaceChild($anchorWrapper, textNode);
+        $anchor.prepend(fileIcon);
+        $li.replaceChild($anchor, textNode);
       }
 
       $li.setAttribute(`${this._data_attribute}name`, name || '');
@@ -124,26 +135,24 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   private _attachEvents(): void {
-    this.$list
-      .querySelectorAll('.treejs-li.has-children > .treejs-anchor-wrapper > .treejs-anchor')
-      .forEach(($anchor) => {
-        if (this.options.openOnDblClick) {
-          $anchor.removeEventListener('dblclick', this._handleToggle);
-          $anchor.addEventListener('dblclick', this._handleToggle);
-        } else {
-          $anchor.removeEventListener('click', this._handleToggle);
-          $anchor.addEventListener('click', this._handleToggle);
-        }
-      });
+    this.$list.querySelectorAll('.treejs-li.has-children > .treejs-anchor').forEach(($anchor) => {
+      if (this.options.openOnDblClick) {
+        $anchor.removeEventListener('dblclick', this._handleToggle);
+        $anchor.addEventListener('dblclick', this._handleToggle);
+      } else {
+        $anchor.removeEventListener('click', this._handleToggle);
+        $anchor.addEventListener('click', this._handleToggle);
+      }
+    });
 
-    this.$list.querySelectorAll('.treejs-li .treejs-anchor').forEach(($anchor) => {
+    this.$list.querySelectorAll('.treejs-li:not(.has-children) .treejs-anchor').forEach(($anchor) => {
       $anchor.removeEventListener('click', this._handleSelect);
       $anchor.addEventListener('click', this._handleSelect);
     });
   }
 
   private _handleToggle(event: Event): void {
-    event.stopImmediatePropagation();
+    event.preventDefault();
     event.stopPropagation();
 
     const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
@@ -153,8 +162,9 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
   }
   private _handleSelect(event: Event): void {
-    event.stopImmediatePropagation();
+    event.preventDefault();
     event.stopPropagation();
+
     const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
     if ($li) {
       const name = $li.getAttribute(`${this._data_attribute}name`) || '';
@@ -174,6 +184,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   toggle(name: string): void {
     const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const needFetch = $li.hasAttribute(`${this._data_attribute}fetch-url`);
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -205,18 +216,37 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
         : Icons.get('folder', this.options.icons?.folder ?? '');
       newIcon.classList.add('treejs-icon');
-      $li.querySelector('.treejs-anchor-wrapper')?.prepend(newIcon);
+      $li.querySelector('.treejs-anchor')?.prepend(newIcon);
+    }
+
+    // adapt height of the list
+    const $ul = $li.querySelector('ul');
+    if ($ul) {
+      if (isHidden) {
+        const targetHeight = $ul.scrollHeight + 'px';
+        $ul.style.height = targetHeight;
+        $ul.addEventListener('transitionend', function handler(e) {
+          if (e.propertyName === 'height') {
+            $ul.style.height = 'auto';
+            $ul.removeEventListener('transitionend', handler);
+          }
+        });
+      } else {
+        $ul.style.height = $ul.scrollHeight + 'px'; // 1. fixe la hauteur courante
+        void $ul.offsetWidth; // 2. force le reflow
+        $ul.style.height = '0px';
+      }
+    }
+
+    if ($li.classList.contains('has-children') && needFetch) {
+      const uri = $li.getAttribute(`${this._data_attribute}fetch-url`) || '';
+      if (isHidden && !this._data[name] && !this._loading[name]) {
+        this._loadFromURI(uri, $li);
+      }
     }
 
     $li.classList.toggle('hide');
     $li.classList.toggle('show');
-
-    if ($li.classList.contains('has-children') && $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
-      const uri = $li.getAttribute(`${this._data_attribute}fetch-url`) || '';
-      if (isHidden && !this._data[name]) {
-        this._loadFromURI(uri, $li);
-      }
-    }
 
     this.trigger('toggle', {
       target: $li,
@@ -275,26 +305,41 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     const name = $li.getAttribute(`${this._data_attribute}name`);
+
+    this._loading[name || ''] = true;
     let $ul = $li.querySelector('ul');
     if (!$ul) {
-      // create empty ul if not exists
       $ul = document.createElement('ul');
-
       $li.appendChild($ul);
     }
-
     $ul.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
-    $ul.prepend(Icons.get('loader', this.options.icons?.loader ?? ''));
+    $ul.append(skeletonLoader());
+    $ul.style.height = '0px';
+
+    void $ul.offsetWidth;
+
+    $ul.addEventListener('transitionend', function handler(e) {
+      if (e.propertyName === 'height') {
+        $ul.style.height = 'auto';
+        $ul.removeEventListener('transitionend', handler);
+      }
+    });
+
+    $ul.style.height = $ul.scrollHeight + 'px';
 
     const data = await fetch(uri);
     if (!data.ok) {
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
+
+    // simulate a delay to show the loader icon
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const isJSON = data.headers.get('content-type')?.includes('application/json');
     const isHTML = data.headers.get('content-type')?.includes('text/html');
     const response = isJSON ? await data.json() : await data.text();
 
     this._data[name || ''] = response;
+    this._loading[name || ''] = false;
 
     let html: HTMLLIElement | DocumentFragment = document.createDocumentFragment();
     if (isJSON) {

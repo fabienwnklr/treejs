@@ -49,3 +49,32 @@ export function JSONToHTMLElement<T>(data: TreeJSJSON | Array<TreeJSJSON>): T {
     return stringToHTMLElement(render([data]));
   }
 }
+
+export function getHiddenElementHeight(element: HTMLElement): number {
+  // Sauvegarde les styles actuels
+  const originalDisplay = element.style.display;
+  const originalVisibility = element.style.visibility;
+  const originalPosition = element.style.position;
+  const originalHeight = element.style.height;
+
+  // Rends l'élément mesurable mais invisible à l'utilisateur
+  element.style.display = 'block';
+  element.style.visibility = 'hidden';
+  element.style.position = 'absolute';
+  element.style.height = 'auto'; // Assure que la hauteur est calculée correctement
+
+  // Mesure la hauteur
+  const height = element.scrollHeight;
+
+  // Restaure les styles
+  element.style.display = originalDisplay;
+  element.style.visibility = originalVisibility;
+  element.style.position = originalPosition;
+  element.style.height = originalHeight;
+
+  return height;
+}
+
+export function skeletonLoader(): HTMLDivElement {
+  return stringToHTMLElement<HTMLDivElement>('<div class="skeleton-box"></div>');
+}
