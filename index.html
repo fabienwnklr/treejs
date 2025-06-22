@@ -8,6 +8,7 @@
 
     <style>
       #app {
+        display: flex;
         font-family: Arial, sans-serif;
         height: 98vh;
         width: 100%;
@@ -17,77 +18,119 @@
         background: url('/images/logo.jpg') no-repeat center center fixed;
       }
 
-      aside {
+      #toggle-aside {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 50%;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        padding: 10px 20px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #toggle-aside:hover {
+        background-color: #f0f0f0;
+      }
+
+      aside {
+        width: 0;
         height: 100%;
         background-color: rgba(255, 255, 255, 0.8);
         overflow-y: auto;
-        padding: 20px;
         box-sizing: border-box;
+        opacity: 0;
+        transition:
+          width 0.3s ease-in-out,
+          opacity 0.3s ease-in-out,
+          padding 0.3s ease-in-out,
+          border-left 0.3s ease-in-out;
+      }
+
+      .left {
+        flex: 1;
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      aside.open {
+        width: 50%;
+        padding: 0 20px;
         border-left: 2px solid #ccc;
+        opacity: 1;
       }
     </style>
   </head>
 
   <body>
-    <div id="app">
-      <ul id="tree">
-        <li data-treejs-onselect="console.log('First')">First</li>
-        <li>Second</li>
-        <li>
-          Third
-          <ul>
-            <li>Third Child 1</li>
-            <li>Third Child 2</li>
-            <li>
-              Third Child 3
-              <ul>
-                <li>Third Child 3.1</li>
-                <li>Third Child 3.2</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>
-          Fourth
-          <ul>
-            <li>Fourth Child 1</li>
-            <li>Fourth Child 2</li>
+    <div id="app" style="position: relative; overflow: hidden">
+      <div class="left">
+        <ul id="tree">
+          <li data-treejs-onselect="console.log('First')">First</li>
+          <li>Second</li>
+          <li>
+            Third
+            <ul>
+              <li>Third Child 1</li>
+              <li>Third Child 2</li>
+              <li>
+                Third Child 3
+                <ul>
+                  <li>Third Child 3.1</li>
+                  <li>Third Child 3.2</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Fourth
+            <ul>
+              <li>Fourth Child 1</li>
+              <li>Fourth Child 2</li>
 
-            <li>
-              Fourth Child 3
-              <ul>
-                <li>Fourth Child 3.1</li>
-                <li>
-                  Fourth Child 3.2
-                  <ul>
-                    <li>Fourth Child 3.2.1</li>
-                    <li>Fourth Child 3.2.2</li>
-                    <li>
-                      Fourth Child 3.2.3
-                      <ul>
-                        <li>Fourth Child 3.3.2.1</li>
-                        <li>Fourth Child 3.3.2.2</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li data-treejs-fetch-url="/data/fetch.json">Fetch test from json</li>
-        <li data-treejs-fetch-url="/data/fetch.html">Fetch test from html</li>
-      </ul>
-      <aside>
-        <h2>TreeJS - Logs</h2>
+              <li>
+                Fourth Child 3
+                <ul>
+                  <li>Fourth Child 3.1</li>
+                  <li>
+                    Fourth Child 3.2
+                    <ul>
+                      <li>Fourth Child 3.2.1</li>
+                      <li>Fourth Child 3.2.2</li>
+                      <li>
+                        Fourth Child 3.2.3
+                        <ul>
+                          <li>Fourth Child 3.3.2.1</li>
+                          <li>Fourth Child 3.3.2.2</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li data-treejs-fetch-url="/data/fetch.json">Fetch test from json</li>
+          <li data-treejs-fetch-url="/data/fetch.html">Fetch test from html</li>
+        </ul>
+
+        <button id="toggle-aside" role="button">Toggle Logs</button>
+      </div>
+
+      <aside class="open">
+        <h2>Logs</h2>
         <pre id="log"></pre>
       </aside>
     </div>
     <script type="module">
+      const $btn = document.getElementById('toggle-aside');
+      const $aside = document.querySelector('aside');
+      $btn.addEventListener('click', () => {
+        $aside.classList.toggle('open');
+      });
       import { TreeJS } from '/src/TreeJS.ts';
 
       const tree = new TreeJS(document.getElementById('tree'), { openOnDblClick: false });

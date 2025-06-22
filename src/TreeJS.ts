@@ -73,7 +73,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     this._attachEvents();
 
     this.initializePlugins(this.options.plugins);
-    this.trigger('init');
   }
 
   /**
