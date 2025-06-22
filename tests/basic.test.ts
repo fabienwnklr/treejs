@@ -24,12 +24,16 @@ describe('TreeJS', () => {
 
   it('Open and close nodes', () => {
     expect(Tree.getState('first')).toBe('closed');
-    // Open with api
+    // With api
     Tree.toggle('first');
     expect(Tree.getState('first')).toBe('open');
+    Tree.toggle('first');
+    expect(Tree.getState('first')).toBe('closed');
 
-    // Close with click
+    // With click
     const firstNode = $tree.querySelector('#first .treejs-anchor') as HTMLElement;
+    firstNode!.click();
+    expect(Tree.getState('first')).toBe('open');
     firstNode!.click();
     expect(Tree.getState('first')).toBe('closed');
   });
