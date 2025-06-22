@@ -181,6 +181,23 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
   }
 
+  /**
+   * Get the state of a node by its name
+   * @param name - The name of the node
+   * @returns The state of the node open/closed, or undefined if the node does not exist
+   */
+  getState(name: string): 'open' | 'closed' | undefined {
+    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with name ${name}`);
+    }
+
+    if ($li.classList.contains('has-children')) {
+      return $li.classList.contains('hide') ? 'closed' : 'open';
+    }
+    return undefined; // No children, no state
+  }
+
   toggle(name: string): void {
     const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     const needFetch = $li.hasAttribute(`${this._data_attribute}fetch-url`);
