@@ -6,7 +6,7 @@ import type { TreeElement, TreeJSJSON, TreeJSOptions } from './@types';
 import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
 import { TreeJSDefaultsOptions } from './constants';
-import { _getLiName, deepMerge, isValidOptions } from './utils/functions';
+import { _getLiName, deepMerge, getAttributes, isValidAttributes, isValidOptions } from './utils/functions';
 import { findNodeByType, JSONToHTMLElement, skeletonLoader, stringToHTMLElement } from './utils/dom';
 
 // !! Plugins !! \\
@@ -24,11 +24,11 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   _data: Record<string, TreeJSJSON | string> = {};
   _data_attribute = 'data-treejs-';
   /**
-   * List of available attributes for the TreeJS nodes.
+   * List of available attributes for the TreeJS UL nodes.
    * These attributes can be used to configure the nodes in the tree.
    * It's easier to use these attributes in HTML than to use the options object.
    */
-  _available_attributes = [
+  _available_ul_attributes = [
     { name: 'name', description: 'Name of the node, used to identify the node in the tree.', type: 'string' },
     {
       name: 'fetch-url',
@@ -36,15 +36,21 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       type: 'string',
     },
     {
-      name: 'onselect',
-      description:
-        'JavaScript function to execute when the node is selected. The function receives the event, the TreeJS instance, and the HTMLLIElement as arguments.',
-      type: 'function',
-    },
-    {
       name: 'open',
       description: 'Boolean attribute to indicate if the node is closed by default.',
       type: 'boolean',
+    },
+  ];
+  _available_li_attributes = [
+    {
+      name: 'name',
+      description: 'Name of the node, used to identify the node in the tree.',
+      type: 'string',
+    },
+    {
+      name: 'onselect',
+      description: 'JavaScript function to call when the node is selected.',
+      type: 'string',
     },
   ];
 
@@ -91,6 +97,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   private _buildHtml(): void {
     this.$list.classList.add('treejs-ul', this.options.showPath ? 'path' : 'no-path');
+    const ULAttributes = getAttributes(this._data_attribute, this.$list);
+    isValidAttributes(ULAttributes, this._available_ul_attributes);
     this.$liList = this.$list.querySelectorAll('li');
     this._buildList(this.$liList);
   }
@@ -99,6 +107,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     for (const $li of $liList) {
       const textNode = findNodeByType($li.childNodes, '#text');
       const name = _getLiName($li, textNode);
+      const LIAttributes = getAttributes(this._data_attribute, $li);
+      isValidAttributes(LIAttributes, this._available_li_attributes);
 
       if (!textNode) {
         throw new TreeJSError(`Canot find textNode from li element`);

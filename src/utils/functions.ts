@@ -30,6 +30,7 @@ export function deepMerge<T extends object>(target: T, source: Partial<T> | T): 
   }
   return output;
 }
+
 /**
  * Sanitize a string by escaping special characters, replace spaces with underscores,
  * and trimming leading/trailing whitespace.
@@ -56,4 +57,23 @@ export function isValidOptions(options: Record<string, any>, defaults: Record<st
     }
   }
   return true;
+}
+
+export function getAttributes(data_prefix: string, $el: HTMLElement): Record<string, any> {
+  const attributes: Record<string, any> = {};
+  for (const attr of $el.attributes) {
+    if (attr.name.startsWith(data_prefix)) {
+      const key = attr.name.replace(data_prefix, '');
+      attributes[key] = attr.value;
+    }
+  }
+  return attributes;
+}
+
+export function isValidAttributes(
+  attributes: Record<string, any> = {},
+  attributesList: { name: string; type: string; description: string }[] = []
+): boolean {
+  const validNames = new Set(attributesList.map((attr: any) => attr.name));
+  return Object.keys(attributes).filter((key) => validNames.has(key)).length > 0;
 }
