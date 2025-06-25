@@ -49,6 +49,12 @@ export function _getLiName($li: HTMLLIElement, textNode?: Node | undefined | nul
   return $li.dataset.treejsName ? $li.dataset.treejsName : sanitizeString(textNode?.textContent || '');
 }
 
+/**
+ * Check if options object is valid from default options
+ * @param options 
+ * @param defaults 
+ * @returns {boolean}
+ */
 export function isValidOptions(options: Record<string, any>, defaults: Record<string, any>): boolean {
   for (const key in options) {
     if (!(key in defaults)) {
@@ -59,8 +65,15 @@ export function isValidOptions(options: Record<string, any>, defaults: Record<st
   return true;
 }
 
+/**
+ * Get all data attributes from an element with specific prefix
+ * @param data_prefix Data prefix to look for, at format 'data-'
+ * @param $el 
+ * @returns {Record<string, any>}
+ */
 export function getAttributes(data_prefix: string, $el: HTMLElement): Record<string, any> {
   const attributes: Record<string, any> = {};
+  data_prefix.endsWith('-') ? (data_prefix += '') : (data_prefix += '-');
   for (const attr of $el.attributes) {
     if (attr.name.startsWith(data_prefix)) {
       const key = attr.name.replace(data_prefix, '');
@@ -70,10 +83,16 @@ export function getAttributes(data_prefix: string, $el: HTMLElement): Record<str
   return attributes;
 }
 
+/**
+ * Check if attributes are valid
+ * @param attributes 
+ * @param attributesList 
+ * @returns {boolean}
+ */
 export function isValidAttributes(
   attributes: Record<string, any> = {},
   attributesList: { name: string; type: string; description: string }[] = []
 ): boolean {
   const validNames = new Set(attributesList.map((attr: any) => attr.name));
-  return Object.keys(attributes).filter((key) => validNames.has(key)).length > 0;
+  return Object.keys(attributes).filter((key) => validNames.has(key)).length === Object.keys(attributes).length;
 }

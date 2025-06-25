@@ -1,0 +1,60 @@
+import { describe, expect, it, vi } from 'vitest';
+import {
+  _getLiName,
+  deepMerge,
+  getAttributes,
+  isObject,
+  isValidAttributes,
+  isValidOptions,
+  sanitizeString,
+} from '../src/utils/functions';
+
+describe('Unit tests', () => {
+  it('isObject', () => {
+    expect(isObject({})).toBe(true);
+  });
+
+  it('deepMerge', () => {
+    expect(deepMerge({ a: 1 }, { b: 2 })).toEqual({ a: 1, b: 2 });
+    expect(deepMerge({ a: { b: 1 } }, { a: { c: 2 } })).toEqual({ a: { b: 1, c: 2 } });
+    expect(deepMerge({ a: { b: 1 } }, { a: { c: { d: 2 } } })).toEqual({ a: { b: 1, c: { d: 2 } } });
+  });
+
+  it('sanitizeString', () => {
+    expect(sanitizeString('Hello, World!')).toBe('hello_world');
+    expect(sanitizeString(' Hello ')).toBe('hello');
+    expect(sanitizeString('Hey, 10$ à 20$')).toBe('hey_10_20');
+  });
+
+  it('_getLiName', () => {
+    const $li = document.createElement('li');
+    $li.dataset.treejsName = 'test';
+    expect(sanitizeString(_getLiName($li))).toBe('test');
+  });
+
+  it('isValidOptions', () => {
+    const options = { a: 1, b: 2, c: 3 };
+    const defaults = { a: 1, b: 2, c: 3, d: 4 };
+    expect(isValidOptions(options, defaults)).toBe(true);
+
+    const options2 = { a: 1, b: 2, c: 3, e: 4 };
+    expect(isValidOptions(options2, defaults)).toBe(false);
+  });
+
+  it('getAttributes', () => {
+    const $el = document.createElement('div');
+    $el.setAttribute('data-test-first', '1');
+    $el.setAttribute('data-test-second', '2');
+    const attributes = getAttributes('data-test', $el);
+    expect(attributes).toEqual({ first: '1', second: '2' });
+  });
+
+  it('isValidAttributes', () => {
+    const attributes = { first: '1' };
+    const attributesList = [{ name: 'first', type: 'string', description: 'First attribute' }];
+    expect(isValidAttributes(attributes, attributesList)).toBe(true);
+
+    const attributes2 = { first: '1', second: '2' };
+    expect(isValidAttributes(attributes2, attributesList)).toBe(false);
+  });
+});
