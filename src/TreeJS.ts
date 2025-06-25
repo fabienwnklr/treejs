@@ -228,16 +228,43 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   toggle(name: string): void {
     const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
-    const needFetch = $li.hasAttribute(`${this._data_attribute}fetch-url`);
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
 
-    const isHidden = $li.classList.contains('hide');
     if (!$li.classList.contains('has-children')) {
       throw new TreeJSError(`element with name ${name} is not a parent node`);
     }
 
+    const isHidden = $li.classList.contains('hide');
+    if (isHidden) {
+      this.open(name);
+    } else {
+      this.close(name);
+    }
+  }
+
+  /**
+   * Open a node by its name
+   * This method will throw an error if the node does not exist or is not a parent node.
+   * @param name - The name of the node to open
+   * @throws {TreeJSError} if the node does not exist or is not a
+   */
+  open(name: string): void {
+    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with name ${name}`);
+    }
+    if (!$li.classList.contains('has-children')) {
+      throw new TreeJSError(`element with name ${name} is not a parent node`);
+    }
+
+    const isHidden = $li.classList.contains('hide');
+    if (!isHidden) {
+      return; // already open
+    }
+
+    const needFetch = $li.hasAttribute(`${this._data_attribute}fetch-url`);
     const iconEl = $li.querySelector('.treejs-icon');
     if (iconEl) {
       iconEl.classList.remove('animate-out', 'animate-in');
@@ -288,38 +315,13 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         this._loadFromURI(uri, $li);
       }
     }
+    $li.classList.remove('hide');
+    $li.classList.add('show');
 
-    $li.classList.toggle('hide');
-    $li.classList.toggle('show');
-
-    this.trigger('toggle', {
+    this.trigger('open', {
       target: $li,
       name: name,
     });
-
-    if (isHidden) {
-      this.trigger('open', {
-        target: $li,
-        name: name,
-      });
-    } else {
-      this.trigger('close', {
-        target: $li,
-        name: name,
-      });
-    }
-  }
-
-  open(name: string): void {
-    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
-    if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
-    }
-    if (!$li.classList.contains('has-children')) {
-      throw new TreeJSError(`element with name ${name} is not a parent node`);
-    }
-    $li.classList.remove('hide');
-    $li.classList.add('show');
   }
 
   close(name: string): void {
@@ -330,8 +332,64 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     if (!$li.classList.contains('has-children')) {
       throw new TreeJSError(`element with name ${name} is not a parent node`);
     }
+
+    const isHidden = $li.classList.contains('hide');
+
+    if (isHidden) {
+      return; // already closed
+    }
+
+    const iconEl = $li.querySelector('.treejs-icon');
+    if (iconEl) {
+      iconEl.classList.remove('animate-out', 'animate-in');
+      iconEl.classList.add('animate-in');
+      iconEl.addEventListener(
+        'transitionend',
+        function handler(this: TreeJS) {
+          iconEl.removeEventListener('transitionend', handler as EventListener);
+          const newIcon = isHidden
+            ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
+            : Icons.get('folder', this.options.icons?.folder ?? '');
+          iconEl.replaceWith(newIcon);
+          newIcon.classList.add('animate-out');
+        }.bind(this),
+        { once: true }
+      );
+    } else {
+      // fallback if no icon found
+      const newIcon = isHidden
+        ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
+        : Icons.get('folder', this.options.icons?.folder ?? '');
+      newIcon.classList.add('treejs-icon');
+      $li.querySelector('.treejs-anchor')?.prepend(newIcon);
+    }
+
+    // adapt height of the list
+    const $ul = $li.querySelector('ul');
+    if ($ul) {
+      if (isHidden) {
+        const targetHeight = $ul.scrollHeight + 'px';
+        $ul.style.height = targetHeight;
+        $ul.addEventListener('transitionend', function handler(e) {
+          if (e.propertyName === 'height') {
+            $ul.style.height = 'auto';
+            $ul.removeEventListener('transitionend', handler);
+          }
+        });
+      } else {
+        $ul.style.height = $ul.scrollHeight + 'px'; // 1. fixe la hauteur courante
+        void $ul.offsetWidth; // 2. force le reflow
+        $ul.style.height = '0px';
+      }
+    }
+
     $li.classList.remove('show');
     $li.classList.add('hide');
+
+    this.trigger('close', {
+      target: $li,
+      name: name,
+    });
   }
 
   toggleAll(): void {
