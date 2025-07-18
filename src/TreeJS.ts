@@ -14,6 +14,7 @@ import ContextMenu from './plugins/context-menu/plugin';
 import Checkbox from './plugins/checkbox/plugin';
 import { TreeJSError } from './utils/error';
 import { Icons } from './Icons';
+import { TreeJSConsole } from './utils/console';
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
@@ -190,7 +191,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     event.preventDefault();
     event.stopPropagation();
 
-    console.log('select', event);
+    TreeJSConsole.info('select', event);
 
     const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
     if ($li) {
@@ -465,10 +466,22 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     $ul.style.height = $ul.scrollHeight + 'px';
 
+    this.trigger('fetch', {
+      target: $li,
+      name: name,
+      uri,
+    });
+
     const data = await fetch(uri);
     if (!data.ok) {
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
+
+    this.trigger('fetched', {
+      target: $li,
+      name: name,
+      response: data,
+    });
 
     // simulate a delay to show the loader icon
     // await new Promise((resolve) => setTimeout(resolve, 2000));

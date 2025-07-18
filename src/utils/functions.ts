@@ -40,8 +40,9 @@ export function deepMerge<T extends object>(target: T, source: Partial<T> | T): 
 export function sanitizeString(string: string): string {
   return string
     .trim()
-    .replace(/[^\w\s]/gi, '')
-    .replace(/\s+/g, '_')
+    .replace(/\./g, '_') // replace dots with underscores
+    .replace(/[^\w\s]/gi, '') // remove special characters except alphanumeric, underscores and spaces
+    .replace(/\s+/g, '_') // replace spaces with underscores
     .toLowerCase();
 }
 
