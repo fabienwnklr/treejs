@@ -474,6 +474,13 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     const data = await fetch(uri);
     if (!data.ok) {
+      this._loading[name || ''] = false;
+      this.trigger('fetch-error', {
+        target: $li,
+        name: name,
+        uri,
+        error: data.text(),
+      });
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
 

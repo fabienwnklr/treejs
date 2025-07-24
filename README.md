@@ -1,6 +1,8 @@
 # TreeJS
 
-TreeJS est un composant JavaScript léger pour afficher et manipuler des arbres de données dans le DOM. Il supporte la sélection, l’expansion/repliement, le chargement dynamique, les plugins (checkbox, menu contextuel), et la personnalisation via des options.
+TreeJS is a lightweight JavaScript component for displaying and manipulating data trees in the DOM. It supports selection, expand/collapse, dynamic loading, plugins (checkbox, context menu), and customization via options.
+
+TreeJS is strongly typed and performs thorough data validation to make usage as clear and safe as possible, reducing complexity and clarifying expectations.
 
 ## Installation
 
@@ -8,7 +10,7 @@ TreeJS est un composant JavaScript léger pour afficher et manipuler des arbres 
 npm install treejs
 ```
 
-## Utilisation de base
+## Basic Usage
 
 ```html
 <ul id="my-tree">
@@ -40,14 +42,14 @@ const tree = new TreeJS('#my-tree', {
 
 ## Options
 
-| Option         | Type                                      | Description                                                                                 | Par défaut |
-| -------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- | ---------- |
-| `showPath`     | `boolean`                                 | Affiche le chemin complet dans les classes                                                  | `false`    |
-| `icons`        | `{ folder?: string; file?: string; chevron?: string; folderOpen?: string }` | Icônes personnalisées pour les dossiers, fichiers, chevrons, etc. (HTML ou SVG)            | `{}`       |
-| `plugins`      | `string[]`                                | Plugins à activer (`'checkbox'`, `'context-menu'`, etc.)                                    | `[]`       |
-| `openOnDblClick` | `boolean`                               | Ouvre/ferme les dossiers au double-clic au lieu du simple clic                             | `false`    |
+| Option           | Type                                      | Description                                                                                 | Default    |
+| ---------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- | ---------- |
+| `showPath`       | `boolean`                                 | Shows the full path in the classes                                                          | `false`    |
+| `icons`          | `{ folder?: string; file?: string; chevron?: string; folderOpen?: string }` | Custom icons for folders, files, chevrons, etc. (HTML or SVG)                               | `{}`       |
+| `plugins`        | `string[]`                                | Plugins to enable (`'checkbox'`, `'context-menu'`, etc.)                                    | `[]`       |
+| `openOnDblClick` | `boolean`                                 | Opens/closes folders on double-click instead of single-click                                | `false`    |
 
-## Typage
+## Typing
 
 ```typescript
 export interface TreeJSOptions {
@@ -63,69 +65,107 @@ export interface TreeJSOptions {
 }
 ```
 
-## Événements
+## Events
 
-TreeJS émet plusieurs événements auxquels tu peux réagir :
+TreeJS emits several events you can listen to:
 
-| Événement  | Description                                                                                 | Payload (exemple)                |
+| Event      | Description                                                                                 | Payload (example)                |
 |------------|--------------------------------------------------------------------------------------------|----------------------------------|
-| `select`   | Lorsqu’un élément feuille est sélectionné                                                  | `{ target: $li, name: string }`  |
-| `open`     | Lorsqu’un dossier est ouvert                                                               | `{ target: $li, name: string }`  |
-| `close`    | Lorsqu’un dossier est fermé                                                                | `{ target: $li, name: string }`  |
-| `fetch`    | Avant le chargement dynamique d’un dossier                                                 | `{ target: $li, name: string, uri: string }` |
-| `fetched`  | Après le chargement dynamique d’un dossier                                                 | `{ target: $li, name: string, response: Response }` |
+| `select`   | When a leaf node is selected                                                               | `{ target: $li, name: string }`  |
+| `open`     | When a folder is opened                                                                    | `{ target: $li, name: string }`  |
+| `close`    | When a folder is closed                                                                    | `{ target: $li, name: string }`  |
+| `fetch`    | Before dynamically loading a folder                                                        | `{ target: $li, name: string, uri: string }` |
+| `fetched`  | After dynamically loading a folder                                                         | `{ target: $li, name: string, response: Response }` |
 
-Pour écouter un événement :
+To listen to an event:
 
 ```typescript
 tree.on('select', (payload) => {
-  console.log('Sélectionné :', payload.name, payload.target);
+  console.log('Selected:', payload.name, payload.target);
 });
 ```
 
-## Chargement dynamique
+## Dynamic Loading
 
-Vous pouvez charger des données dynamiquement via une URL :
+You can load data dynamically via a URL:
+
+1. JSON format
+
+```json
+[
+  {
+    "label": "...", // Label
+    "children": [
+      {
+        "label": "...", // Label
+        "children": [], // Optionnal childen
+      },
+      {
+        "label": "...", // Label
+        "children": [], // Optionnal childen
+      },
+      {
+        "label": "...", // Label
+        "children": [], // Optionnal childen
+      }
+    ]
+  },
+  {
+    "label": "...", // Label
+    "children": []
+  }
+]
+```
+
+2. HTML format
 
 ```html
-<li data-treejs-fetch-url="/api/children.json">Chargement dynamique</li>
+<li data-treejs-fetch-url="/api/children.{html/json}">Dynamic loading</li>
 ```
 
 ## Plugins
 
-Activez des plugins via l’option `plugins` :
+Enable plugins via the `plugins` option:
 
 ```typescript
 const tree = new TreeJS('#my-tree', {
   plugins: ['checkbox', 'context-menu'],
 });
+
+// or with options
+const tree = new TreeJS('#my-tree', {
+  plugins: [{
+    name: 'checkbox',
+    options: { ... }
+  }],
+});
 ```
 
 ## API
 
-- `tree.open(name: string)`: déplie un nœud.
-- `tree.close(name: string)`: replie un nœud.
-- `tree.toggle(name: string)`: ouvre ou ferme un nœud.
-- `tree.getState(name: string)`: retourne l’état (`'open'` ou `'closed'`) d’un nœud.
-- `tree.getSelected()`: retourne le nœud sélectionné.
-- `tree.getChecked()`: retourne les nœuds cochés (si plugin checkbox).
-- `tree.toJSON()`: retourne l’arbre sous forme de données JSON.
+- `tree.open(name: string)`: expands a node.
+- `tree.close(name: string)`: collapses a node.
+- `tree.toggle(name: string)`: opens or closes a node.
+- `tree.getState(name: string)`: returns the state (`'open'` or `'closed'`) of a node.
+- `tree.getSelected()`: returns the selected node.
+- `tree.getChecked()`: returns checked nodes (if checkbox plugin is enabled).
+- `tree.toJSON()`: returns the tree as JSON data.
 
-## Exemple de données JSON
+## Example JSON Data
 
 ```json
 [
   {
-    "label": "Racine",
+    "label": "Root",
     "children": [
-      { "label": "Enfant 1", "children": [] },
-      { "label": "Enfant 2", "children": [] }
+      { "label": "Child 1", "children": [] },
+      { "label": "Child 2", "children": [] }
     ]
   }
 ]
 ```
 
-## Générer un arbre depuis du JSON
+## Generate a Tree from JSON
 
 ```typescript
 import { JSONToHTML } from 'treejs';

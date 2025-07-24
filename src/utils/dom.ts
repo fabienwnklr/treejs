@@ -1,4 +1,6 @@
 import type { TreeJSJSON } from '../@types';
+import { TreeJSConsole } from './console';
+import { TreeJSTypeError } from './error';
 
 /**
  * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references
@@ -31,6 +33,54 @@ export function stringToHTMLElement<T>(string: string): T {
  * Generate HTML list from TreeJSJSON object
  */
 export function JSONToHTMLElement<T>(data: TreeJSJSON | Array<TreeJSJSON>): T {
+  // Check json structure
+  if (!data || (typeof data !== 'object' && !Array.isArray(data)))
+    throw new TreeJSTypeError('JSONToHTMLElement: data must be an object or an array of objects');
+  if (Array.isArray(data) && data.length === 0) {
+    throw new TreeJSTypeError('JSONToHTMLElement: data cannot be an empty array');
+  }
+
+  // check json properties
+  if (Array.isArray(data)) {
+    data.forEach((item) => {
+      if (typeof item !== 'object' || !item.label) {
+        throw new TreeJSTypeError('JSONToHTMLElement: each item in the array must be an object with a label property');
+      }
+
+      // if property is unknown, warning
+      Object.keys(item).forEach((key) => {
+        if (key !== 'label' && key !== 'children') {
+          TreeJSConsole.warn(`JSONToHTMLElement: unknown property "${key}" in item`, item);
+        }
+      });
+      // check children property
+      if (item.children && !Array.isArray(item.children)) {
+        throw new TreeJSTypeError('JSONToHTMLElement: children property must be an array');
+      }
+
+      if (item.children) {
+        item.children.forEach((child) => {
+          if (typeof child !== 'object' || !child.label) {
+            throw new TreeJSTypeError('JSONToHTMLElement: each child must be an object with a label property');
+          }
+
+          // if property is unknown, warning
+          Object.keys(child).forEach((key) => {
+            if (key !== 'label' && key !== 'children') {
+              TreeJSConsole.warn(`JSONToHTMLElement: unknown property "${key}" in child`, child);
+            }
+          });
+        });
+      }
+    });
+  } else {
+    if (typeof data !== 'object' || !data.label) {
+      throw new TreeJSTypeError('JSONToHTMLElement: the object must have a label property');
+    }
+  }
+
+  // Render the JSON as an HTML list
+  // This function is recursive to handle nested children
   function render(items: TreeJSJSON[]): string {
     return items
       .map(

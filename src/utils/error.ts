@@ -7,3 +7,13 @@ export class TreeJSError extends Error {
     }
   }
 }
+
+export class TreeJSTypeError extends TypeError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TreeJSTypeError';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, TreeJSTypeError);
+    }
+  }
+}
