@@ -39,6 +39,7 @@
     "test:watch": "vitest dev",
     "lint": "biome lint",
     "format": "biome format --write",
+    "check": "biome --formatter-enabled=false --linter-enabled=false check --write",
     "docs": "cd docs && yarn start",
     "build:api": "npx typedoc --excludePrivate --plugin typedoc-plugin-markdown --out docs/docs/api src/**/*.ts && cp dist/* docs/static",
     "preview": "vite preview",
