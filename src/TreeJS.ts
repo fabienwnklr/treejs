@@ -2,19 +2,18 @@ import './scss/style.scss';
 
 // !! Types !! \\
 import type { TreeElement, TreeJSJSON, TreeJSOptions } from './@types';
-
+import { TreeJSDefaultsOptions } from './constants';
+import { Icons } from './Icons';
 import MicroEvent from './lib/MicroEvent';
 import MicroPlugin from './lib/MicroPlugin';
-import { TreeJSDefaultsOptions } from './constants';
-import { _getLiName, deepMerge, getAttributes, isValidAttributes, isValidOptions } from './utils/functions';
-import { findNodeByType, JSONToHTMLElement, skeletonLoader, stringToHTMLElement } from './utils/dom';
+import Checkbox from './plugins/checkbox/plugin';
 
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
-import Checkbox from './plugins/checkbox/plugin';
-import { TreeJSError } from './utils/error';
-import { Icons } from './Icons';
 import { TreeJSConsole } from './utils/console';
+import { findNodeByType, JSONToHTMLElement, skeletonLoader, stringToHTMLElement } from './utils/dom';
+import { TreeJSError } from './utils/error';
+import { _getLiName, deepMerge, getAttributes, isValidAttributes, isValidOptions } from './utils/functions';
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
@@ -30,27 +29,27 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
    * It's easier to use these attributes in HTML than to use the options object.
    */
   _available_ul_attributes = [
-    { name: 'name', description: 'Name of the node, used to identify the node in the tree.', type: 'string' },
+    { description: 'Name of the node, used to identify the node in the tree.', name: 'name', type: 'string' },
     {
-      name: 'fetch-url',
       description: 'URL to fetch data for the node. The data can be in JSON or HTML format.',
+      name: 'fetch-url',
       type: 'string',
     },
     {
-      name: 'open',
       description: 'Boolean attribute to indicate if the node is closed by default.',
+      name: 'open',
       type: 'boolean',
     },
   ];
   _available_li_attributes = [
     {
-      name: 'name',
       description: 'Name of the node, used to identify the node in the tree.',
+      name: 'name',
       type: 'string',
     },
     {
-      name: 'onselect',
       description: 'JavaScript function to call when the node is selected.',
+      name: 'onselect',
       type: 'string',
     },
   ];
@@ -204,8 +203,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         }
       }
       this.trigger('select', {
-        target: $li,
         name: name,
+        target: $li,
       });
     }
   }
@@ -320,8 +319,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     $li.classList.add('show');
 
     this.trigger('open', {
-      target: $li,
       name: name,
+      target: $li,
     });
   }
 
@@ -388,8 +387,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     $li.classList.add('hide');
 
     this.trigger('close', {
-      target: $li,
       name: name,
+      target: $li,
     });
   }
 
@@ -423,7 +422,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         }
       }
 
-      return { label, name, children };
+      return { children, label, name };
     }
 
     const topLevelLis = this.$list.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
@@ -467,8 +466,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     $ul.style.height = $ul.scrollHeight + 'px';
 
     this.trigger('fetch', {
-      target: $li,
       name: name,
+      target: $li,
       uri,
     });
 
@@ -476,18 +475,18 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     if (!data.ok) {
       this._loading[name || ''] = false;
       this.trigger('fetch-error', {
-        target: $li,
-        name: name,
-        uri,
         error: data.text(),
+        name: name,
+        target: $li,
+        uri,
       });
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
 
     this.trigger('fetched', {
-      target: $li,
       name: name,
       response: data,
+      target: $li,
     });
 
     // simulate a delay to show the loader icon

@@ -34,11 +34,11 @@ export default function MicroPlugin(Interface: any) {
 
   return class extends Interface {
     public plugins: TPlugins = {
-      names: [],
-      settings: {},
-      requested: {},
-      loaded: {},
       data: {},
+      loaded: {},
+      names: [],
+      requested: {},
+      settings: {},
     };
 
     /**
@@ -48,8 +48,8 @@ export default function MicroPlugin(Interface: any) {
      */
     static define(name: string, fn: (this: any, settings: TSettings) => any) {
       Interface.plugins[name] = {
-        name: name,
         fn: fn,
+        name: name,
       };
     }
 

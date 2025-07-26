@@ -42,8 +42,8 @@ export default function (this: TreeJS, opts: myType = {}) {
           this.plugins.data.checked = checked;
 
           this.trigger('checkbox-change', {
-            target: $li,
             checked: $a.checked,
+            target: $li,
           });
         });
       });

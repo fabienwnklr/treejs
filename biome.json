@@ -1,22 +1,46 @@
 {
-  "formatter": {
-    "includes": ["src/**/*.ts"],
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedKeys": "on"
+      }
+    },
     "enabled": true,
+    "includes": ["src/**/*.ts", "biome.json"]
+  },
+  "formatter": {
+    "attributePosition": "auto",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "enabled": true,
+    "expand": "auto",
     "formatWithErrors": false,
+    "includes": ["src/**/*.ts"],
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 120,
-    "attributePosition": "auto",
-    "bracketSameLine": false,
-    "bracketSpacing": true,
-    "expand": "auto",
     "useEditorconfig": true
+  },
+  "html": { "formatter": { "selfCloseVoidElements": "always" } },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "attributePosition": "auto",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    },
+    "globals": ["arguments"]
   },
   "linter": {
     "enabled": true,
+    "includes": ["**", "**/*.css", "**/*.scss", "**/*.svg"],
     "rules": {
-      "recommended": false,
       "complexity": {
         "noAdjacentSpacesInRegex": "error",
         "noBannedTypes": "error",
@@ -50,6 +74,7 @@
         "useValidTypeof": "error",
         "useYield": "error"
       },
+      "recommended": false,
       "style": {
         "noNamespace": "error",
         "useArrayLiterals": "error",
@@ -86,22 +111,6 @@
         "noWith": "error",
         "useGetterReturn": "error"
       }
-    },
-    "includes": ["**", "**/*.css", "**/*.scss", "**/*.svg"]
-  },
-  "javascript": {
-    "globals": ["arguments"],
-    "formatter": {
-      "jsxQuoteStyle": "double",
-      "quoteProperties": "asNeeded",
-      "trailingCommas": "es5",
-      "semicolons": "always",
-      "arrowParentheses": "always",
-      "bracketSameLine": false,
-      "quoteStyle": "single",
-      "attributePosition": "auto",
-      "bracketSpacing": true
     }
-  },
-  "html": { "formatter": { "selfCloseVoidElements": "always" } }
+  }
 }

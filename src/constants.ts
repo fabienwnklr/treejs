@@ -1,8 +1,8 @@
 import type { TreeJSOptions } from './@types';
 
 export const TreeJSDefaultsOptions: TreeJSOptions = {
-  showPath: true,
-  plugins: [],
+  icons: { file: '', folder: '' },
   openOnDblClick: false,
-  icons: { folder: '', file: '' },
+  plugins: [],
+  showPath: true,
 };

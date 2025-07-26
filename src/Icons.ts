@@ -1,9 +1,9 @@
+import chevron from './icons/chevron.svg?raw';
+import file from './icons/file.svg?raw';
 import folder from './icons/folder.svg?raw';
 import folderOpen from './icons/folder-open.svg?raw';
-import file from './icons/file.svg?raw';
-import chevron from './icons/chevron.svg?raw';
-import { TreeJSError } from './utils/error';
 import { stringToHTMLElement } from './utils/dom';
+import { TreeJSError } from './utils/error';
 export class Icons {
   static iconsTypes: string[] = ['folder', 'file', 'chevron', 'loader', 'folderOpen'];
 
