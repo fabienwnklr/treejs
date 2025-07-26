@@ -37,8 +37,8 @@
     "build": "tsc && vite build",
     "test": "vitest run",
     "test:watch": "vitest dev",
-    "lint": "npx eslint src/**",
-    "format": "prettier src/**/*.ts --write",
+    "lint": "biome lint",
+    "format": "biome format --write",
     "docs": "cd docs && yarn start",
     "build:api": "npx typedoc --excludePrivate --plugin typedoc-plugin-markdown --out docs/docs/api src/**/*.ts && cp dist/* docs/static",
     "preview": "vite preview",
@@ -49,6 +49,7 @@
     "release:major": "npm run build && standard-version --release-as major && npm run publish"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.2",
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
     "@types/node": "^20.8.7",

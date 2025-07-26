@@ -52,8 +52,8 @@ export function _getLiName($li: HTMLLIElement, textNode?: Node | undefined | nul
 
 /**
  * Check if options object is valid from default options
- * @param options 
- * @param defaults 
+ * @param options
+ * @param defaults
  * @returns {boolean}
  */
 export function isValidOptions(options: Record<string, any>, defaults: Record<string, any>): boolean {
@@ -69,7 +69,7 @@ export function isValidOptions(options: Record<string, any>, defaults: Record<st
 /**
  * Get all data attributes from an element with specific prefix
  * @param data_prefix Data prefix to look for, at format 'data-'
- * @param $el 
+ * @param $el
  * @returns {Record<string, any>}
  */
 export function getAttributes(data_prefix: string, $el: HTMLElement): Record<string, any> {
@@ -86,8 +86,8 @@ export function getAttributes(data_prefix: string, $el: HTMLElement): Record<str
 
 /**
  * Check if attributes are valid
- * @param attributes 
- * @param attributesList 
+ * @param attributes
+ * @param attributesList
  * @returns {boolean}
  */
 export function isValidAttributes(

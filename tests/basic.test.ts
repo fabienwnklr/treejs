@@ -80,7 +80,7 @@ describe('TreeJS', () => {
     expect(Tree.getState('first')).toBe('closed');
   });
 
-  it('Load data from url', async () => {
+  // it('Load data from url', async () => {
 
-  })
+  // })
 });

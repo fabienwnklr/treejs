@@ -1,5 +1,3 @@
-/* eslint-disable no-prototype-builtins */
-/* eslint-disable @typescript-eslint/no-this-alias */
 /**
  * microplugin.js
  * Copyright (c) 2013 Brian Reavis & contributors
@@ -72,7 +70,6 @@ export default function MicroPlugin(Interface: any) {
      */
     initializePlugins(plugins: string[] | TPluginItem[] | TPluginHash) {
       let key, name;
-      const self = this;
       const queue: string[] = [];
 
       if (Array.isArray(plugins)) {
@@ -80,14 +77,14 @@ export default function MicroPlugin(Interface: any) {
           if (typeof plugin === 'string') {
             queue.push(plugin);
           } else {
-            self.plugins.settings[plugin.name] = plugin.options;
+            this.plugins.settings[plugin.name] = plugin.options;
             queue.push(plugin.name);
           }
         });
       } else if (plugins) {
         for (key in plugins) {
-          if (plugins.hasOwnProperty(key)) {
-            self.plugins.settings[key] = plugins[key];
+          if (Object.hasOwn(plugins, key)) {
+            this.plugins.settings[key] = plugins[key];
             queue.push(key);
           }
         }
@@ -100,16 +97,15 @@ export default function MicroPlugin(Interface: any) {
     }
 
     loadPlugin(name: string) {
-      const self = this;
-      const plugins = self.plugins;
+      const plugins = this.plugins;
       const plugin = Interface.plugins[name];
 
-      if (!Interface.plugins.hasOwnProperty(name)) {
+      if (!Object.hasOwn(Interface.plugins, name)) {
         throw new Error('Unable to find "' + name + '" plugin');
       }
 
       plugins.requested[name] = true;
-      plugins.loaded[name] = plugin.fn.apply(self, [self.plugins.settings[name] || {}]);
+      plugins.loaded[name] = plugin.fn.apply(this, [this.plugins.settings[name] || {}]);
       plugins.names.push(name);
     }
 
@@ -118,14 +114,13 @@ export default function MicroPlugin(Interface: any) {
      *
      */
     require(name: string) {
-      const self = this;
-      const plugins = self.plugins;
+      const plugins = this.plugins;
 
-      if (!self.plugins.loaded.hasOwnProperty(name)) {
+      if (!Object.hasOwn(this.plugins.loaded, name)) {
         if (plugins.requested[name]) {
           throw new Error('Plugin has circular dependency ("' + name + '")');
         }
-        self.loadPlugin(name);
+        this.loadPlugin(name);
       }
 
       return plugins.loaded[name];
