@@ -77,6 +77,10 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     super();
 
     if (typeof $list === 'string') {
+      if (!$list) {
+        throw new TreeJSError(`id cannot be empty`);
+      }
+
       const $ul = document.getElementById($list);
 
       if (!$ul) {
@@ -89,6 +93,9 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         throw new TreeJSError(`target must be an instance of HTMLUListElement, actual is ${$ul.nodeType}`);
       }
     } else {
+      if (!$list) {
+        throw new TreeJSError(`id is null or undefined`);
+      }
       this.$list = $list;
     }
 

@@ -26,6 +26,12 @@ describe('TreeJS', () => {
     expect($tree.classList.contains('treejs-ul')).toBe(true);
   });
 
+  it('Throws error on invalid element', () => {
+    expect(() => new TreeJS('nonexistent')).toThrowError('cannot find element with id nonexistent');
+    expect(() => new TreeJS('')).toThrowError('id cannot be empty');
+    expect(() => new TreeJS(null as any)).toThrowError('id is null or undefined');
+  });
+
   it('Toggle nodes', () => {
     expect(Tree.getState('first')).toBe('closed');
     // With api

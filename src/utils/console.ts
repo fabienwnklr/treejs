@@ -4,7 +4,6 @@ export class TreeJSConsole {
   }
 
   static warn(...args: any[]) {
-    // console.warn with color
     console.warn(`%cTreeJS: ${args.join(' ')}`, 'color: orange; font-weight: bold;');
   }
 
