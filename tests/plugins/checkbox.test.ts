@@ -16,10 +16,47 @@ describe('Plugin - Checkbox', () => {
       Third
   </ul>`;
 
-    it('should initialize with default options', () => {
-        const tree = new TreeJS('tree', { plugins: ['checkbox'] });
-        expect(tree.plugins.data.checked).toEqual({});
-        expect(tree.plugins.loaded.checkbox).not.toBeUndefined();
-        expect(tree.plugins.loaded.checkbox).toBeInstanceOf(Object);
+    const Tree = new TreeJS('tree', { plugins: ['checkbox'] });
+
+    it('init', () => {
+        expect(Tree.plugins.data.checked).toEqual({});
+        expect(Tree.plugins.loaded.checkbox).not.toBeUndefined();
+        expect(Tree.plugins.loaded.checkbox).toBeInstanceOf(Object);
+    });
+
+    it('toggleAllCheckboxes', () => {
+        const $checkboxes = document.querySelectorAll('.treejs-checkbox');
+
+        // Initially, all checkboxes should be unchecked
+        $checkboxes.forEach(($checkbox) => {
+            expect(($checkbox as HTMLInputElement).checked).toBe(false);
+        });
+
+        // Toggle all checkboxes to checked
+        Tree.toggleAllCheckboxes(true);
+        $checkboxes.forEach(($checkbox) => {
+            expect(($checkbox as HTMLInputElement).checked).toBe(true);
+        });
+
+        // Toggle all checkboxes to unchecked
+        Tree.toggleAllCheckboxes(false);
+        $checkboxes.forEach(($checkbox) => {
+            expect(($checkbox as HTMLInputElement).checked).toBe(false);
+        });
+    });
+
+    it('toggleCheckbox', () => {
+        const $firstCheckbox = document.querySelector('.treejs-checkbox[name="first"]') as HTMLInputElement;
+
+        // Initially, the first checkbox should be unchecked
+        expect($firstCheckbox.checked).toBe(false);
+
+        // Toggle the first checkbox
+        Tree.toggleCheckbox('first');
+        expect($firstCheckbox.checked).toBe(true);
+
+        // Toggle the first checkbox again
+        Tree.toggleCheckbox('first');
+        expect($firstCheckbox.checked).toBe(false);
     });
 });
