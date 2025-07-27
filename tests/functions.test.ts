@@ -7,7 +7,6 @@ import {
   validateAttributes,
   isValidOptions,
   sanitizeString,
-  validateAttributes,
 } from '../src/utils/functions';
 
 describe('Unit tests', () => {
