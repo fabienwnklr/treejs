@@ -524,12 +524,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       throw new TreeJSError(`failed to fetch data from ${uri}`);
     }
 
-    this.trigger('fetched', {
-      name: name,
-      response: data,
-      target: $li,
-    });
-
     // simulate a delay to show the loader icon
     // await new Promise((resolve) => setTimeout(resolve, 2000));
     const isJSON = data.headers.get('content-type')?.includes('application/json');
@@ -558,6 +552,12 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     $ul.innerHTML = '';
     $ul.appendChild(html);
+
+    this.trigger('fetched', {
+      name: name,
+      response: data,
+      target: $li,
+    });
 
     this._attachEvents();
   }

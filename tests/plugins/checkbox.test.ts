@@ -64,11 +64,10 @@ describe('Plugin - Checkbox', () => {
       Tree.on('fetched', (data) => {
         expect(data).toBeDefined();
         expect(Object.keys(data).length).toBeGreaterThan(0);
-        const $checkboxes = document.querySelectorAll('li[data-treejs-fetch-url] .treejs-checkbox');
+        const $checkboxes = data.target.querySelectorAll('.treejs-checkbox');
         expect($checkboxes.length).toBeGreaterThan(0);
       });
       Tree.open('third');
-        // Wait for the fetch to complete
     });
 
 });

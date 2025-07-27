@@ -81,7 +81,7 @@ describe('TreeJS', () => {
       // console.log(`Node ${name} is closed`, target);
     });
     const onSelect = vi.fn(({ name, target }) => {
-      console.log(`Node ${name} selected`, target);
+      // console.log(`Node ${name} selected`, target);
     });
 
     Tree.on('open', onOpen);

@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@plugins/*": ["plugins/*"],
+      "@utils/*": ["utils/*"],
+    },
     "target": "ES2015",
     "useDefineForClassFields": true,
     "module": "ESNext",

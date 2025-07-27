@@ -24,8 +24,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      find: '~',
-      replacement: resolve(__dirname, 'src'),
+      '@': resolve(__dirname, './src'),
+      '@plugins': resolve(__dirname, './src/plugins'),
+      '@utils': resolve(__dirname, './src/utils'),
     },
   },
   test: {

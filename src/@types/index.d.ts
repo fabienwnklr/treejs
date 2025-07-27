@@ -1,5 +1,22 @@
+declare module '../TreeJS' {
+  interface TreeJS {
+    // Checbox plugin methods
+    _buildCheckboxes($liList: NodeListOf<HTMLLIElement>): void;
+    toggleAllCheckboxes(checked: boolean): void;
+    getCheckedCheckboxes(): CheckboxJSON;
+    getChecked(): string[];
+    toggleCheckbox(name: string): void;
+  }
+}
+
 export interface TreeElement extends HTMLUListElement {
   treejs?: TreeJS;
+}
+
+export interface IEventEmitter {
+  on(event: string, handler: (...args: any[]) => void): void;
+  trigger(event: string, payload?: any): void;
+  // Ajoute d'autres méthodes si besoin (off, once, etc.)
 }
 
 export interface TreeJSOptions {
