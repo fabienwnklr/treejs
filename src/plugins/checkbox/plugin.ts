@@ -90,4 +90,12 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
       }
     });
   };
+
+  return {
+    getCheckedCheckboxes: this.getCheckedCheckboxes,
+    name: 'checkbox',
+    options: opts,
+    toggleAllCheckboxes: this.toggleAllCheckboxes,
+    toggleCheckbox: this.toggleCheckbox,
+  };
 }

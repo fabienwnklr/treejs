@@ -24,7 +24,7 @@ type TPlugins = {
   names: string[];
   settings: TSettings;
   requested: Record<string, boolean>;
-  loaded: Record<string, any>;
+  loaded: Record<string, object>;
   data: Record<string, any>;
 };
 
@@ -118,7 +118,7 @@ export default function MicroPlugin(Interface: any) {
       }
 
       plugins.requested[name] = true;
-      plugins.loaded[name] = plugin.fn.apply(this, [this.plugins.settings[name] || {}]);
+      plugins.loaded[name] = plugin.fn.apply(this, [this.plugins.settings[name] || {}]) ?? {};
       plugins.names.push(name);
     }
 
