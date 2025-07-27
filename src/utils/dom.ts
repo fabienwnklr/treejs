@@ -128,3 +128,30 @@ export function getHiddenElementHeight(element: HTMLElement): number {
 export function skeletonLoader(): HTMLDivElement {
   return stringToHTMLElement<HTMLDivElement>('<div class="treejs-skeleton-box"></div>');
 }
+
+export function parseNode(li: HTMLLIElement, _data_attribute: string): TreeJSJSON {
+  const label = li.querySelector('.treejs-anchor')?.textContent || '';
+  const name = li.getAttribute(`${_data_attribute}name`) || '';
+  const children: TreeJSJSON[] = [];
+
+  const subUl = li.querySelector(':scope > ul');
+  if (subUl) {
+    const subLis = subUl.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
+    for (const childLi of subLis) {
+      children.push(parseNode(childLi, _data_attribute));
+    }
+  }
+
+  return { children, label, name };
+}
+
+export function animateHeight($ul: HTMLElement) {
+  const targetHeight = $ul.scrollHeight + 'px';
+  $ul.style.height = targetHeight;
+  $ul.addEventListener('transitionend', function handler(e) {
+    if (e.propertyName === 'height') {
+      $ul.style.height = 'auto';
+      $ul.removeEventListener('transitionend', handler);
+    }
+  });
+}

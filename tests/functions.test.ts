@@ -4,9 +4,10 @@ import {
   deepMerge,
   getAttributes,
   isObject,
-  isValidAttributes,
+  validateAttributes,
   isValidOptions,
   sanitizeString,
+  validateAttributes,
 } from '../src/utils/functions';
 
 describe('Unit tests', () => {
@@ -49,12 +50,12 @@ describe('Unit tests', () => {
     expect(attributes).toEqual({ first: '1', second: '2' });
   });
 
-  it('isValidAttributes', () => {
+  it('validateAttributes', () => {
     const attributes = { first: '1' };
     const attributesList = [{ name: 'first', type: 'string', description: 'First attribute' }];
-    expect(isValidAttributes(attributes, attributesList)).toBe(true);
+    expect(validateAttributes(attributes, attributesList)).toBe(true);
 
     const attributes2 = { first: '1', second: '2' };
-    expect(isValidAttributes(attributes2, attributesList)).toBe(false);
+    expect(validateAttributes(attributes2, attributesList)).toBe(false);
   });
 });

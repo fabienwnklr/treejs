@@ -150,7 +150,25 @@
       tree.on('open', (node) => {
         console.log(node);
         const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Opened: ${node.name}\n`));
+        log.appendChild(document.createTextNode(`Open: ${node.name}\n`));
+      });
+
+      tree.on('fetch', (node) => {
+        console.log(node);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Fetch: ${node.name}\n`));
+      });
+
+      tree.on('fetch-error', (node, error) => {
+        console.error(error);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Fetch error for ${node.name}: ${error.message}\n`));
+      });
+
+      tree.on('fetched', (node) => {
+        console.log(node);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Fetched: ${node.name}\n`));
       });
 
       tree.on('close', (node) => {

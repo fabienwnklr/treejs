@@ -90,10 +90,22 @@ export function getAttributes(data_prefix: string, $el: HTMLElement): Record<str
  * @param attributesList
  * @returns {boolean}
  */
-export function isValidAttributes(
+export function validateAttributes(
   attributes: Record<string, any> = {},
   attributesList: { name: string; type: string; description: string }[] = []
 ): boolean {
   const validNames = new Set(attributesList.map((attr: any) => attr.name));
-  return Object.keys(attributes).filter((key) => validNames.has(key)).length === Object.keys(attributes).length;
+  const isValid =
+    Object.keys(attributes).filter((key) => validNames.has(key)).length === Object.keys(attributes).length;
+
+  if (!isValid) {
+    console.warn(
+      'TreeJS : Invalid attributes found. Valid attributes are:',
+      validNames,
+      'but found:',
+      Object.keys(attributes)
+    );
+    return false;
+  }
+  return true;
 }

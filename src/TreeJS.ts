@@ -11,9 +11,16 @@ import Checkbox from './plugins/checkbox/plugin';
 // !! Plugins !! \\
 import ContextMenu from './plugins/context-menu/plugin';
 import { TreeJSConsole } from './utils/console';
-import { findNodeByType, JSONToHTMLElement, skeletonLoader, stringToHTMLElement } from './utils/dom';
+import {
+  animateHeight,
+  findNodeByType,
+  JSONToHTMLElement,
+  parseNode,
+  skeletonLoader,
+  stringToHTMLElement,
+} from './utils/dom';
 import { TreeJSError } from './utils/error';
-import { _getLiName, deepMerge, getAttributes, isValidAttributes, isValidOptions } from './utils/functions';
+import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from './utils/functions';
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
@@ -23,16 +30,16 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   _loading: Record<string, boolean> = {};
   _data: Record<string, TreeJSJSON | string> = {};
   _data_attribute = 'data-treejs-';
+  _li_class = 'treejs-li';
   /**
    * List of available attributes for the TreeJS UL nodes.
    * These attributes can be used to configure the nodes in the tree.
    * It's easier to use these attributes in HTML than to use the options object.
    */
   _available_ul_attributes = [
-    { description: 'Name of the node, used to identify the node in the tree.', name: 'name', type: 'string' },
     {
-      description: 'URL to fetch data for the node. The data can be in JSON or HTML format.',
-      name: 'fetch-url',
+      description: 'Name of the node, used to identify the node in the tree.',
+      name: 'name',
       type: 'string',
     },
     {
@@ -52,8 +59,20 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       name: 'onselect',
       type: 'string',
     },
+    {
+      description: 'URL to fetch data for the node. The data can be in JSON or HTML format.',
+      name: 'fetch-url',
+      type: 'string',
+    },
   ];
 
+  /**
+   * Create a new TreeJS instance.
+   * @param $list - The target element or the id of the target element where the tree will be rendered.
+   * @param {Partial<TreeJSOptions>} options - The options to configure the tree.
+   * @throws {TreeJSError} if the target element is not found or is not an instance of HTMLUListElement.
+   * @throws {TreeJSError} if the options are invalid.
+   */
   constructor($list: TreeElement | string, options: Partial<TreeJSOptions> = {}) {
     super();
 
@@ -95,20 +114,27 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     this._handleSelect = this._handleSelect.bind(this);
   }
 
+  /**
+   * Build the HTML structure of the tree.
+   */
   private _buildHtml(): void {
     this.$list.classList.add('treejs-ul', this.options.showPath ? 'path' : 'no-path');
     const ULAttributes = getAttributes(this._data_attribute, this.$list);
-    isValidAttributes(ULAttributes, this._available_ul_attributes);
+    validateAttributes(ULAttributes, this._available_ul_attributes);
     this.$liList = this.$list.querySelectorAll('li');
     this._buildList(this.$liList);
   }
 
+  /**
+   * Build the list from the NodeListOf HTMLLIElement.
+   * @param {NodeListOf<HTMLLIElement>} $liList - NodeListOf HTMLLIElement
+   */
   private _buildList($liList: NodeListOf<HTMLLIElement>): void {
     for (const $li of $liList) {
       const textNode = findNodeByType($li.childNodes, '#text');
       const name = _getLiName($li, textNode);
       const LIAttributes = getAttributes(this._data_attribute, $li);
-      isValidAttributes(LIAttributes, this._available_li_attributes);
+      validateAttributes(LIAttributes, this._available_li_attributes);
 
       if (!textNode) {
         throw new TreeJSError(`Canot find textNode from li element`);
@@ -117,7 +143,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         throw new TreeJSError(`Canot find textContent from textNode`);
       }
 
-      $li.classList.add('treejs-li');
+      $li.classList.add(this._li_class);
       const $child = $li.querySelector('ul');
 
       const $anchor = stringToHTMLElement<HTMLSpanElement>(
@@ -159,8 +185,11 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
   }
 
+  /**
+   * Attach event listeners to the tree elements.
+   */
   private _attachEvents(): void {
-    this.$list.querySelectorAll('.treejs-li.has-children > .treejs-anchor').forEach(($anchor) => {
+    this.$list.querySelectorAll(`.${this._li_class}.has-children > .treejs-anchor`).forEach(($anchor) => {
       if (this.options.openOnDblClick) {
         $anchor.removeEventListener('dblclick', this._handleToggle);
         $anchor.addEventListener('dblclick', this._handleToggle);
@@ -170,29 +199,34 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       }
     });
 
-    this.$list.querySelectorAll('.treejs-li:not(.has-children) .treejs-anchor').forEach(($anchor) => {
+    this.$list.querySelectorAll(`.${this._li_class}:not(.has-children) .treejs-anchor`).forEach(($anchor) => {
       $anchor.removeEventListener('click', this._handleSelect);
       $anchor.addEventListener('click', this._handleSelect);
     });
   }
 
+  /**
+   * Handle the toggle action for a node.
+   * @param {Event} event - The event that triggered the toggle action.
+   */
   private _handleToggle(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
 
-    const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
+    const $li = (event.currentTarget as HTMLElement).closest(`.${this._li_class}`) as HTMLLIElement;
     if ($li) {
       const name = $li.getAttribute(`${this._data_attribute}name`) || '';
       this.toggle(name);
     }
   }
+
   private _handleSelect(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
 
     TreeJSConsole.info('select', event);
 
-    const $li = (event.currentTarget as HTMLElement).closest('.treejs-li') as HTMLLIElement;
+    const $li = (event.currentTarget as HTMLElement).closest(`.${this._li_class}`) as HTMLLIElement;
     if ($li) {
       const name = $li.getAttribute(`${this._data_attribute}name`) || '';
       if ($li.hasAttribute(`${this._data_attribute}onselect`)) {
@@ -215,7 +249,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
    * @returns The state of the node open/closed, or undefined if the node does not exist
    */
   getState(name: string): 'open' | 'closed' | undefined {
-    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -226,8 +260,13 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     return undefined; // No children, no state
   }
 
+  /**
+   * Toggle a node by its name
+   * @param name - The name of the node to toggle
+   * @throws {TreeJSError} if the node does not exist or is not a parent node.
+   */
   toggle(name: string): void {
-    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -251,7 +290,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
    * @throws {TreeJSError} if the node does not exist or is not a
    */
   open(name: string): void {
-    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -294,14 +333,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     const $ul = $li.querySelector('ul');
     if ($ul) {
       if (isHidden) {
-        const targetHeight = $ul.scrollHeight + 'px';
-        $ul.style.height = targetHeight;
-        $ul.addEventListener('transitionend', function handler(e) {
-          if (e.propertyName === 'height') {
-            $ul.style.height = 'auto';
-            $ul.removeEventListener('transitionend', handler);
-          }
-        });
+        animateHeight($ul);
       } else {
         $ul.style.height = $ul.scrollHeight + 'px'; // 1. fixe la hauteur courante
         void $ul.offsetWidth; // 2. force le reflow
@@ -324,8 +356,17 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     });
   }
 
+  /**
+   * Close a node by its name
+   *
+   * @param name - The name of the node to close
+   * @throws {TreeJSError} if the node does not exist or is not a parent node.
+   *
+   * This method will close the node and hide its children.
+   * It will also trigger the `close` event.
+   */
   close(name: string): void {
-    const $li = this.$list.querySelector(`.treejs-li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
     if (!$li) {
       throw new TreeJSError(`cannot find element with name ${name}`);
     }
@@ -393,37 +434,35 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   toggleAll(): void {
-    this.$list.querySelectorAll<HTMLAnchorElement>('.treejs-li.has-children .treejs-anchor').forEach(($link) => {
-      $link.click();
-    });
+    this.$list
+      .querySelectorAll<HTMLAnchorElement>(`.${this._li_class}.has-children .treejs-anchor`)
+      .forEach(($link) => {
+        $link.click();
+      });
   }
 
+  /**
+   * Get the currently selected node in the tree.
+   * @returns {HTMLElement|null} currently selected node in the tree.
+   */
   getSelected(): HTMLLIElement | null {
     return this.$list.querySelector('.selected');
   }
 
+  /**
+   * This method returns the names of all nodes that have been checked in the tree.
+   * @returns {string[]} An array of names of the checked nodes.
+   */
   getChecked(): string[] {
     return this.plugins.data.checked ?? [];
   }
 
+  /**
+   * Convert the tree structure to a TreeJSJSON representation.
+   * @returns {TreeJSJSON[]} An array of JSON objects representing the tree structure.
+   */
   toJSON(): TreeJSJSON[] {
     const result: TreeJSJSON[] = [];
-
-    function parseNode(li: HTMLLIElement, _data_attribute: string): TreeJSJSON {
-      const label = li.querySelector('.treejs-anchor')?.textContent || '';
-      const name = li.getAttribute(`${_data_attribute}name`) || '';
-      const children: TreeJSJSON[] = [];
-
-      const subUl = li.querySelector(':scope > ul');
-      if (subUl) {
-        const subLis = subUl.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
-        for (const childLi of subLis) {
-          children.push(parseNode(childLi, _data_attribute));
-        }
-      }
-
-      return { children, label, name };
-    }
 
     const topLevelLis = this.$list.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
     for (const li of topLevelLis) {
