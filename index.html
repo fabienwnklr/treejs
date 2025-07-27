@@ -131,7 +131,7 @@
       });
       import { TreeJS } from '/src/TreeJS.ts';
 
-      const tree = new TreeJS('tree', { openOnDblClick: false });
+      const tree = new TreeJS('tree', { openOnDblClick: false, plugins: ['checkbox'] });
       window.TREE = tree;
       window.TreeJS = TreeJS;
 
@@ -175,6 +175,13 @@
         console.log(node);
         const log = document.getElementById('log');
         log.appendChild(document.createTextNode(`Closed: ${node.name}\n`));
+      });
+
+       // Plugins events
+      tree.on('checkbox-change', (node) => {
+        console.log(node);
+        const log = document.getElementById('log');
+        log.appendChild(document.createTextNode(`Checkbox changed: ${node.name}\n`));
       });
     </script>
   </body>

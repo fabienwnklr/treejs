@@ -8,6 +8,14 @@
     "enabled": true,
     "includes": ["src/**/*.ts", "biome.json"]
   },
+  "css": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
   "formatter": {
     "attributePosition": "auto",
     "bracketSameLine": false,

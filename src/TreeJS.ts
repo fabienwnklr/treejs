@@ -452,22 +452,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   }
 
   /**
-   * Get the currently selected node in the tree.
-   * @returns {HTMLElement|null} currently selected node in the tree.
-   */
-  getSelected(): HTMLLIElement | null {
-    return this.$list.querySelector('.selected');
-  }
-
-  /**
-   * This method returns the names of all nodes that have been checked in the tree.
-   * @returns {string[]} An array of names of the checked nodes.
-   */
-  getChecked(): string[] {
-    return this.plugins.data.checked ?? [];
-  }
-
-  /**
    * Convert the tree structure to a TreeJSJSON representation.
    * @returns {TreeJSJSON[]} An array of JSON objects representing the tree structure.
    */
