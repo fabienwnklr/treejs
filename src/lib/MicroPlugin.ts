@@ -14,6 +14,8 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
+import { TreeJSError } from '../utils/error';
+
 type TSettings = {
   [key: string]: any;
 };
@@ -47,6 +49,9 @@ export default function MicroPlugin(Interface: any) {
      * @param {function} fn
      */
     static define(name: string, fn: (this: any, settings: TSettings) => any) {
+      if (Interface.plugins[name]) {
+        throw new TreeJSError(`Plugin "${name}" already defined`);
+      }
       Interface.plugins[name] = {
         fn: fn,
         name: name,
@@ -69,31 +74,39 @@ export default function MicroPlugin(Interface: any) {
      * @param {array|object} plugins
      */
     initializePlugins(plugins: string[] | TPluginItem[] | TPluginHash) {
-      let key, name;
-      const queue: string[] = [];
+      const queue = this.buildPluginQueue(plugins, this.plugins.settings);
+      let name;
+      while ((name = queue.shift())) {
+        this.require(name);
+      }
+    }
 
+    /**
+     *
+     * @param plugins
+     * @param settings
+     * @returns
+     */
+    private buildPluginQueue(plugins: string[] | TPluginItem[] | TPluginHash, settings: TSettings): string[] {
+      const queue: string[] = [];
       if (Array.isArray(plugins)) {
         plugins.forEach((plugin: string | TPluginItem) => {
           if (typeof plugin === 'string') {
             queue.push(plugin);
           } else {
-            this.plugins.settings[plugin.name] = plugin.options;
+            settings[plugin.name] = plugin.options;
             queue.push(plugin.name);
           }
         });
       } else if (plugins) {
-        for (key in plugins) {
+        for (const key in plugins) {
           if (Object.hasOwn(plugins, key)) {
-            this.plugins.settings[key] = plugins[key];
+            settings[key] = plugins[key];
             queue.push(key);
           }
         }
       }
-
-      // eslint-disable-next-line no-cond-assign
-      while ((name = queue.shift())) {
-        self.require(name);
-      }
+      return queue;
     }
 
     loadPlugin(name: string) {
