@@ -5,7 +5,7 @@ import type { TreeElement } from '../src/@types';
 describe('TreeJS', () => {
   document.body.innerHTML = `
   <ul id="tree">
-    <li id="first">
+    <li id="first" data-treejs-onselect="console.log('First')">
       First
       <ul>
         <li>First child</li>
@@ -15,6 +15,21 @@ describe('TreeJS', () => {
     <li id="second">Second</li>
     <li id="third" data-treejs-fetch-url="https://example.com/data.json">
       Third
+    </li>
+    <li data-treejs-name="fourth" data-treejs-open="true">
+      Fourth (open on init)
+      <ul>
+        <li>Fourth child 1</li>
+        <li>Fourth child 2</li>
+        <li data-treejs-open="true">
+          Fourth child 3
+          <ul>
+            <li>Fourth child 3.1</li>
+            <li>Fourth child 3.2</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
   </ul>`;
 
   const Tree = new TreeJS('tree');
@@ -24,6 +39,16 @@ describe('TreeJS', () => {
     expect(Tree).toBeInstanceOf(TreeJS);
     expect($tree.treejs).toBeInstanceOf(TreeJS);
     expect($tree.classList.contains('treejs-ul')).toBe(true);
+  });
+
+  it('LI with children', () => {
+    const firstNode = $tree.querySelector('#first') as TreeElement;
+    expect(firstNode.children.length).toBe(2);
+    expect(firstNode.classList.contains('has-children')).toBe(true);
+  });
+
+  it('Open tree on initialization', () => {
+    expect(Tree.getState('fourth')).toBe('open');
   });
 
   it('Throws error on invalid element', () => {

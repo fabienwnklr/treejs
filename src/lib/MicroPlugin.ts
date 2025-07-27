@@ -31,7 +31,7 @@ type TPlugins = {
 export type TPluginItem = { name: string; options: object };
 export type TPluginHash = Record<string, object>;
 
-export default function MicroPlugin(Interface: any) {
+export default function MicroPlugin<TBase extends new (...args: any[]) => object>(Interface: TBase & { plugins?: Record<string, any> }) {
   Interface.plugins = {};
 
   return class extends Interface {
@@ -49,6 +49,9 @@ export default function MicroPlugin(Interface: any) {
      * @param {function} fn
      */
     static define(name: string, fn: (this: any, settings: TSettings) => any) {
+      if (!Interface.plugins) {
+        Interface.plugins = {};
+      }
       if (Interface.plugins[name]) {
         throw new TreeJSError(`Plugin "${name}" already defined`);
       }
@@ -111,6 +114,9 @@ export default function MicroPlugin(Interface: any) {
 
     loadPlugin(name: string) {
       const plugins = this.plugins;
+      if (!Interface.plugins) {
+        throw new Error('Plugins registry is not initialized');
+      }
       const plugin = Interface.plugins[name];
 
       if (!Object.hasOwn(Interface.plugins, name)) {

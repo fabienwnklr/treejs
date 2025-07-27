@@ -12,7 +12,7 @@ describe('Plugin - Checkbox', () => {
       </ul>
     </li>
     <li id="second">Second</li>
-    <li id="third" data-treejs-fetch-url="https://example.com/data.json">
+    <li id="third" data-treejs-fetch-url="https://gist.githack.com/fabienwnklr/4561e87ad6c94070544470a7bf930a8d/raw/144478e6210a8a87df4ce48ebc099f4b09a4a332/treejs.json">
       Third
   </ul>`;
 
@@ -59,4 +59,16 @@ describe('Plugin - Checkbox', () => {
         Tree.toggleCheckbox('first');
         expect($firstCheckbox.checked).toBe(false);
     });
+
+    it('Fetch and add checkboxes', async () => {
+      Tree.on('fetched', (data) => {
+        expect(data).toBeDefined();
+        expect(Object.keys(data).length).toBeGreaterThan(0);
+        const $checkboxes = document.querySelectorAll('li[data-treejs-fetch-url] .treejs-checkbox');
+        expect($checkboxes.length).toBeGreaterThan(0);
+      });
+      Tree.open('third');
+        // Wait for the fetch to complete
+    });
+
 });

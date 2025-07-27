@@ -56,6 +56,11 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
   ];
   _available_li_attributes = [
     {
+      description: 'Boolean attribute to indicate if the node is closed by default.',
+      name: 'open',
+      type: 'boolean',
+    },
+    {
       description: 'Name of the node, used to identify the node in the tree.',
       name: 'name',
       type: 'string',
@@ -119,6 +124,10 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     this._attachEvents();
 
     this.initializePlugins(this.options.plugins);
+
+    this.trigger('initialize', {
+      target: this.$list,
+    });
   }
 
   /**
@@ -161,29 +170,22 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
       $li.classList.add(this._li_class);
       const $child = $li.querySelector('ul');
-
+      const open = Boolean($li?.getAttribute(`${this._data_attribute}open`) || false);
+      const fetchUrl = $li?.getAttribute(`${this._data_attribute}fetch-url`) || '';
       const $anchor = createAnchorElement(textNode, this._anchor_class);
 
-      if ($child || $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
+      if ($child || fetchUrl) {
         const folderIcon = Icons.get('folder', this.options.icons?.folder ?? '');
         $anchor.prepend(folderIcon);
-
         const chevronIcon = Icons.get('chevron', this.options.icons?.chevron ?? '');
         $anchor.append(chevronIcon);
 
-        const open = $child?.getAttribute(`${this._data_attribute}open`) || '';
-
-        if (open !== 'true') $li.classList.add('has-children', 'hide');
+        $li.classList.add('hide');
         $li.replaceChild($anchor, textNode);
+        $li.classList.add('has-children');
 
         if ($child) {
           $child.classList.add(this._ul_class, this._child_class, this.options.showPath ? 'path' : 'no-path');
-
-          if ($child.hasAttribute(`${this._data_attribute}fetch-url`)) {
-            if (open === 'true') {
-              $li.classList.remove('hide');
-            }
-          }
         }
       } else {
         const fileIcon = Icons.get('file', this.options.icons?.file ?? '');
@@ -192,6 +194,12 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       }
 
       $li.setAttribute(`${this._data_attribute}name`, name || '');
+
+      if (open) {
+        this.on('initialize', () => {
+          this.open(name || '');
+        });
+      }
     }
   }
 
@@ -543,6 +551,10 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     const $liList = html.parentElement?.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
 
     this._buildList($liList);
+
+    if (this.plugins.loaded.checkbox && typeof this._buildCheckboxes === 'function') {
+      this._buildCheckboxes($liList);
+    }
 
     $ul.innerHTML = '';
     $ul.appendChild(html);

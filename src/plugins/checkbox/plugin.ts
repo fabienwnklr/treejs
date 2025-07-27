@@ -1,25 +1,33 @@
-import { TreeJS } from '../../TreeJS';
-import { createCheckbox } from '../../utils/dom';
-// import { ... } from '../../utils/dom'
-import { _getLiName, deepMerge } from '../../utils/functions';
+import { TreeJS } from '@/TreeJS';
+import { createCheckbox } from '@/utils/dom';
+// import { ... } from '@/utils/dom'
+import { _getLiName, deepMerge } from '@/utils/functions';
 import type { CheckboxJSON, CheckboxOptions } from './@types';
 
 // importing style
 import './plugin.scss';
 
 /**
- * @name Template
- * Description of plugin
- * @param this
- * @param opts
+ * @name Checkbox
+ * @description Adds checkboxes to the tree nodes.
+ * @version 1.0.0
+ * @author Your Name
+ * @param {TreeJS} this - The TreeJS instance
+ * @param {CheckboxOptions} [opts={}] - Plugin options
  */
 export default function (this: TreeJS, opts: CheckboxOptions = {}) {
   const defaultOpts: CheckboxOptions = {};
   opts = deepMerge<CheckboxOptions>(opts, defaultOpts);
 
-  if (this.$liList) {
-    this.plugins.data.checked = this.plugins.data.checked || {};
-    this.$liList.forEach(($li) => {
+  this.on('initialize', () => {
+    if (this.$liList) {
+      this.plugins.data.checked = this.plugins.data.checked || {};
+      this._buildCheckboxes(this.$liList);
+    }
+  });
+
+  this._buildCheckboxes = ($list: NodeListOf<HTMLLIElement>) => {
+    $list.forEach(($li) => {
       const $child = $li.querySelector('ul');
       let $checkbox: HTMLInputElement | null = null;
       const anchorWrapper = $li.querySelector(`.${this._anchor_class}`);
@@ -53,7 +61,7 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
         });
       });
     });
-  }
+  };
 
   /**
    * Get the object containing the checked nodes.
