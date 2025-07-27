@@ -5,6 +5,8 @@ import folderOpen from './icons/folder-open.svg?raw';
 import { stringToHTMLElement } from './utils/dom';
 import { TreeJSError } from './utils/error';
 export class Icons {
+  static _prefix = '';
+  static _icon_class = '';
   static iconsTypes: string[] = ['folder', 'file', 'chevron', 'loader', 'folderOpen'];
 
   static get(type: 'folder' | 'file' | 'chevron' | 'loader' | 'folderOpen', content?: string): HTMLSpanElement {
@@ -22,24 +24,24 @@ export class Icons {
   }
 
   static folder(): HTMLSpanElement {
-    return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon">${folder}</span>${folder}</span>`);
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${folder}</span>${folder}</span>`);
   }
 
   static folderOpen(): HTMLSpanElement {
-    return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon">${folderOpen}</span>`);
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${folderOpen}</span>`);
   }
 
   static file(): HTMLSpanElement {
-    return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon">${file}</span>`);
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${file}</span>`);
   }
 
   static chevron(): HTMLSpanElement {
-    return stringToHTMLElement<HTMLSpanElement>(`<span class="treejs-icon-chevron">${chevron}</span>`);
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}-chevron">${chevron}</span>`);
   }
 
   static loader(): HTMLSpanElement {
-    return stringToHTMLElement<HTMLSpanElement>(`<div class="treejs-loader">
-            <span class="treejs-loader-icon"></span>
+    return stringToHTMLElement<HTMLSpanElement>(`<div class="${this._prefix}loader">
+            <span class="${this._prefix}loader-icon"></span>
           </div>`);
   }
 }

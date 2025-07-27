@@ -25,7 +25,7 @@ export default function (this: TreeJS, opts: myType = {}) {
         const anchorWrapper = findNodeByType($li.childNodes, 'span') as HTMLSpanElement;
         if (!anchorWrapper || !anchorWrapper.textContent) return;
         const name = _getLiName($li, anchorWrapper);
-        $checkbox = createCheckbox(name);
+        $checkbox = createCheckbox(name, this._prefix);
         anchorWrapper.prepend($checkbox);
 
         const checked: Record<string, boolean> = {};

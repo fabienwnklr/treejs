@@ -13,6 +13,7 @@ import ContextMenu from './plugins/context-menu/plugin';
 import { TreeJSConsole } from './utils/console';
 import {
   animateHeight,
+  createAnchorElement,
   findNodeByType,
   JSONToHTMLElement,
   parseNode,
@@ -29,8 +30,13 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   _loading: Record<string, boolean> = {};
   _data: Record<string, TreeJSJSON | string> = {};
-  _data_attribute = 'data-treejs-';
-  _li_class = 'treejs-li';
+  _prefix = 'treejs-';
+  _data_attribute = `data-${this._prefix}`;
+  _ul_class = `${this._prefix}ul`;
+  _li_class = `${this._prefix}li`;
+  _child_class = `${this._prefix}child`;
+  _anchor_class = `${this._prefix}anchor`;
+  _icon_class = `${this._prefix}icon`;
   /**
    * List of available attributes for the TreeJS UL nodes.
    * These attributes can be used to configure the nodes in the tree.
@@ -105,6 +111,9 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     this.$list.treejs = this;
     this.options = deepMerge<TreeJSOptions>(TreeJSDefaultsOptions, options);
 
+    Icons._prefix = this._prefix;
+    Icons._icon_class = this._icon_class;
+
     this._bindThis();
     this._buildHtml();
     this._attachEvents();
@@ -125,7 +134,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
    * Build the HTML structure of the tree.
    */
   private _buildHtml(): void {
-    this.$list.classList.add('treejs-ul', this.options.showPath ? 'path' : 'no-path');
+    this.$list.classList.add(this._ul_class, this.options.showPath ? 'path' : 'no-path');
     const ULAttributes = getAttributes(this._data_attribute, this.$list);
     validateAttributes(ULAttributes, this._available_ul_attributes);
     this.$liList = this.$list.querySelectorAll('li');
@@ -153,13 +162,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       $li.classList.add(this._li_class);
       const $child = $li.querySelector('ul');
 
-      const $anchor = stringToHTMLElement<HTMLSpanElement>(
-        `<button class="treejs-anchor">
-             <span class="treejs-anchor-label">
-                  ${textNode.textContent}
-             </span>
-        </button>`
-      );
+      const $anchor = createAnchorElement(textNode, this._anchor_class);
 
       if ($child || $li.hasAttribute(`${this._data_attribute}fetch-url`)) {
         const folderIcon = Icons.get('folder', this.options.icons?.folder ?? '');
@@ -174,7 +177,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
         $li.replaceChild($anchor, textNode);
 
         if ($child) {
-          $child.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
+          $child.classList.add(this._ul_class, this._child_class, this.options.showPath ? 'path' : 'no-path');
 
           if ($child.hasAttribute(`${this._data_attribute}fetch-url`)) {
             if (open === 'true') {
@@ -196,7 +199,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
    * Attach event listeners to the tree elements.
    */
   private _attachEvents(): void {
-    this.$list.querySelectorAll(`.${this._li_class}.has-children > .treejs-anchor`).forEach(($anchor) => {
+    this.$list.querySelectorAll(`.${this._li_class}.has-children > .${this._anchor_class}`).forEach(($anchor) => {
       if (this.options.openOnDblClick) {
         $anchor.removeEventListener('dblclick', this._handleToggle);
         $anchor.addEventListener('dblclick', this._handleToggle);
@@ -206,7 +209,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       }
     });
 
-    this.$list.querySelectorAll(`.${this._li_class}:not(.has-children) .treejs-anchor`).forEach(($anchor) => {
+    this.$list.querySelectorAll(`.${this._li_class}:not(.has-children) .${this._anchor_class}`).forEach(($anchor) => {
       $anchor.removeEventListener('click', this._handleSelect);
       $anchor.addEventListener('click', this._handleSelect);
     });
@@ -311,7 +314,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     const needFetch = $li.hasAttribute(`${this._data_attribute}fetch-url`);
-    const iconEl = $li.querySelector('.treejs-icon');
+    const iconEl = $li.querySelector(`.${this._icon_class}`) as HTMLElement | null;
     if (iconEl) {
       iconEl.classList.remove('animate-out', 'animate-in');
       iconEl.classList.add('animate-in');
@@ -332,8 +335,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       const newIcon = isHidden
         ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
         : Icons.get('folder', this.options.icons?.folder ?? '');
-      newIcon.classList.add('treejs-icon');
-      $li.querySelector('.treejs-anchor')?.prepend(newIcon);
+      newIcon.classList.add(this._icon_class);
+      $li.querySelector(`.${this._anchor_class}`)?.prepend(newIcon);
     }
 
     // adapt height of the list
@@ -387,7 +390,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       return; // already closed
     }
 
-    const iconEl = $li.querySelector('.treejs-icon');
+    const iconEl = $li.querySelector(`.${this._icon_class}`);
     if (iconEl) {
       iconEl.classList.remove('animate-out', 'animate-in');
       iconEl.classList.add('animate-in');
@@ -408,8 +411,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       const newIcon = isHidden
         ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
         : Icons.get('folder', this.options.icons?.folder ?? '');
-      newIcon.classList.add('treejs-icon');
-      $li.querySelector('.treejs-anchor')?.prepend(newIcon);
+      newIcon.classList.add(this._icon_class);
+      $li.querySelector(`.${this._anchor_class}`)?.prepend(newIcon);
     }
 
     // adapt height of the list
@@ -442,7 +445,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
   toggleAll(): void {
     this.$list
-      .querySelectorAll<HTMLAnchorElement>(`.${this._li_class}.has-children .treejs-anchor`)
+      .querySelectorAll<HTMLAnchorElement>(`.${this._li_class}.has-children .${this._anchor_class}`)
       .forEach(($link) => {
         $link.click();
       });
@@ -473,7 +476,7 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     const topLevelLis = this.$list.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
     for (const li of topLevelLis) {
-      result.push(parseNode(li, this._data_attribute));
+      result.push(parseNode(li, this._data_attribute, this._anchor_class));
     }
 
     return result;
@@ -496,8 +499,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       $ul = document.createElement('ul');
       $li.appendChild($ul);
     }
-    $ul.classList.add('treejs-ul', 'treejs-child', this.options.showPath ? 'path' : 'no-path');
-    $ul.append(skeletonLoader());
+    $ul.classList.add(this._ul_class, this._child_class, this.options.showPath ? 'path' : 'no-path');
+    $ul.append(skeletonLoader(this._prefix));
     $ul.style.height = '0px';
 
     void $ul.offsetWidth;

@@ -17,21 +17,21 @@
     border: none;
     text-align: left;
     cursor: pointer;
-    color: var(--treejs-text-primary);
+    color: var(--#{$prefix}-text-primary);
     display: flex;
     align-items: center;
     transition: background-color .2s ease;
     border-radius: 0.5rem;
 
     &:hover {
-        background-color: var(--treejs-bg-primary);
+        background-color: var(--#{$prefix}-bg-primary);
       }
   }
 
   hr {
     border: none;
     height: 1px;
-    background-color: var(--treejs-bg-primary);
+    background-color: var(--#{$prefix}-bg-primary);
     margin-block: 0.5rem;
     margin: .4rem 0 .4rem 0;
   }

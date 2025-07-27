@@ -14,7 +14,8 @@ describe('DOM Utils', () => {
     checkbox.type = 'checkbox';
     checkbox.name = 'test';
     checkbox.classList.add('treejs-checkbox');
-    expect(createCheckbox('test')).toEqual(checkbox);
+    expect(createCheckbox('test', 'treejs-')).toEqual(checkbox);
+    expect(createCheckbox('test', 'treejs-').classList.contains('treejs-checkbox')).toBe(true);
   });
 
   it('stringToHTMLElement', () => {

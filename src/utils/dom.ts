@@ -16,11 +16,11 @@ export function findNodeByType(list: NodeList, type: string): Node | undefined {
   }
 }
 
-export function createCheckbox(name: string): HTMLInputElement {
+export function createCheckbox(name: string, prefix: string): HTMLInputElement {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.name = name;
-  checkbox.classList.add('treejs-checkbox');
+  checkbox.classList.add(`${prefix}checkbox`);
 
   return checkbox;
 }
@@ -125,12 +125,12 @@ export function getHiddenElementHeight(element: HTMLElement): number {
   return height;
 }
 
-export function skeletonLoader(): HTMLDivElement {
-  return stringToHTMLElement<HTMLDivElement>('<div class="treejs-skeleton-box"></div>');
+export function skeletonLoader(prefix: string): HTMLDivElement {
+  return stringToHTMLElement<HTMLDivElement>(`<div class="${prefix}skeleton-box"></div>`);
 }
 
-export function parseNode(li: HTMLLIElement, _data_attribute: string): TreeJSJSON {
-  const label = li.querySelector('.treejs-anchor')?.textContent || '';
+export function parseNode(li: HTMLLIElement, _data_attribute: string, anchorClass: string): TreeJSJSON {
+  const label = li.querySelector(`.${anchorClass}`)?.textContent || '';
   const name = li.getAttribute(`${_data_attribute}name`) || '';
   const children: TreeJSJSON[] = [];
 
@@ -138,7 +138,7 @@ export function parseNode(li: HTMLLIElement, _data_attribute: string): TreeJSJSO
   if (subUl) {
     const subLis = subUl.querySelectorAll(':scope > li') as NodeListOf<HTMLLIElement>;
     for (const childLi of subLis) {
-      children.push(parseNode(childLi, _data_attribute));
+      children.push(parseNode(childLi, _data_attribute, anchorClass));
     }
   }
 
@@ -154,4 +154,16 @@ export function animateHeight($ul: HTMLElement) {
       $ul.removeEventListener('transitionend', handler);
     }
   });
+}
+
+export function createAnchorElement(textNode: Node, anchorClass: string): HTMLButtonElement {
+  const $anchor = stringToHTMLElement<HTMLButtonElement>(
+    `<button class="${anchorClass}">
+             <span class="${anchorClass}-label">
+                  ${textNode.textContent}
+             </span>
+        </button>`
+  );
+
+  return $anchor;
 }
