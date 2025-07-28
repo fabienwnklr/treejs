@@ -32,7 +32,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     threads: false,
-    // For this config, check https://github.com/vitest-dev/vitest/issues/740
     environmentOptions: {
       jsdom: {
         resources: 'usable',

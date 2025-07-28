@@ -1,16 +1,6 @@
 import './scss/style.scss';
-
 // !! Types !! \\
-import type { TreeElement, TreeJSJSON, TreeJSOptions } from './@types';
-import { TreeJSDefaultsOptions } from './constants';
-import { Icons } from './Icons';
-import MicroEvent from './lib/MicroEvent';
-import MicroPlugin from './lib/MicroPlugin';
-import Checkbox from './plugins/checkbox/plugin';
-
-// !! Plugins !! \\
-import ContextMenu from './plugins/context-menu/plugin';
-import { TreeJSConsole } from './utils/console';
+import { TreeJSConsole } from '@utils/console';
 import {
   animateHeight,
   createAnchorElement,
@@ -19,9 +9,18 @@ import {
   parseNode,
   skeletonLoader,
   stringToHTMLElement,
-} from './utils/dom';
-import { TreeJSError } from './utils/error';
-import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from './utils/functions';
+} from '@utils/dom';
+import { TreeJSError } from '@utils/error';
+import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
+import type { TreeElement, TreeJSJSON, TreeJSOptions } from './@types';
+import { TreeJSDefaultsOptions } from './constants';
+import { Icons } from './Icons';
+import MicroEvent from './lib/MicroEvent';
+import MicroPlugin from './lib/MicroPlugin';
+
+// !! Plugins !!
+import Checkbox from './plugins/checkbox/plugin';
+import ContextMenu from './plugins/context-menu/plugin';
 
 export class TreeJS extends MicroPlugin(MicroEvent) {
   $list: TreeElement;
