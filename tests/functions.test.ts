@@ -7,7 +7,7 @@ import {
   validateAttributes,
   isValidOptions,
   sanitizeString,
-} from '../src/utils/functions';
+} from '@utils/functions';
 
 describe('Unit tests', () => {
   it('isObject', () => {

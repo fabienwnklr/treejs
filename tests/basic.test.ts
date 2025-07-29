@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { TreeJS } from '../src/TreeJS';
-import type { TreeElement } from '../src/@types';
+import { TreeJS } from '@/TreeJS';
+import type { TreeElement } from '@/@types';
 
 describe('TreeJS', () => {
   document.body.innerHTML = `
@@ -75,13 +75,13 @@ describe('TreeJS', () => {
 
   it('Event listeners', () => {
     const onOpen = vi.fn(({ name, target }) => {
-      // console.log(`Node ${name} is open`, target);
+      console.log(`Node ${name} is open`, target);
     });
     const onClose = vi.fn(({ name, target }) => {
-      // console.log(`Node ${name} is closed`, target);
+      console.log(`Node ${name} is closed`, target);
     });
     const onSelect = vi.fn(({ name, target }) => {
-      // console.log(`Node ${name} selected`, target);
+      console.log(`Node ${name} selected`, target);
     });
 
     Tree.on('open', onOpen);

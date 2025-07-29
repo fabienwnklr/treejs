@@ -15,7 +15,7 @@ import {
 import { TreeJSError } from '@utils/error';
 import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
 // !! Types !! \\
-import type { TreeElement, TreeJSJSON, TreeJSOptions } from '@/@types';
+import type { IEventEmitter, TreeElement, TreeJSJSON, TreeJSOptions } from '@/@types';
 import { TreeJSDefaultsOptions } from '@/constants';
 import { Icons } from '@/Icons';
 
@@ -76,7 +76,6 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
       type: 'string',
     },
   ];
-
   /**
    * Create a new TreeJS instance.
    * @param $list - The target element or the id of the target element where the tree will be rendered.
@@ -546,8 +545,8 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
 
     this._buildList($liList);
 
-    if (this.plugins.loaded.checkbox && typeof this._buildCheckboxes === 'function') {
-      this._buildCheckboxes($liList);
+    if (this.plugins.loaded.checkbox) {
+      this.plugins.loaded.checkbox._buildCheckboxes($liList);
     }
 
     $ul.innerHTML = '';

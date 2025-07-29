@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createCheckbox, findNodeByType, getHiddenElementHeight, JSONToHTMLElement, stringToHTMLElement } from '../src/utils/dom';
+import { createCheckbox, findNodeByType,  JSONToHTMLElement, stringToHTMLElement } from '@utils/dom';
 
 describe('DOM Utils', () => {
   it('findNodeByType', () => {

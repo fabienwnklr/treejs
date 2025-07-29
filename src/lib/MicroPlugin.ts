@@ -15,7 +15,7 @@
  */
 
 import { TreeJSError } from '@utils/error';
-import { TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
+import { AvailablePlugins, PluginTypes, TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
 
 export default function MicroPlugin<TBase extends new (...args: any[]) => object>(
   Interface: TBase & { plugins?: Record<string, any> }
@@ -68,7 +68,7 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
       const queue = this.buildPluginQueue(plugins, this.plugins.settings);
       let name;
       while ((name = queue.shift())) {
-        this.require(name);
+        this.require(name as keyof PluginTypes);
       }
     }
 
@@ -100,19 +100,19 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
       return queue;
     }
 
-    loadPlugin(name: string) {
+    loadPlugin<K extends keyof PluginTypes>(name: K) {
       const plugins = this.plugins;
       if (!Interface.plugins) {
         throw new Error('Plugins registry is not initialized');
       }
-      const plugin = Interface.plugins[name];
 
       if (!Object.hasOwn(Interface.plugins, name)) {
         throw new Error('Unable to find "' + name + '" plugin');
       }
 
       plugins.requested[name] = true;
-      plugins.loaded[name] = plugin.fn.apply(this, [this.plugins.settings[name] || {}]) ?? {};
+      const result = Interface.plugins[name].fn.apply(this, [this.plugins.settings[name] || {}]) as PluginTypes[K];
+      plugins.loaded[name] = result;
       plugins.names.push(name);
     }
 
@@ -120,7 +120,7 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
      * Initializes a plugin.
      *
      */
-    require(name: string) {
+    require<K extends keyof PluginTypes>(name: K) {
       const plugins = this.plugins;
 
       if (!Object.hasOwn(this.plugins.loaded, name)) {

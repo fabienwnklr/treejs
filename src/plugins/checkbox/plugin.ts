@@ -100,6 +100,7 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
   };
 
   return {
+    _buildCheckboxes: this._buildCheckboxes,
     getCheckedCheckboxes: this.getCheckedCheckboxes,
     name: 'checkbox',
     options: opts,
