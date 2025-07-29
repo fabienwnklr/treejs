@@ -5,6 +5,7 @@
       "@/*": ["*"],
       "@plugins/*": ["plugins/*"],
       "@utils/*": ["utils/*"],
+      "@lib/*": ["lib/*"],
     },
     "target": "ES2015",
     "useDefineForClassFields": true,

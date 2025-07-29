@@ -1,5 +1,7 @@
 import './scss/style.scss';
-// !! Types !! \\
+
+import MicroEvent from '@lib/MicroEvent';
+import MicroPlugin from '@lib/MicroPlugin';
 import { TreeJSConsole } from '@utils/console';
 import {
   animateHeight,
@@ -12,11 +14,10 @@ import {
 } from '@utils/dom';
 import { TreeJSError } from '@utils/error';
 import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
-import type { TreeElement, TreeJSJSON, TreeJSOptions } from './@types';
-import { TreeJSDefaultsOptions } from './constants';
-import { Icons } from './Icons';
-import MicroEvent from './lib/MicroEvent';
-import MicroPlugin from './lib/MicroPlugin';
+// !! Types !! \\
+import type { TreeElement, TreeJSJSON, TreeJSOptions } from '@/@types';
+import { TreeJSDefaultsOptions } from '@/constants';
+import { Icons } from '@/Icons';
 
 // !! Plugins !!
 import Checkbox from './plugins/checkbox/plugin';

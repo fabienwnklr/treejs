@@ -1,6 +1,6 @@
-import type { TreeJSJSON } from '../@types';
-import { TreeJSConsole } from './console';
-import { TreeJSTypeError } from './error';
+import { TreeJSConsole } from '@utils/console';
+import { TreeJSTypeError } from '@utils/error';
+import type { TreeJSJSON } from '@/@types';
 
 /**
  * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references

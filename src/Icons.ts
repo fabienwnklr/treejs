@@ -1,9 +1,9 @@
-import chevron from './icons/chevron.svg?raw';
-import file from './icons/file.svg?raw';
-import folder from './icons/folder.svg?raw';
-import folderOpen from './icons/folder-open.svg?raw';
-import { stringToHTMLElement } from './utils/dom';
-import { TreeJSError } from './utils/error';
+import { stringToHTMLElement } from '@utils/dom';
+import { TreeJSError } from '@utils/error';
+import chevron from '@/Icons/chevron.svg?raw';
+import file from '@/Icons/file.svg?raw';
+import folder from '@/Icons/folder.svg?raw';
+import folderOpen from '@/Icons/folder-open.svg?raw';
 export class Icons {
   static _prefix = '';
   static _icon_class = '';

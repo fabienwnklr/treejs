@@ -8,7 +8,7 @@
  * @author Jerome Etienne (https://github.com/jeromeetienne)
  */
 
-type TCallback = (...args: any) => any;
+import { TCallback } from "@/@types";
 
 /**
  * Execute callback for each event in space separated list of event names

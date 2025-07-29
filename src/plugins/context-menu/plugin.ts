@@ -1,6 +1,6 @@
-import { TreeJS } from '../../TreeJS';
-// import { ... } from '../../utils/dom'
-import { deepMerge } from '../../utils/functions';
+import { TreeJS } from '@/TreeJS';
+// import { ... } from '@/utils/dom'
+import { deepMerge } from '@/utils/functions';
 import type { myType } from './@types';
 
 // importing style

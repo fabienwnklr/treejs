@@ -1,4 +1,4 @@
-import type { TreeJSOptions } from './@types';
+import type { TreeJSOptions } from '@/@types';
 
 export const TreeJSDefaultsOptions: TreeJSOptions = {
   icons: { file: '', folder: '' },

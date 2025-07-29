@@ -14,24 +14,12 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-import { TreeJSError } from '../utils/error';
+import { TreeJSError } from '@utils/error';
+import { TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
 
-type TSettings = {
-  [key: string]: any;
-};
-
-type TPlugins = {
-  names: string[];
-  settings: TSettings;
-  requested: Record<string, boolean>;
-  loaded: Record<string, object>;
-  data: Record<string, any>;
-};
-
-export type TPluginItem = { name: string; options: object };
-export type TPluginHash = Record<string, object>;
-
-export default function MicroPlugin<TBase extends new (...args: any[]) => object>(Interface: TBase & { plugins?: Record<string, any> }) {
+export default function MicroPlugin<TBase extends new (...args: any[]) => object>(
+  Interface: TBase & { plugins?: Record<string, any> }
+) {
   Interface.plugins = {};
 
   return class extends Interface {

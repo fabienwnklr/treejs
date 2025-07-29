@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
-import { TreeJS } from '../../../TreeJS';
+import { describe, expect, it } from 'vitest';
+import { TreeJS } from '@/TreeJS';
 
 describe('Plugin - Checkbox', () => {
     document.body.innerHTML = `
@@ -69,5 +69,4 @@ describe('Plugin - Checkbox', () => {
       });
       Tree.open('third');
     });
-
 });

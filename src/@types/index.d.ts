@@ -1,4 +1,4 @@
-declare module '../TreeJS' {
+declare module '@/TreeJS' {
   interface TreeJS {
     // Checbox plugin methods
     _buildCheckboxes($liList: NodeListOf<HTMLLIElement>): void;
@@ -45,3 +45,19 @@ export interface TreeJSJSON {
   name?: string;
   children: TreeJSJSON[];
 }
+
+export type TSettings = {
+  [key: string]: any;
+};
+
+export type TPlugins = {
+  names: string[];
+  settings: TSettings;
+  requested: Record<string, boolean>;
+  loaded: Record<string, object>;
+  data: Record<string, any>;
+};
+
+export type TPluginItem = { name: string; options: object };
+export type TPluginHash = Record<string, object>;
+export type TCallback = (...args: any) => any;
