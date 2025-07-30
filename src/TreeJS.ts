@@ -15,7 +15,7 @@ import {
 import { TreeJSError } from '@utils/error';
 import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
 // !! Types !! \\
-import type { IEventEmitter, TreeElement, TreeJSJSON, TreeJSOptions } from '@/@types';
+import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
 import { TreeJSDefaultsOptions } from '@/constants';
 import { Icons } from '@/Icons';
 
@@ -23,7 +23,7 @@ import { Icons } from '@/Icons';
 import Checkbox from './plugins/checkbox/plugin';
 import ContextMenu from './plugins/context-menu/plugin';
 
-export class TreeJS extends MicroPlugin(MicroEvent) {
+export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;
@@ -483,6 +483,10 @@ export class TreeJS extends MicroPlugin(MicroEvent) {
     }
 
     const name = $li.getAttribute(`${this._data_attribute}name`);
+
+    if (!name) {
+      throw new TreeJSError(`Element with name ${name} does not exist.`);
+    }
 
     this._loading[name || ''] = true;
     let $ul = $li.querySelector('ul');

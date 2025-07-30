@@ -1,68 +1,43 @@
 /**
  * MicroEvent - to make any js object an event emitter
  *
- * - pure javascript - server compatible, browser compatible
+ * - Highly typed - server compatible, browser compatible
  * - dont rely on the browser doms
  * - super simple - you get it immediatly, no mistery, no magic involved
  *
- * @author Jerome Etienne (https://github.com/jeromeetienne)
+ * @author Winkler Fabien (https://github.com/fabienwnklr)
  */
 
-import { TCallback } from "@/@types";
-
-/**
- * Execute callback for each event in space separated list of event names
- *
- */
-function forEvents(events: string, callback: (event: string) => any) {
-  events.split(/\s+/).forEach((event) => {
-    callback(event);
-  });
-}
-
-export default class MicroEvent {
-  public _events: Record<string, TCallback[]> = {};
+export default class MicroEvent<TEvents extends Record<string, (...args: any[]) => any>> {
+  private _events: { [K in keyof TEvents]?: TEvents[K][] } = {};
 
   constructor() {
     this._events = {};
   }
 
-  on(events: string, fct: TCallback) {
-    forEvents(events, (event) => {
-      const event_array = this._events[event] || [];
-      event_array.push(fct);
-      this._events[event] = event_array;
-    });
+  on<K extends keyof TEvents>(event: K, fct: TEvents[K]) {
+    const event_array = this._events[event] || [];
+    event_array.push(fct);
+    this._events[event] = event_array;
   }
 
-  off(events: string, fct: TCallback) {
-    const n = arguments.length;
-    if (n === 0) {
+  off<K extends keyof TEvents>(event: K, fct?: TEvents[K]) {
+    if (event === undefined) {
       this._events = {};
       return;
     }
-
-    forEvents(events, (event) => {
-      if (n === 1) {
-        delete this._events[event];
-        return;
-      }
-
-      const event_array = this._events[event];
-      if (event_array === undefined) return;
-
-      event_array.splice(event_array.indexOf(fct), 1);
-      this._events[event] = event_array;
-    });
+    if (!fct) {
+      delete this._events[event];
+      return;
+    }
+    const event_array = this._events[event];
+    if (!event_array) return;
+    this._events[event] = event_array.filter(cb => cb !== fct);
   }
 
-  trigger(events: string, ...args: any) {
-    forEvents(events, (event) => {
-      const event_array = this._events[event];
-      if (event_array === undefined) return;
-      event_array.forEach((fct) => {
-        fct.apply(this, args);
-      });
-    });
+  trigger<K extends keyof TEvents>(event: K, ...args: Parameters<TEvents[K]>) {
+    const event_array = this._events[event];
+    if (!event_array) return;
+    event_array.forEach(fct => fct(...args));
   }
 }

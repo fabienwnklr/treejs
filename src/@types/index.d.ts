@@ -18,7 +18,13 @@ export interface TreeJSOptions {
   };
 }
 
-export type AvailablePlugins = 'context-menu' | 'checkbox' | 'drag-drop' | 'search' | 'sort' | 'filter';
+export type AvailablePlugins =
+  | "context-menu"
+  | "checkbox"
+  | "drag-drop"
+  | "search"
+  | "sort"
+  | "filter";
 
 export interface TreeJSPlugin {
   name: AvailablePlugins;
@@ -38,6 +44,25 @@ export type TSettings = {
 export interface PluginTypes {
   checkbox: CheckboxPlugin;
 }
+
+export type TreeJSEvents = {
+  initialize: (payload: { target: HTMLElement }) => void;
+  select: (payload: { name: string; target: HTMLElement }) => void;
+  open: (payload: { name: string; target: HTMLElement }) => void;
+  close: (payload: { name: string; target: HTMLElement }) => void;
+  fetch: (payload: { name: string; target: HTMLElement; uri: string }) => void;
+  fetched: (payload: {
+    name: string;
+    response: Response;
+    target: HTMLElement;
+  }) => void;
+  "fetch-error": (payload: {
+    error: any;
+    name: string;
+    target: HTMLElement;
+    uri: string;
+  }) => void;
+};
 
 export type TPlugins = {
   names: string[];
