@@ -21,7 +21,7 @@ import { Icons } from '@/Icons';
 
 // !! Plugins !!
 import Checkbox from './plugins/checkbox/plugin';
-// import ContextMenu from './plugins/context-menu/plugin';
+import ContextMenu from './plugins/context-menu/plugin';
 
 export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   $list: TreeElement;
@@ -621,4 +621,4 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 }
 
 TreeJS.define('checkbox', Checkbox);
-// TreeJS.define('context-menu', ContextMenu);
+TreeJS.define('context-menu', ContextMenu);
