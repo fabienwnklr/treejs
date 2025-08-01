@@ -1,6 +1,6 @@
 /**
  * MicroPlugin.ts
- * 
+ *
  * MicroPlugin is a mixin that allows classes to define and manage plugins.
  * It provides methods to define, initialize, and require plugins with options.
  * Copyright (c) 2024 Fabien Winkler & contributors
@@ -17,12 +17,18 @@
  * @author Fabien Winkler <fabien.winkler@outlook.fr>
  */
 
-import { TreeJSError } from '@utils/error';
-import { PluginTypes, TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
+import {
+  PluginTypes,
+  TPluginHash,
+  TPluginItem,
+  TPlugins,
+  TSettings,
+} from "@/@types";
+import { TreeJSConsole } from "@/utils/console";
 
-export default function MicroPlugin<TBase extends new (...args: any[]) => object>(
-  Interface: TBase & { plugins?: Record<string, any> }
-) {
+export default function MicroPlugin<
+  TBase extends new (...args: any[]) => object
+>(Interface: TBase & { plugins?: Record<string, any> }) {
   Interface.plugins = {};
 
   return class extends Interface {
@@ -37,14 +43,18 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
     /**
      * Registers a plugin.
      *
-     * @param {function} fn
+     * @param {string} name - The name of the plugin.
+     * @param {function} fn - The function that initializes the plugin.
+     * The function receives the settings object as an argument.
+     * It should return an object that represents the plugin's functionality.
      */
     static define(name: string, fn: (this: any, settings: TSettings) => any) {
       if (!Interface.plugins) {
         Interface.plugins = {};
       }
       if (Interface.plugins[name]) {
-        throw new TreeJSError(`Plugin "${name}" already defined`);
+        TreeJSConsole.warn(`Plugin "${name}" already defined`);
+        return;
       }
       Interface.plugins[name] = {
         fn: fn,
@@ -65,7 +75,7 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
      * Hash (with options):
      *   {'a': { ... }, 'b': { ... }, 'c': { ... }}
      *
-     * @param {array|object} plugins
+     * @param {string[]|TPluginItem[]|TPluginHash[]} plugins
      */
     initializePlugins(plugins: string[] | TPluginItem[] | TPluginHash) {
       const queue = this.buildPluginQueue(plugins, this.plugins.settings);
@@ -76,16 +86,21 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
     }
 
     /**
+     * Builds the plugin queue from the provided plugins.
+     * It processes the plugins and their options, returning a queue of plugin names.
      *
-     * @param plugins
-     * @param settings
-     * @returns
+     * @param {string[]|TPluginItem[]|TPluginHash} plugins - The plugins to process.
+     * @param {TSettings} settings - The settings object to store plugin options.
+     * @returns {string[]} - An array of plugin names in the order they should be loaded.
      */
-    private buildPluginQueue(plugins: string[] | TPluginItem[] | TPluginHash, settings: TSettings): string[] {
+    private buildPluginQueue(
+      plugins: string[] | TPluginItem[] | TPluginHash,
+      settings: TSettings
+    ): string[] {
       const queue: string[] = [];
       if (Array.isArray(plugins)) {
         plugins.forEach((plugin: string | TPluginItem) => {
-          if (typeof plugin === 'string') {
+          if (typeof plugin === "string") {
             queue.push(plugin);
           } else {
             settings[plugin.name] = plugin.options;
@@ -103,25 +118,36 @@ export default function MicroPlugin<TBase extends new (...args: any[]) => object
       return queue;
     }
 
+    /**
+     * Loads a plugin by name.
+     *
+     * @param {K} name - The name of the plugin to load.
+     */
     loadPlugin<K extends keyof PluginTypes>(name: K) {
       const plugins = this.plugins;
       if (!Interface.plugins) {
-        throw new Error('Plugins registry is not initialized');
+        TreeJSConsole.error("Plugins registry is not initialized");
+        return;
       }
 
       if (!Object.hasOwn(Interface.plugins, name)) {
-        throw new Error('Unable to find "' + name + '" plugin');
+        TreeJSConsole.error(`Plugin "${name as string}" is not defined`);
+        return;
       }
 
       plugins.requested[name] = true;
-      const result = Interface.plugins[name].fn.apply(this, [this.plugins.settings[name] || {}]) as PluginTypes[K];
+      const result = Interface.plugins[name].fn.apply(this, [
+        this.plugins.settings[name] || {},
+      ]) as PluginTypes[K];
       plugins.loaded[name] = result;
       plugins.names.push(name);
     }
 
     /**
-     * Initializes a plugin.
+     * Requires a plugin by name.
+     * If the plugin is not loaded, it will load it first.
      *
+     * @param {K} name - The name of the plugin to require.
      */
     require<K extends keyof PluginTypes>(name: K) {
       const plugins = this.plugins;
