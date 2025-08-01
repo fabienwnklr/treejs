@@ -21,7 +21,7 @@ import { Icons } from '@/Icons';
 
 // !! Plugins !!
 import Checkbox from './plugins/checkbox/plugin';
-import ContextMenu from './plugins/context-menu/plugin';
+// import ContextMenu from './plugins/context-menu/plugin';
 
 export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   $list: TreeElement;
@@ -54,6 +54,11 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       type: 'boolean',
     },
   ];
+  /**
+   * List of available attributes for the TreeJS LI nodes.
+   * These attributes can be used to configure the nodes in the tree.
+   * It's easier to use these attributes in HTML than to use the options object.
+   */
   _available_li_attributes = [
     {
       description: 'Boolean attribute to indicate if the node is closed by default.',
@@ -138,12 +143,13 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * Initialize all .treejs elements in the document with the provided options.
    *
    * @param {Partial<TreeJSOptions>} options - The options to configure the tree.
+   * @throws {TreeJSError} if options is not an object.
    * @throws {TreeJSError} if no ul.treejs elements are found in the document.
    * This method will initialize all TreeJS instances in the document with the provided options.
    * It will search for all ul elements with the class treejs and create a new TreeJS instance for each of them.
    * If no ul.treejs elements are found, it will throw an error.
    * @example
-   * TreeJS.init({ showPath: true, openOnDblClick: false });
+   * TreeJS.init({ showPath: false, openOnDblClick: true });
    * @memberof TreeJS
    * @static
    * @public
@@ -152,7 +158,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * @description
    * This method is useful to initialize all TreeJS instances in the document with the same options.
    * It can be called once at the beginning of your application to set up the trees.
-   * 
+   *
    * @see {@link TreeJSOptions} for available options.
    * @see {@link TreeJSDefaultsOptions} for default options.
    */
@@ -160,7 +166,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     if (typeof options !== 'object') {
       throw new TreeJSError(`options must be an object, actual is ${typeof options}`);
     }
-    
+
     const $trees = document.querySelectorAll<HTMLUListElement>('ul.treejs');
     if ($trees.length === 0) {
       throw new TreeJSError('No ul.treejs elements found in the document.');

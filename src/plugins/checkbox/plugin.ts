@@ -54,7 +54,8 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
         if ($child) {
           $child.querySelectorAll('input').forEach(($input) => {
             $input.checked = $a.checked;
-            checked[$input.name] = { checked: $input.checked, name: $input.name, value: $input.value };
+            // Dispatch change event to update the state
+            $input.dispatchEvent(new Event('change'));
           });
         }
 
