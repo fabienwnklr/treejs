@@ -135,6 +135,48 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   }
 
   /**
+   * Initialize all .treejs elements in the document with the provided options.
+   *
+   * @param {Partial<TreeJSOptions>} options - The options to configure the tree.
+   * @throws {TreeJSError} if no ul.treejs elements are found in the document.
+   * This method will initialize all TreeJS instances in the document with the provided options.
+   * It will search for all ul elements with the class treejs and create a new TreeJS instance for each of them.
+   * If no ul.treejs elements are found, it will throw an error.
+   * @example
+   * TreeJS.init({ showPath: true, openOnDblClick: false });
+   * @memberof TreeJS
+   * @static
+   * @public
+   * @returns {void}
+   * @throws {TreeJSError} if no ul.treejs elements are found in the document.
+   * @description
+   * This method is useful to initialize all TreeJS instances in the document with the same options.
+   * It can be called once at the beginning of your application to set up the trees.
+   * 
+   * @see {@link TreeJSOptions} for available options.
+   * @see {@link TreeJSDefaultsOptions} for default options.
+   */
+  static init(options: Partial<TreeJSOptions> = {}): TreeJS | TreeJS[] {
+    if (typeof options !== 'object') {
+      throw new TreeJSError(`options must be an object, actual is ${typeof options}`);
+    }
+    
+    const $trees = document.querySelectorAll<HTMLUListElement>('ul.treejs');
+    if ($trees.length === 0) {
+      throw new TreeJSError('No ul.treejs elements found in the document.');
+    }
+    // Initialize each tree with the provided options
+    const trees = Array.from($trees).map(($tree) => new TreeJS($tree, options));
+
+    if (trees.length === 1) {
+      // If only one tree is found, return the instance directly
+      return trees[0];
+    }
+    // If multiple trees are found, return an array of instances
+    return trees;
+  }
+
+  /**
    * Bind `this` to event handlers
    * used to ensure that `this` refers to the TreeJS instance when the event handler is called
    */

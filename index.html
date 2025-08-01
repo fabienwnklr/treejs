@@ -66,7 +66,7 @@
   <body>
     <div id="app" style="position: relative; overflow: hidden">
       <div class="left">
-        <ul id="tree">
+        <ul id="tree" class="treejs">
           <li data-treejs-onselect="console.log('First')">First</li>
           <li>Second</li>
           <li data-treejs-open="true">
@@ -131,7 +131,7 @@
       });
       import { TreeJS } from '/src/TreeJS.ts';
 
-      const tree = new TreeJS('tree', { openOnDblClick: false, plugins: ['checkbox'] });
+      const tree = TreeJS.init({ openOnDblClick: false, plugins: ['checkbox'] });
       window.TREE = tree;
       window.TreeJS = TreeJS;
 
