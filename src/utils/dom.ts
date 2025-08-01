@@ -131,7 +131,7 @@ export function skeletonLoader(prefix: string): HTMLDivElement {
 }
 
 export function parseNode(li: HTMLLIElement, _data_attribute: string, anchorClass: string): TreeJSJSON {
-  const label = li.querySelector(`.${anchorClass}`)?.textContent || '';
+  const label = li.querySelector(`.${anchorClass}`)?.textContent?.trim() || '';
   const name = li.getAttribute(`${_data_attribute}name`) || '';
   const children: TreeJSJSON[] = [];
 
