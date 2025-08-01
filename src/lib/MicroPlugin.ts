@@ -17,18 +17,12 @@
  * @author Fabien Winkler <fabien.winkler@outlook.fr>
  */
 
-import {
-  PluginTypes,
-  TPluginHash,
-  TPluginItem,
-  TPlugins,
-  TSettings,
-} from "@/@types";
-import { TreeJSConsole } from "@/utils/console";
+import { PluginTypes, TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
+import { TreeJSConsole } from '@/utils/console';
 
-export default function MicroPlugin<
-  TBase extends new (...args: any[]) => object
->(Interface: TBase & { plugins?: Record<string, any> }) {
+export default function MicroPlugin<TBase extends new (...args: any[]) => object>(
+  Interface: TBase & { plugins?: Record<string, any> }
+) {
   Interface.plugins = {};
 
   return class extends Interface {
@@ -93,14 +87,11 @@ export default function MicroPlugin<
      * @param {TSettings} settings - The settings object to store plugin options.
      * @returns {string[]} - An array of plugin names in the order they should be loaded.
      */
-    private buildPluginQueue(
-      plugins: string[] | TPluginItem[] | TPluginHash,
-      settings: TSettings
-    ): string[] {
+    private buildPluginQueue(plugins: string[] | TPluginItem[] | TPluginHash, settings: TSettings): string[] {
       const queue: string[] = [];
       if (Array.isArray(plugins)) {
         plugins.forEach((plugin: string | TPluginItem) => {
-          if (typeof plugin === "string") {
+          if (typeof plugin === 'string') {
             queue.push(plugin);
           } else {
             settings[plugin.name] = plugin.options;
@@ -126,7 +117,7 @@ export default function MicroPlugin<
     loadPlugin<K extends keyof PluginTypes>(name: K) {
       const plugins = this.plugins;
       if (!Interface.plugins) {
-        TreeJSConsole.error("Plugins registry is not initialized");
+        TreeJSConsole.error('Plugins registry is not initialized');
         return;
       }
 
@@ -136,9 +127,7 @@ export default function MicroPlugin<
       }
 
       plugins.requested[name] = true;
-      const result = Interface.plugins[name].fn.apply(this, [
-        this.plugins.settings[name] || {},
-      ]) as PluginTypes[K];
+      const result = Interface.plugins[name].fn.apply(this, [this.plugins.settings[name] || {}]) as PluginTypes[K];
       plugins.loaded[name] = result;
       plugins.names.push(name);
     }

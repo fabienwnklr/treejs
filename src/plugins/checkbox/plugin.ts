@@ -28,7 +28,7 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
 
   this._buildCheckboxes = ($list: NodeListOf<HTMLLIElement>, $parent?: HTMLLIElement) => {
     if (!$list || !$list.length) return;
-    
+
     let parentChecked = false;
     if ($parent) {
       // check if parent checked

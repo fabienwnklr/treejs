@@ -75,6 +75,11 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       name: 'fetch-url',
       type: 'string',
     },
+    {
+      description: 'Boolean attribute to indicate if the child nodes should be opened by default.',
+      name: 'open-child',
+      type: 'boolean',
+    },
   ];
   /**
    * Create a new TreeJS instance.
@@ -537,7 +542,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     this._data[name || ''] = response;
     this._loading[name || ''] = false;
 
-    let html : HTMLLIElement;
+    let html: HTMLLIElement;
     if (isJSON) {
       html = JSONToHTMLElement<HTMLLIElement>(response);
     } else if (isHTML) {

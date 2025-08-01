@@ -1,4 +1,4 @@
-import { CheckboxPlugin } from "@/plugins/checkbox/@types";
+import { CheckboxPlugin } from '@/plugins/checkbox/@types';
 
 export interface TreeElement extends HTMLUListElement {
   treejs?: TreeJS;
@@ -18,7 +18,7 @@ export interface TreeJSOptions {
   };
 }
 
-export type AvailablePlugins = "context-menu" | "checkbox";
+export type AvailablePlugins = 'context-menu' | 'checkbox';
 
 export interface TreeJSJSON {
   label: string;
@@ -94,7 +94,7 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
      */
     target: HTMLLIElement;
   }) => void;
-  "fetch-error": (payload: {
+  'fetch-error': (payload: {
     /**
      * Error message
      */

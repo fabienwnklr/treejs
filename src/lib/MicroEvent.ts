@@ -19,11 +19,9 @@
  * @author Winkler Fabien (https://github.com/fabienwnklr)
  */
 
-import { TreeJSConsole } from "@/utils/console";
+import { TreeJSConsole } from '@/utils/console';
 
-export default class MicroEvent<
-  TEvents extends Record<string, (...args: any[]) => any>
-> {
+export default class MicroEvent<TEvents extends Record<string, (...args: any[]) => any>> {
   private _events: { [K in keyof TEvents]?: TEvents[K][] } = {};
 
   constructor() {
@@ -32,16 +30,12 @@ export default class MicroEvent<
 
   on<K extends keyof TEvents>(event: K, fct: TEvents[K]) {
     if (!event) {
-      TreeJSConsole.error("MicroEvent: No event provided to add a listener.");
+      TreeJSConsole.error('MicroEvent: No event provided to add a listener.');
       return;
     }
 
-    if (typeof fct !== "function") {
-      TreeJSConsole.error(
-        `MicroEvent: The provided listener for event "${
-          event as string
-        }" is not a function.`
-      );
+    if (typeof fct !== 'function') {
+      TreeJSConsole.error(`MicroEvent: The provided listener for event "${event as string}" is not a function.`);
       return;
     }
 
@@ -53,17 +47,11 @@ export default class MicroEvent<
   off<K extends keyof TEvents>(event: K, fct?: TEvents[K]) {
     if (event === undefined) {
       this._events = {};
-      TreeJSConsole.warn(
-        "MicroEvent: No event provided to remove all listeners."
-      );
+      TreeJSConsole.warn('MicroEvent: No event provided to remove all listeners.');
       return;
     }
     if (!fct) {
-      TreeJSConsole.warn(
-        `MicroEvent: No function provided to remove for event "${
-          event as string
-        }".`
-      );
+      TreeJSConsole.warn(`MicroEvent: No function provided to remove for event "${event as string}".`);
       // If no function is provided, remove all listeners for the event
       delete this._events[event];
       return;
@@ -75,13 +63,11 @@ export default class MicroEvent<
 
   trigger<K extends keyof TEvents>(event: K, ...args: Parameters<TEvents[K]>) {
     if (!event) {
-      TreeJSConsole.error("MicroEvent: No event provided to trigger.");
+      TreeJSConsole.error('MicroEvent: No event provided to trigger.');
       return;
     }
     if (!this._events[event]) {
-      TreeJSConsole.warn(
-        `MicroEvent: No listeners registered for event "${event as string}".`
-      );
+      TreeJSConsole.warn(`MicroEvent: No listeners registered for event "${event as string}".`);
       return;
     }
     const event_array = this._events[event];
