@@ -1,15 +1,31 @@
 import { stringToHTMLElement } from '@utils/dom';
 import { TreeJSError } from '@utils/error';
 import chevron from '@/Icons/chevron.svg?raw';
+import createFile from '@/Icons/create-file.svg?raw';
+import createfolder from '@/Icons/create-folder.svg?raw';
 import file from '@/Icons/file.svg?raw';
 import folder from '@/Icons/folder.svg?raw';
 import folderOpen from '@/Icons/folder-open.svg?raw';
+import removeFile from '@/Icons/remove-file.svg?raw';
+import removefolder from '@/Icons/remove-folder.svg?raw';
 export class Icons {
   static _prefix = '';
   static _icon_class = '';
-  static iconsTypes: string[] = ['folder', 'file', 'chevron', 'loader', 'folderOpen'];
+  static iconsTypes: string[] = ['folder', 'file', 'chevron', 'loader', 'folderOpen', 'createFolder', 'removeFile', 'removeFolder', 'createFile'];
 
-  static get(type: 'folder' | 'file' | 'chevron' | 'loader' | 'folderOpen', content?: string): HTMLSpanElement {
+  static get(
+    type:
+      | 'folder'
+      | 'file'
+      | 'chevron'
+      | 'loader'
+      | 'folderOpen'
+      | 'createFolder'
+      | 'removeFile'
+      | 'removeFolder'
+      | 'createFile',
+    content?: string
+  ): HTMLSpanElement {
     // check if type is valid
     if (!Icons.iconsTypes.includes(type)) {
       throw new TreeJSError(`Invalid icon type: ${type}. Expected 'folder', 'file', 'chevron', or 'loader'.`);
@@ -43,5 +59,21 @@ export class Icons {
     return stringToHTMLElement<HTMLSpanElement>(`<div class="${this._prefix}loader">
             <span class="${this._prefix}loader-icon"></span>
           </div>`);
+  }
+
+  static createFolder(): HTMLSpanElement {
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${createfolder}</span>`);
+  }
+
+  static removeFile(): HTMLSpanElement {
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${removeFile}</span>`);
+  }
+
+  static removeFolder(): HTMLSpanElement {
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${removefolder}</span>`);
+  }
+
+  static createFile(): HTMLSpanElement {
+    return stringToHTMLElement<HTMLSpanElement>(`<span class="${this._icon_class}">${createFile}</span>`);
   }
 }
