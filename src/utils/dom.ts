@@ -16,11 +16,12 @@ export function findNodeByType(list: NodeList, type: string): Node | undefined {
   }
 }
 
-export function createCheckbox(name: string, prefix: string): HTMLInputElement {
+export function createCheckbox(name: string, prefix: string, checked: boolean = false): HTMLInputElement {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.name = name;
   checkbox.classList.add(`${prefix}checkbox`);
+  checkbox.checked = checked;
 
   return checkbox;
 }

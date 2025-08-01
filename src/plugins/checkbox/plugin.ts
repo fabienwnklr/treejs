@@ -26,7 +26,14 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
     }
   });
 
-  this._buildCheckboxes = ($list: NodeListOf<HTMLLIElement>) => {
+  this._buildCheckboxes = ($list: NodeListOf<HTMLLIElement>, $parent?: HTMLLIElement) => {
+    if (!$list || !$list.length) return;
+    
+    let parentChecked = false;
+    if ($parent) {
+      // check if parent checked
+      parentChecked = $parent.querySelector<HTMLInputElement>(`.${this._prefix}checkbox:first-child`)?.checked || false;
+    }
     $list.forEach(($li) => {
       const $child = $li.querySelector('ul');
       let $checkbox: HTMLInputElement | null = null;
@@ -34,7 +41,7 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
       if (!anchorWrapper || !anchorWrapper.textContent) return;
       $li.classList.add(`${this._li_class}--checkbox`);
       const name = _getLiName($li, anchorWrapper);
-      $checkbox = createCheckbox(name, this._prefix);
+      $checkbox = createCheckbox(name, this._prefix, parentChecked);
       anchorWrapper.prepend($checkbox);
 
       const checked: CheckboxJSON = {};
