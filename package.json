@@ -47,7 +47,10 @@
     "release": "npm run build && commit-and-tag-version && git push --follow-tags origin master && npm publish --access public",
     "release:patch": "npm run build && standard-version --release-as patch && npm run publish",
     "release:minor": "npm run build && standard-version --release-as minor && npm run publish",
-    "release:major": "npm run build && standard-version --release-as major && npm run publish"
+    "release:major": "npm run build && standard-version --release-as major && npm run publish",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.2",
@@ -65,6 +68,7 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.0",
+    "vitepress": "^1.6.3",
     "vitest": "^0.34.6"
   }
 }

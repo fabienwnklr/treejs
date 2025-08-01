@@ -47,7 +47,7 @@
   },
   "linter": {
     "enabled": true,
-    "includes": ["**", "**/*.css", "**/*.scss", "**/*.svg"],
+    "includes": ["src/**/*.ts", "biome.json"],
     "rules": {
       "complexity": {
         "noAdjacentSpacesInRegex": "error",
