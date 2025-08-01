@@ -517,10 +517,11 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     const data = await fetch(uri);
     if (!data.ok) {
+      const error = await data.text();
       this._loading[name || ''] = false;
       this.trigger('fetch-error', {
-        error: data.text(),
-        name: name,
+        error,
+        name,
         target: $li,
         uri,
       });
@@ -536,7 +537,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     this._data[name || ''] = response;
     this._loading[name || ''] = false;
 
-    let html: HTMLLIElement | DocumentFragment = document.createDocumentFragment();
+    let html : HTMLLIElement;
     if (isJSON) {
       html = JSONToHTMLElement<HTMLLIElement>(response);
     } else if (isHTML) {
@@ -550,7 +551,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     this._buildList($liList);
 
     if (this.plugins.loaded.checkbox) {
-      this.plugins.loaded.checkbox._buildCheckboxes($liList);
+      this.plugins.loaded.checkbox._buildCheckboxes($liList, $li);
     }
 
     $ul.innerHTML = '';
@@ -566,5 +567,5 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   }
 }
 
-TreeJS.define('context-menu', ContextMenu);
 TreeJS.define('checkbox', Checkbox);
+// TreeJS.define('context-menu', ContextMenu);

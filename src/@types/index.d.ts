@@ -18,18 +18,7 @@ export interface TreeJSOptions {
   };
 }
 
-export type AvailablePlugins =
-  | "context-menu"
-  | "checkbox"
-  | "drag-drop"
-  | "search"
-  | "sort"
-  | "filter";
-
-export interface TreeJSPlugin {
-  name: AvailablePlugins;
-  options?: Record<string, any>;
-}
+export type AvailablePlugins = "context-menu" | "checkbox";
 
 export interface TreeJSJSON {
   label: string;
@@ -45,24 +34,85 @@ export interface PluginTypes {
   checkbox: CheckboxPlugin;
 }
 
-export type TreeJSEvents = {
-  initialize: (payload: { target: HTMLElement }) => void;
-  select: (payload: { name: string; target: HTMLElement }) => void;
-  open: (payload: { name: string; target: HTMLElement }) => void;
-  close: (payload: { name: string; target: HTMLElement }) => void;
-  fetch: (payload: { name: string; target: HTMLElement; uri: string }) => void;
-  fetched: (payload: {
+export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
+  initialize: (payload: { target: TreeElement }) => void;
+  select: (payload: {
+    /**
+     * The name of selected item
+     */
     name: string;
-    response: Response;
-    target: HTMLElement;
+    /**
+     * The target HTML element of the selected item
+     */
+    target: HTMLLIElement;
   }) => void;
-  "fetch-error": (payload: {
-    error: any;
+  open: (payload: {
+    /**
+     * The name of the item opened
+     */
     name: string;
-    target: HTMLElement;
+    /**
+     * The target HTML element of the opened item
+     */
+    target: HTMLLIElement;
+  }) => void;
+  close: (payload: {
+    /**
+     * The name of the item closed
+     */
+    name: string;
+    /**
+     * The target HTML element of the closed item
+     */
+    target: HTMLLIElement;
+  }) => void;
+  fetch: (payload: {
+    /**
+     * The name of the item being fetched
+     */
+    name: string;
+    /**
+     * The target HTML element of the item being fetched
+     */
+    target: HTMLLIElement;
+    /**
+     * The URI from which the item is being fetched
+     */
     uri: string;
   }) => void;
-};
+  fetched: (payload: {
+    /**
+     * The name of the item that was fetched
+     */
+    name: string;
+    /**
+     * The response object from the fetch operation
+     */
+    response: Response;
+    /**
+     * The target HTML element of the fetched item
+     */
+    target: HTMLLIElement;
+  }) => void;
+  "fetch-error": (payload: {
+    /**
+     * Error message
+     */
+    error: string;
+    /**
+     * The name of the item that encountered an error during fetch
+     */
+    name: string;
+    /**
+     * The target HTML element of the item that encountered an error during fetch
+     */
+    target: HTMLLIElement;
+    /**
+     * The URI that was attempted to be fetched
+     */
+    uri: string;
+  }) => void;
+}
 
 export type TPlugins = {
   names: string[];
@@ -74,10 +124,3 @@ export type TPlugins = {
 
 export type TPluginItem = { name: string; options: object };
 export type TPluginHash = Record<string, object>;
-export type TCallback = (...args: any) => any;
-
-export interface IEventEmitter {
-  on(events: string, fct: TCallback): void;
-  off(events: string, fct: TCallback): void;
-  trigger(events: string, ...args: any): void;
-}

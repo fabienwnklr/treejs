@@ -1,6 +1,9 @@
 /**
- * microplugin.js
- * Copyright (c) 2013 Brian Reavis & contributors
+ * MicroPlugin.ts
+ * 
+ * MicroPlugin is a mixin that allows classes to define and manage plugins.
+ * It provides methods to define, initialize, and require plugins with options.
+ * Copyright (c) 2024 Fabien Winkler & contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at:
@@ -11,11 +14,11 @@
  * ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  *
- * @author Brian Reavis <brian@thirdroute.com>
+ * @author Fabien Winkler <fabien.winkler@outlook.fr>
  */
 
 import { TreeJSError } from '@utils/error';
-import { AvailablePlugins, PluginTypes, TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
+import { PluginTypes, TPluginHash, TPluginItem, TPlugins, TSettings } from '@/@types';
 
 export default function MicroPlugin<TBase extends new (...args: any[]) => object>(
   Interface: TBase & { plugins?: Record<string, any> }
