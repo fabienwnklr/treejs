@@ -18,20 +18,30 @@ export default function (this: TreeJS, opts: myType = {}) {
   const defaultOpts: myType = { prop1: '' };
   opts = deepMerge<myType>(opts, defaultOpts);
 
+  const contextMenu = document.createElement('div');
+  contextMenu.classList.add(`${this._prefix}contextmenu`);
+
+  this._folderMenu = () => {
+    contextMenu.innerHTML = `
+      <button id="create-folder">${createFolder}</i>Create folder</button>
+       <button id="create-file">${createFile}</i>Create file</button>
+      <hr />
+      <button id="remove-folder">${removeFolder}</i>Remove folder</button>`;
+  };
+
+  this._fileMenu = () => {
+    contextMenu.innerHTML = `
+      <button id="create-folder">${createFolder}</i>Create folder</button>
+      <button id="create-file">${createFile}</i>Create file</button>
+
+      <hr />
+      <button id="remove-file">${removeFile}</i>Remove file</button>`;
+  };
+
   this.on('initialize', () => {
     console.log(opts);
 
     const body = document.body;
-
-    const contextMenu = document.createElement('div');
-    contextMenu.classList.add(`${this._prefix}contextmenu`);
-
-    contextMenu.innerHTML = `
-      <button id="create-folder">${createFolder}</i>Create folder</button>
-      <button id="create-file">${createFile}</i>Create file</button>
-      <hr />
-      <button id="remove-file">${removeFile}</i>Remove file</button>
-      <button id="remove-folder">${removeFolder}</i>Remove folder</button>`;
 
     const closeContextMenu = (e: MouseEvent) => {
       if (e.target === contextMenu || !contextMenu.isConnected) return;
@@ -44,7 +54,11 @@ export default function (this: TreeJS, opts: myType = {}) {
       const isFile = !(e.target as HTMLElement).closest('li')?.classList.contains('has-children');
       const isFolder = (e.target as HTMLElement).closest('li')?.classList.contains('has-children');
 
-      console.log('isFile:', isFile, 'isFolder:', isFolder);
+      if (isFile) {
+        this._fileMenu();
+      } else if (isFolder) {
+        this._folderMenu();
+      }
 
       contextMenu.style.left = `${e.clientX}px`;
       contextMenu.style.top = `${e.clientY}px`;
@@ -56,4 +70,8 @@ export default function (this: TreeJS, opts: myType = {}) {
     });
     window.addEventListener('click', closeContextMenu);
   });
+
+  return {
+    options: opts,
+  }
 }

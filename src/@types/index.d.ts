@@ -1,4 +1,5 @@
-import { CheckboxPlugin } from '@/plugins/checkbox/@types';
+import type { CheckboxPlugin } from '@/plugins/checkbox/@types';
+import type { ContextMenuPlugin } from '@/plugins/context-menu/@types';
 
 export interface TreeElement extends HTMLUListElement {
   treejs?: TreeJS;
@@ -32,6 +33,7 @@ export type TSettings = {
 
 export interface PluginTypes {
   checkbox: CheckboxPlugin;
+  'context-menu': ContextMenuPlugin;
 }
 
 export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
