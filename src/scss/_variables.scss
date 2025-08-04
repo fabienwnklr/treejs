@@ -3,10 +3,15 @@ $bg-primary: rgba(darken($primary, 5%) , .2);
 $bg-primary-selected: rgba(darken($primary, 20%), .1);
 $text-primary: darken($primary, 10%);
 $prefix: 'treejs';
+$danger: #b92e2e !default;
+$bg-danger: rgba($danger, .7);
+$text-danger: #fff;
 
 :root {
     --#{$prefix}-primary: #{$primary};
     --#{$prefix}-bg-primary: #{$bg-primary};
     --#{$prefix}-text-primary: #{$text-primary};
     --#{$prefix}-bg-primary-selected: #{$bg-primary-selected};
+    --#{$prefix}-text-danger: #{$text-danger};
+    --#{$prefix}-bg-danger: #{$bg-danger};
 }

@@ -21,4 +21,39 @@ describe('Plugin - Context menu', () => {
   it('should initialize the context menu plugin', () => {
     expect(Tree.plugins.loaded['context-menu']).toBeDefined();
   });
+
+  it('should open context menu on right click and close on click outside', () => {
+    const body = document.body;
+    const firstItem = document.getElementById('first') as HTMLLIElement;
+    firstItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    // context menu should be visible
+    expect(contextMenu).toBeDefined();
+    expect(contextMenu.style.display).not.toBe('none');
+
+    body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const contextMenuAfterClick = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    // context menu should be hidden
+    expect(contextMenuAfterClick).toBeNull();
+  });
+
+  it('should show folder context menu on right click of a folder', () => {
+    const firstItem = document.getElementById('first') as HTMLLIElement;
+    firstItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    // context menu should contain folder options
+    expect(contextMenu.innerHTML).toContain('Create folder');
+    expect(contextMenu.innerHTML).toContain('Create file');
+    expect(contextMenu.innerHTML).toContain('Remove folder');
+  });
+
+  it('should show file context menu on right click of a file', () => {
+    const firstChild = document.querySelector('#first ul li') as HTMLLIElement;
+    firstChild.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    // context menu should contain file options
+    expect(contextMenu.innerHTML).toContain('Create folder');
+    expect(contextMenu.innerHTML).toContain('Create file');
+    expect(contextMenu.innerHTML).toContain('Remove file');
+  });
 });

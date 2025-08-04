@@ -23,19 +23,19 @@ export default function (this: TreeJS, opts: myType = {}) {
 
   this._folderMenu = () => {
     contextMenu.innerHTML = `
-      <button id="create-folder">${createFolder}</i>Create folder</button>
-       <button id="create-file">${createFile}</i>Create file</button>
+      <button id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
+       <button id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
       <hr />
-      <button id="remove-folder">${removeFolder}</i>Remove folder</button>`;
+      <button id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}</i>Remove folder</button>`;
   };
 
   this._fileMenu = () => {
     contextMenu.innerHTML = `
-      <button id="create-folder">${createFolder}</i>Create folder</button>
-      <button id="create-file">${createFile}</i>Create file</button>
+      <button id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
+      <button id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
 
       <hr />
-      <button id="remove-file">${removeFile}</i>Remove file</button>`;
+      <button id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}</i>Remove file</button>`;
   };
 
   this.on('initialize', () => {

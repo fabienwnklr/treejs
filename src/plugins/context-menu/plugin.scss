@@ -11,7 +11,7 @@
   animation: open 0.3s;
   transform-origin: top left;
 
-  button {
+  .#{$prefix}-contextmenu-btn {
     background: none;
     padding: 0.5rem;
     border: none;
@@ -23,9 +23,18 @@
     transition: background-color .2s ease;
     border-radius: 0.5rem;
 
-    &:hover {
-        background-color: var(--#{$prefix}-bg-primary);
+    &:not(.danger):hover {
+      background-color: var(--#{$prefix}-bg-primary);
+    }
+
+    &.danger:hover {
+      background-color: var(--#{$prefix}-bg-danger);
+      color: var(--#{$prefix}-text-danger);
+
+      svg {
+        fill: var(--#{$prefix}-text-danger);
       }
+    }
   }
 
   hr {
