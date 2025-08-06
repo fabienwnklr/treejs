@@ -8,10 +8,8 @@ import type { myType } from './@types';
 
 // importing style
 import './plugin.scss';
-import { Icons } from '@/Icons';
-import { TreeJSConsole } from '@/utils/console';
-import { createAnchorElement, createLiElement, stringToHTMLElement } from '@/utils/dom';
-import { TreeJSError, TreeJSTypeError } from '@/utils/error';
+import { createLiElement } from '@/utils/dom';
+import {  TreeJSTypeError } from '@/utils/error';
 
 /**
  * Context menu plugin
