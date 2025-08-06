@@ -63,9 +63,6 @@
       background-color: var(--#{$prefix}-bg-primary) !important;
       color: var(--#{$prefix}-text-primary) !important;
     }
-    &:focus {
-      // outline: 2px solid var(--#{$prefix}-primary);
-    }
 
     .#{$prefix}-anchor-label {
       text-decoration: none;
