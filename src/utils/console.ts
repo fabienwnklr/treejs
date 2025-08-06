@@ -1,6 +1,6 @@
 export class TreeJSConsole {
   static log(...args: any[]) {
-    console.log(...args);
+    console.log(`%cTreeJS: ${args.join(' ')}`, 'color: black; font-weight: bold;');
   }
 
   static warn(...args: any[]) {

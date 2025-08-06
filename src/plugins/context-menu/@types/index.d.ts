@@ -8,6 +8,11 @@ declare module '@/TreeJS' {
 
 
 export interface ContextMenuPlugin {
-  _folderMenu: () => void;
-  _fileMenu: () => void;
+  _folderMenu: (name: string) => void;
+  _fileMenu: (name: string) => void;
+  createFolder: (label: string, name?: string, parent?: HTMLLIElement) => void;
+  _removeFolder: (event: Event) => void;
+  _createFile: (event: Event) => void;
+  _removeFile: (event: Event) => void;
+  _bindContextMenuEvents: () => void;
 }

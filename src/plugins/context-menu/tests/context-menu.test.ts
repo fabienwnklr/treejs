@@ -56,4 +56,14 @@ describe('Plugin - Context menu', () => {
     expect(contextMenu.innerHTML).toContain('Create file');
     expect(contextMenu.innerHTML).toContain('Remove file');
   });
+
+  it('should button has data name attribute', () => {
+    const firstChild = document.querySelector('#first ul li') as HTMLLIElement;
+    firstChild.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    const buttons = contextMenu.querySelectorAll('button');
+    buttons.forEach((button) => {
+      expect(button.getAttribute(`${Tree._data_attribute}name`)).toBeDefined();
+    });
+  })
 });

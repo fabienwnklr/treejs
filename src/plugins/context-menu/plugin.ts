@@ -8,6 +8,10 @@ import type { myType } from './@types';
 
 // importing style
 import './plugin.scss';
+import { Icons } from '@/Icons';
+import { TreeJSConsole } from '@/utils/console';
+import { createAnchorElement, createLiElement, stringToHTMLElement } from '@/utils/dom';
+import { TreeJSError, TreeJSTypeError } from '@/utils/error';
 
 /**
  * Context menu plugin
@@ -21,26 +25,23 @@ export default function (this: TreeJS, opts: myType = {}) {
   const contextMenu = document.createElement('div');
   contextMenu.classList.add(`${this._prefix}contextmenu`);
 
-  this._folderMenu = () => {
+  this._folderMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
-       <button id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
       <hr />
-      <button id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}</i>Remove folder</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}</i>Remove folder</button>`;
   };
 
-  this._fileMenu = () => {
+  this._fileMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
-      <button id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
-
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
       <hr />
-      <button id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}</i>Remove file</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}</i>Remove file</button>`;
   };
 
   this.on('initialize', () => {
-    console.log(opts);
-
     const body = document.body;
 
     const closeContextMenu = (e: MouseEvent) => {
@@ -53,25 +54,82 @@ export default function (this: TreeJS, opts: myType = {}) {
 
       const isFile = !(e.target as HTMLElement).closest('li')?.classList.contains('has-children');
       const isFolder = (e.target as HTMLElement).closest('li')?.classList.contains('has-children');
+      const name = (e.target as HTMLElement).closest('li')?.getAttribute(`${this._data_attribute}name`);
+
+      if (!name) {
+        throw new TreeJSTypeError('Required name is null or undefined');
+      }
 
       if (isFile) {
-        this._fileMenu();
+        this._fileMenu(name);
       } else if (isFolder) {
-        this._folderMenu();
+        this._folderMenu(name);
       }
 
       contextMenu.style.left = `${e.clientX}px`;
       contextMenu.style.top = `${e.clientY}px`;
 
       body.appendChild(contextMenu);
+      this._bindContextMenuEvents();
     };
-    this.$liList.forEach(($li) => {
-      $li.addEventListener('contextmenu', openContextMenu);
-    });
+    this.$list.addEventListener('contextmenu', openContextMenu);
     window.addEventListener('click', closeContextMenu);
   });
 
+  this._bindContextMenuEvents = () => {
+    contextMenu.querySelector('#create-folder')?.addEventListener('click', (event: Event) => {
+      const pointerEvent = event as PointerEvent;
+      const $button = pointerEvent.currentTarget as HTMLButtonElement;
+      const name = $button.getAttribute(`${this._data_attribute}name`);
+      const $parent = document.querySelector(`li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+      if (name && $parent) {
+        this.createFolder('New folder', '', $parent);
+        return;
+      }
+
+      throw new TreeJSTypeError('Required name is null or undefined or parent not found');
+    });
+    contextMenu.querySelector('#remove-folder')?.addEventListener('click', this._removeFolder);
+    contextMenu.querySelector('#create-file')?.addEventListener('click', this._createFile);
+    contextMenu.querySelector('#remove-file')?.addEventListener('click', this._removeFile);
+  };
+
+  this.createFolder = (label: string, name?: string, parent?: HTMLLIElement) => {
+    if (!parent) {
+      throw new TreeJSTypeError('Required parent is null or undefined');
+    }
+    const isFolder = parent.classList.contains('has-children');
+    const $folder = createLiElement(this._li_class, true, this._anchor_class, label, name);
+
+    if (isFolder) {
+      const ul = parent.querySelector('ul');
+      if (ul) {
+        ul.appendChild($folder);
+      }
+    } else {
+      parent.after($folder);
+    }
+
+    // then bind event to the new folder
+    this._bindEvents();
+  };
+
+  // this._removeFolder = (event: Event) => {
+  //   const pointerEvent = event as PointerEvent;
+  //   TreeJSConsole.log('remove folder', pointerEvent);
+  // };
+
+  // this._createFile = (event: Event) => {
+  //   const pointerEvent = event as PointerEvent;
+  //   TreeJSConsole.log('create file', pointerEvent);
+  // };
+
+  // this._removeFile = (event: Event) => {
+  //   const pointerEvent = event as PointerEvent;
+  //   TreeJSConsole.log('remove file', pointerEvent);
+  // };
+
   return {
     options: opts,
-  }
+  };
 }

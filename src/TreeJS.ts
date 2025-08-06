@@ -130,7 +130,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     this._bindThis();
     this._buildHtml();
-    this._attachEvents();
+    this._bindEvents();
 
     this.initializePlugins(this.options.plugins);
 
@@ -258,7 +258,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   /**
    * Attach event listeners to the tree elements.
    */
-  private _attachEvents(): void {
+  protected _bindEvents(): void {
     this.$list.querySelectorAll(`.${this._li_class}.has-children > .${this._anchor_class}`).forEach(($anchor) => {
       if (this.options.openOnDblClick) {
         $anchor.removeEventListener('dblclick', this._handleToggle);
@@ -616,7 +616,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       target: $li,
     });
 
-    this._attachEvents();
+    this._bindEvents();
   }
 }
 

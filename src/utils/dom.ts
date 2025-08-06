@@ -1,6 +1,9 @@
 import { TreeJSConsole } from '@utils/console';
 import { TreeJSTypeError } from '@utils/error';
+import { s } from 'vitest/dist/reporters-5f784f42.js';
 import type { TreeJSJSON } from '@/@types';
+import { Icons } from '@/Icons';
+import { sanitizeString } from './functions';
 
 /**
  * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references
@@ -167,4 +170,46 @@ export function createAnchorElement(textNode: Node, anchorClass: string): HTMLBu
   );
 
   return $anchor;
+}
+
+export function createLiElement(
+  liClass: string,
+  hasChildren: boolean,
+  anchorClass: string,
+  label: string,
+  name?: string,
+  open?: boolean
+): HTMLLIElement {
+  if (!name) {
+    name = sanitizeString(label);
+  }
+  const $li = stringToHTMLElement<HTMLLIElement>(
+    `<li class="${liClass}${hasChildren ? ' has-children' : ''}" data-treejs-name="${name}"></li>`
+  );
+  if (open) {
+    $li.classList.add('show');
+  } else {
+    $li.classList.add('hide');
+  }
+  const $anchor = createAnchorElement(document.createTextNode(label), anchorClass);
+
+  // Add icons
+  if (hasChildren) {
+    const folderIcon = Icons.get('folder', '');
+    $anchor.prepend(folderIcon);
+  } else {
+    const fileIcon = Icons.get('file', '');
+    $anchor.prepend(fileIcon);
+  }
+
+  const chevronIcon = Icons.get('chevron', '');
+  $anchor.append(chevronIcon);
+
+  if (hasChildren) {
+    $li.appendChild(document.createElement('ul'));
+  }
+
+  $li.appendChild($anchor);
+
+  return $li;
 }
