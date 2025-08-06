@@ -114,6 +114,16 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
      */
     uri: string;
   }) => void;
+  edit: (payload: {
+    /**
+     * The name of the item being edited
+     */
+    name: string;
+    /**
+     * The target HTML element of the item being edited
+     */
+    target: HTMLLIElement;
+  }) => void;
 }
 
 export type TPlugins = {

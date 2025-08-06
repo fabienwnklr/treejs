@@ -12,7 +12,7 @@ import {
   skeletonLoader,
   stringToHTMLElement,
 } from '@utils/dom';
-import { TreeJSError } from '@utils/error';
+import { TreeJSError, TreeJSTypeError } from '@utils/error';
 import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
 // !! Types !! \\
 import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
@@ -617,6 +617,63 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     });
 
     this._bindEvents();
+  }
+
+  edit(name: string): void {
+    if (!name) {
+      throw new TreeJSTypeError('Required name is null or undefined');
+    }
+
+    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with name ${name}`);
+    }
+
+    const $liLabel = $li.querySelector(`.${this._anchor_class}-label`) as HTMLSpanElement;
+
+    if (!$liLabel) {
+      throw new TreeJSError(`element with name ${name} does not have a label`);
+    }
+    $liLabel.classList.add('editing');
+    $liLabel.setAttribute('contenteditable', 'true');
+    $liLabel.setAttribute('spellcheck', 'false');
+    $liLabel.setAttribute('tabindex', '1');
+    $liLabel.focus();
+
+    $liLabel.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+    });
+
+    $liLabel.addEventListener('blur', (e) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      $liLabel.classList.remove('editing');
+      $liLabel.removeAttribute('contenteditable');
+      $liLabel.removeAttribute('spellcheck');
+      $liLabel.removeAttribute('tabindex');
+
+      this.trigger('edit', {
+        name,
+        target: $li,
+      });
+    });
+
+    $liLabel.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        $liLabel.classList.remove('editing');
+        $liLabel.removeAttribute('contenteditable');
+        $liLabel.removeAttribute('spellcheck');
+        $liLabel.removeAttribute('tabindex');
+
+        this.trigger('edit', {
+          name,
+          target: $li,
+        });
+      }
+    });
   }
 }
 

@@ -27,18 +27,20 @@ export default function (this: TreeJS, opts: myType = {}) {
 
   this._folderMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">Rename</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}Create folder</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}Create file</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}</i>Remove folder</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}Remove folder</button>`;
   };
 
   this._fileMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}</i>Create folder</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}</i>Create file</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">Rename</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}Create folder</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}Create file</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}</i>Remove file</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}Remove file</button>`;
   };
 
   this.on('initialize', () => {
@@ -92,6 +94,15 @@ export default function (this: TreeJS, opts: myType = {}) {
     contextMenu.querySelector('#remove-folder')?.addEventListener('click', this._removeFolder);
     contextMenu.querySelector('#create-file')?.addEventListener('click', this._createFile);
     contextMenu.querySelector('#remove-file')?.addEventListener('click', this._removeFile);
+    contextMenu.querySelector('#rename')?.addEventListener('click', (event: Event) => {
+      const pointerEvent = event as PointerEvent;
+      const $button = pointerEvent.currentTarget as HTMLButtonElement;
+      const name = $button.getAttribute(`${this._data_attribute}name`);
+      if (!name) {
+        throw new TreeJSTypeError('Required name is null or undefined');
+      }
+      this.edit(name);
+    });
   };
 
   this.createFolder = (label: string, name?: string, parent?: HTMLLIElement) => {
