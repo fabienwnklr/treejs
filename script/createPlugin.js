@@ -73,6 +73,9 @@ export default function(this: TreeJS, options: ${pluginNameCamelCase}Options) {
     // Initialization code for the plugin
     console.log('${pluginNameCamelCase} plugin initialized with options:', mergedOptions);
   });
+
+  // Return an object with plugin methods of others, or empty object if no methods
+  return {};
 }
 `;
 
