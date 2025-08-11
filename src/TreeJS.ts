@@ -14,16 +14,28 @@ import {
 } from '@utils/dom';
 import { TreeJSError, TreeJSTypeError } from '@utils/error';
 import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
+import i18n from 'i18next';
 // !! Types !! \\
 import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
 import { TreeJSDefaultsOptions } from '@/constants';
 import { Icons } from '@/Icons';
-
+// Translation
+import { resources } from '@/locales';
 // !! Plugins !!
 import Checkbox from './plugins/checkbox/plugin';
 import ContextMenu from './plugins/context-menu/plugin';
 
+const locale = navigator.language || 'en';
+
+i18n.init({
+  debug: true,
+  fallbackLng: 'en',
+  lng: locale,
+  resources,
+});
+
 export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
+  t: typeof i18n.t = i18n.t;
   $list: TreeElement;
   options: TreeJSOptions;
   $liList!: NodeListOf<HTMLLIElement>;

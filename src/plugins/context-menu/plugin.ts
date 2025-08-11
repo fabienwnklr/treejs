@@ -25,20 +25,20 @@ export default function (this: TreeJS, opts: myType = {}) {
 
   this._folderMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">Rename</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}Create folder</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}Create file</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}${this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}${this.t('create_file')}</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}Remove folder</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}${this.t('remove_folder')}</button>`;
   };
 
   this._fileMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">Rename</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}Create folder</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}Create file</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}${this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}${this.t('create_file')}</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}Remove file</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}${this.t('remove_file')}</button>`;
   };
 
   this.on('initialize', () => {

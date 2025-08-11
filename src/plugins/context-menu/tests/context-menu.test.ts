@@ -42,9 +42,10 @@ describe('Plugin - Context menu', () => {
     firstItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
     const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
     // context menu should contain folder options
-    expect(contextMenu.innerHTML).toContain('Create folder');
-    expect(contextMenu.innerHTML).toContain('Create file');
-    expect(contextMenu.innerHTML).toContain('Remove folder');
+    expect(contextMenu.innerHTML).toContain(Tree.t('rename'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('create_file'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('create_folder'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('remove_folder'));
   });
 
   it('should show file context menu on right click of a file', () => {
@@ -52,9 +53,10 @@ describe('Plugin - Context menu', () => {
     firstChild.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
     const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
     // context menu should contain file options
-    expect(contextMenu.innerHTML).toContain('Create folder');
-    expect(contextMenu.innerHTML).toContain('Create file');
-    expect(contextMenu.innerHTML).toContain('Remove file');
+    expect(contextMenu.innerHTML).toContain(Tree.t('rename'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('create_folder'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('create_file'));
+    expect(contextMenu.innerHTML).toContain(Tree.t('remove_file'));
   });
 
   it('should button has data name attribute', () => {
@@ -65,5 +67,5 @@ describe('Plugin - Context menu', () => {
     buttons.forEach((button) => {
       expect(button.getAttribute(`${Tree._data_attribute}name`)).toBeDefined();
     });
-  })
+  });
 });

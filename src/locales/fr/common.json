@@ -1,0 +1,7 @@
+{
+ "rename": "Renommer",
+ "create_folder": "Créer un dossier",
+ "remove_folder": "Supprimer le dossier",
+ "create_file": "Créer un fichier",
+ "remove_file": "Supprimer le fichier"
+}

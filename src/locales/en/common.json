@@ -1,0 +1,7 @@
+{
+ "rename": "Rename",
+ "create_folder": "Create Folder",
+ "remove_folder": "Remove Folder",
+ "create_file": "Create File",
+ "remove_file": "Remove File"
+}

@@ -61,6 +61,7 @@
     "@typescript-eslint/parser": "^6.7.5",
     "commit-and-tag-version": "^11.3.0",
     "husky": "^8.0.3",
+    "i18next": "^25.3.4",
     "jsdom": "^22.1.0",
     "sass": "^1.69.1",
     "typedoc": "^0.25.2",
