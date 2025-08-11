@@ -1,5 +1,6 @@
 import createFile from '@/Icons/create-file.svg?raw';
 import createFolder from '@/Icons/create-folder.svg?raw';
+import edit from '@/Icons/edit.svg?raw';
 import removeFile from '@/Icons/remove-file.svg?raw';
 import removeFolder from '@/Icons/remove-folder.svg?raw';
 import { TreeJS } from '@/TreeJS';
@@ -9,7 +10,7 @@ import type { myType } from './@types';
 // importing style
 import './plugin.scss';
 import { createLiElement } from '@/utils/dom';
-import {  TreeJSTypeError } from '@/utils/error';
+import { TreeJSTypeError } from '@/utils/error';
 
 /**
  * Context menu plugin
@@ -25,18 +26,18 @@ export default function (this: TreeJS, opts: myType = {}) {
 
   this._folderMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}${this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}${this.t('create_file')}</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder}${this.t('remove_folder')}</button>`;
+      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder + this.t('remove_folder')}</button>`;
   };
 
   this._fileMenu = (name: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder}${this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile}${this.t('create_file')}</button>
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
       <hr />
       <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}${this.t('remove_file')}</button>`;
   };
