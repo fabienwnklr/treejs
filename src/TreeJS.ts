@@ -13,7 +13,14 @@ import {
   stringToHTMLElement,
 } from '@utils/dom';
 import { TreeJSError, TreeJSTypeError } from '@utils/error';
-import { _getLiName, deepMerge, getAttributes, isValidOptions, validateAttributes } from '@utils/functions';
+import {
+  _getLiName,
+  bindAllMethods,
+  deepMerge,
+  getAttributes,
+  isValidOptions,
+  validateAttributes,
+} from '@utils/functions';
 import i18n from 'i18next';
 // !! Types !! \\
 import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
@@ -146,9 +153,11 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     this.initializePlugins(this.options.plugins);
 
-    this.trigger('initialize', {
-      target: this.$list,
-    });
+    setTimeout(() => {
+      this.trigger('initialize', {
+        target: this.$list,
+      });
+    }, 1);
   }
 
   /**
@@ -199,8 +208,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * used to ensure that `this` refers to the TreeJS instance when the event handler is called
    */
   private _bindThis(): void {
-    this._handleToggle = this._handleToggle.bind(this);
-    this._handleSelect = this._handleSelect.bind(this);
+    bindAllMethods(this);
   }
 
   /**
@@ -219,9 +227,16 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * @param {NodeListOf<HTMLLIElement>} $liList - NodeListOf HTMLLIElement
    */
   private _buildList($liList: NodeListOf<HTMLLIElement>): void {
+    const toOpen = new Set<string>();
+
     for (const $li of $liList) {
       const textNode = findNodeByType($li.childNodes, '#text');
       const name = _getLiName($li, textNode);
+
+      if (!name) {
+        throw new TreeJSError(`Can not find or create name from li element`);
+      }
+
       const LIAttributes = getAttributes(this._data_attribute, $li);
       validateAttributes(LIAttributes, this._available_li_attributes);
 
@@ -234,7 +249,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
       $li.classList.add(this._li_class);
       const $child = $li.querySelector('ul');
-      const open = Boolean($li?.getAttribute(`${this._data_attribute}open`) || false);
+      const open = Boolean($li?.getAttribute(`${this._data_attribute}open`) === 'true');
       const fetchUrl = $li?.getAttribute(`${this._data_attribute}fetch-url`) || '';
       const $anchor = createAnchorElement(textNode, this._anchor_class);
 
@@ -257,14 +272,20 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
         $li.replaceChild($anchor, textNode);
       }
 
-      $li.setAttribute(`${this._data_attribute}name`, name || '');
+      $li.setAttribute(`${this._data_attribute}name`, name);
 
       if (open) {
-        this.on('initialize', () => {
-          this.open(name || '');
-        });
+        toOpen.add(name);
       }
     }
+
+    toOpen.forEach((name) => {
+      const func = () => {
+        this.open(name);
+        this.off('initialize', func);
+      };
+      this.on('initialize', func);
+    });
   }
 
   /**
@@ -393,7 +414,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       iconEl.addEventListener(
         'transitionend',
         function handler(this: TreeJS) {
-          iconEl.removeEventListener('transitionend', handler as EventListener);
+          iconEl.removeEventListener('transitionend', handler);
           const newIcon = isHidden
             ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
             : Icons.get('folder', this.options.icons?.folder ?? '');
@@ -469,7 +490,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       iconEl.addEventListener(
         'transitionend',
         function handler(this: TreeJS) {
-          iconEl.removeEventListener('transitionend', handler as EventListener);
+          iconEl.removeEventListener('transitionend', handler);
           const newIcon = isHidden
             ? Icons.get('folderOpen', this.options.icons?.folderOpen ?? '')
             : Icons.get('folder', this.options.icons?.folder ?? '');

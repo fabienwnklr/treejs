@@ -109,3 +109,16 @@ export function validateAttributes(
   }
   return true;
 }
+
+export function bindAllMethods<T extends object>(instance: T): void {
+  const proto = Object.getPrototypeOf(instance);
+
+  for (const key of Object.getOwnPropertyNames(proto)) {
+    if (key === 'constructor') continue; // on ignore le constructeur
+
+    const value = (instance as any)[key];
+    if (typeof value === 'function') {
+      (instance as any)[key] = value.bind(instance);
+    }
+  }
+}
