@@ -3,7 +3,7 @@ import { TreeJSTypeError } from '@utils/error';
 import { s } from 'vitest/dist/reporters-5f784f42.js';
 import type { TreeJSJSON } from '@/@types';
 import { Icons } from '@/Icons';
-import { sanitizeString } from './functions';
+import { createId, sanitizeString } from './functions';
 
 /**
  * please see [https://developer.mozilla.org/fr/docs/Web/API/Node/nodeName] for node name references
@@ -177,14 +177,14 @@ export function createLiElement(
   hasChildren: boolean,
   anchorClass: string,
   label: string,
-  name?: string,
+  id?: string,
   open?: boolean
 ): HTMLLIElement {
-  if (!name) {
-    name = sanitizeString(label);
+  if (!id) {
+    id = createId();
   }
   const $li = stringToHTMLElement<HTMLLIElement>(
-    `<li class="${liClass}${hasChildren ? ' has-children' : ''}" data-treejs-name="${name}"></li>`
+    `<li class="${liClass}${hasChildren ? ' has-children' : ''}" id="${id}"></li>`
   );
   if (open) {
     $li.classList.add('show');

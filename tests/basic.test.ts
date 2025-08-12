@@ -16,7 +16,7 @@ describe('TreeJS', () => {
     <li id="third" data-treejs-fetch-url="https://example.com/data.json">
       Third
     </li>
-    <li data-treejs-name="fourth" data-treejs-open="true">
+    <li id="fourth" data-treejs-open="true">
       Fourth (open on init)
       <ul>
         <li>Fourth child 1</li>
@@ -74,14 +74,14 @@ describe('TreeJS', () => {
   });
 
   it('Event listeners', () => {
-    const onOpen = vi.fn(({ name, target }) => {
-      console.log(`Node ${name} is open`, target);
+    const onOpen = vi.fn(({ id, target }) => {
+      console.log(`Node ${id} is open`, target);
     });
-    const onClose = vi.fn(({ name, target }) => {
-      console.log(`Node ${name} is closed`, target);
+    const onClose = vi.fn(({ id, target }) => {
+      console.log(`Node ${id} is closed`, target);
     });
-    const onSelect = vi.fn(({ name, target }) => {
-      console.log(`Node ${name} selected`, target);
+    const onSelect = vi.fn(({ id, target }) => {
+      console.log(`Node ${id} selected`, target);
     });
 
     Tree.on('open', onOpen);
@@ -91,16 +91,16 @@ describe('TreeJS', () => {
     // Trigger open event
     const firstNode = $tree.querySelector('#first .treejs-anchor') as HTMLElement;
     firstNode.click();
-    expect(onOpen).toHaveBeenCalledWith({ name: 'first', target: document.getElementById('first') });
+    expect(onOpen).toHaveBeenCalledWith({ id: 'first', target: document.getElementById('first') });
 
     // Trigger close event
     firstNode.click();
-    expect(onClose).toHaveBeenCalledWith({ name: 'first', target: document.getElementById('first') });
+    expect(onClose).toHaveBeenCalledWith({ id: 'first', target: document.getElementById('first') });
 
     // Trigger select event
     const secondNode = $tree.querySelector('#second .treejs-anchor') as HTMLElement;
     secondNode.click();
-    expect(onSelect).toHaveBeenCalledWith({ name: 'second', target: document.getElementById('second') });
+    expect(onSelect).toHaveBeenCalledWith({ id: 'second', target: document.getElementById('second') });
   });
 
   it('Get and set state', () => {

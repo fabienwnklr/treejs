@@ -1,188 +1,201 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TreeJS</title>
 
-    <style>
-      #app {
-        display: flex;
-        font-family: Arial, sans-serif;
-        height: 98vh;
-        width: 100%;
-        background: url('/images/logo.jpg') no-repeat center center fixed;
-        background-size: cover;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TreeJS</title>
 
-      #toggle-aside {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 1000;
-        padding: 10px 20px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        font-size: 16px;
-        cursor: pointer;
-      }
+  <style>
+    #app {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 98vh;
+      width: 100%;
+      background: url('/images/logo.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
 
-      #toggle-aside:hover {
-        background-color: #f0f0f0;
-      }
+    #toggle-aside {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      padding: 10px 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-      aside {
-        width: 0;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.8);
-        overflow-y: auto;
-        box-sizing: border-box;
-        opacity: 0;
-        transition:
-          width 0.3s ease-in-out,
-          opacity 0.3s ease-in-out,
-          padding 0.3s ease-in-out,
-          border-left 0.3s ease-in-out;
-      }
+    #toggle-aside:hover {
+      background-color: #f0f0f0;
+    }
 
-      .left {
-        flex: 1;
-        box-sizing: border-box;
-        position: relative;
-      }
+    aside {
+      width: 0;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      overflow-y: auto;
+      box-sizing: border-box;
+      opacity: 0;
+      transition:
+        width 0.3s ease-in-out,
+        opacity 0.3s ease-in-out,
+        padding 0.3s ease-in-out,
+        border-left 0.3s ease-in-out;
+    }
 
-      aside.open {
-        width: 50%;
-        padding: 0 20px;
-        border-left: 2px solid #ccc;
-        opacity: 1;
-      }
-    </style>
-  </head>
+    .left {
+      flex: 1;
+      box-sizing: border-box;
+      position: relative;
+    }
 
-  <body>
-    <div id="app" style="position: relative; overflow: hidden">
-      <div class="left">
-        <ul id="tree" class="treejs">
-          <li data-treejs-onselect="console.log('First')">First</li>
-          <li>Second</li>
-          <li data-treejs-open="true">
-            Third (open on init without child)
-            <ul>
-              <li>Third Child 1</li>
-              <li>Third Child 2</li>
-              <li>
-                Third Child 3
-                <ul>
-                  <li>Third Child 3.1</li>
-                  <li>Third Child 3.2</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li data-treejs-open="true" data-treejs-open-child="true">
-            Fourth (open on init with child)
-            <ul>
-              <li>Fourth Child 1</li>
-              <li>Fourth Child 2</li>
+    aside.open {
+      width: 50%;
+      padding: 0 20px;
+      border-left: 2px solid #ccc;
+      opacity: 1;
+    }
+  </style>
+</head>
 
-              <li>
-                Fourth Child 3
-                <ul>
-                  <li>Fourth Child 3.1</li>
-                  <li>
-                    Fourth Child 3.2
-                    <ul>
-                      <li>Fourth Child 3.2.1</li>
-                      <li>Fourth Child 3.2.2</li>
-                      <li>
-                        Fourth Child 3.2.3
-                        <ul>
-                          <li>Fourth Child 3.3.2.1</li>
-                          <li>Fourth Child 3.3.2.2</li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li data-treejs-open="false" data-treejs-open-child="true" data-treejs-fetch-url="https://gist.githack.com/fabienwnklr/4561e87ad6c94070544470a7bf930a8d/raw/144478e6210a8a87df4ce48ebc099f4b09a4a332/treejs.json">Fetch test from json (open on init)</li>
-          <li data-treejs-fetch-url="https://gist.githack.com/fabienwnklr/4e4343743d875271e131a811e1d23bd0/raw/cc034193f727a3ba5b936ae29471cb955f7a22d0/treejs.html">Fetch test from html</li>
-        </ul>
+<body>
+  <div id="app" style="position: relative; overflow: hidden">
+    <div class="left">
+      <ul id="tree" class="treejs">
+        <li data-treejs-onselect="console.log('First')">First</li>
+        <li>Second</li>
+        <li data-treejs-open="true">
+          Third (open on init without child)
+          <ul>
+            <li>Third Child 1</li>
+            <li>Third Child 2</li>
+            <li>
+              Third Child 3
+              <ul>
+                <li>Third Child 3.1</li>
+                <li>Third Child 3.2</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li data-treejs-open="true" data-treejs-open-child="true">
+          Fourth (open on init with child)
+          <ul>
+            <li>Fourth Child 1</li>
+            <li>Fourth Child 2</li>
 
-        <button id="toggle-aside" role="button">Toggle Logs</button>
-      </div>
+            <li>
+              Fourth Child 3
+              <ul>
+                <li>Fourth Child 3.1</li>
+                <li>
+                  Fourth Child 3.2
+                  <ul>
+                    <li>Fourth Child 3.2.1</li>
+                    <li>Fourth Child 3.2.2</li>
+                    <li>
+                      Fourth Child 3.2.3
+                      <ul>
+                        <li>Fourth Child 3.3.2.1</li>
+                        <li>Fourth Child 3.3.2.2</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li data-treejs-open="false" data-treejs-open-child="true"
+          data-treejs-fetch-url="https://gist.githack.com/fabienwnklr/4561e87ad6c94070544470a7bf930a8d/raw/144478e6210a8a87df4ce48ebc099f4b09a4a332/treejs.json">
+          Fetch test from json (open on init)</li>
+        <li
+          data-treejs-fetch-url="https://gist.githack.com/fabienwnklr/4e4343743d875271e131a811e1d23bd0/raw/cc034193f727a3ba5b936ae29471cb955f7a22d0/treejs.html">
+          Fetch test from html</li>
+      </ul>
 
-      <aside class="open">
-        <h2>Logs</h2>
-        <pre id="log"></pre>
-      </aside>
+      <button id="toggle-aside" role="button">Toggle Logs</button>
     </div>
-    <script type="module" >
-      const $btn = document.getElementById('toggle-aside');
-      const $aside = document.querySelector('aside');
-      $btn.addEventListener('click', () => {
-        $aside.classList.toggle('open');
-      });
-      import { TreeJS } from '/src/TreeJS.ts';
 
-      const tree = TreeJS.init({ openOnDblClick: false, plugins: ['context-menu'] });
-      window.TREE = tree;
-      window.TreeJS = TreeJS;
+    <aside class="open">
+      <h2>Logs</h2>
+      <pre id="log"></pre>
+    </aside>
+  </div>
+  <script type="module">
+    const $btn = document.getElementById('toggle-aside');
+    const $aside = document.querySelector('aside');
+    $btn.addEventListener('click', () => {
+      $aside.classList.toggle('open');
+    });
+    import { TreeJS } from '/src/TreeJS.ts';
 
-      tree.on('select', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Selected: ${node.name}\n`));
-      });
 
-      tree.on('toggle', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Toggled: ${node.name}\n`));
-      });
+    const tree = TreeJS.init({ openOnDblClick: false, plugins: ['context-menu'] });
+    window.TREE = tree;
+    window.TreeJS = TreeJS;
 
-      tree.on('open', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Open: ${node.name}\n`));
-      });
+    tree.on('select', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Selected: ${node.id}\n`));
+    });
 
-      tree.on('fetch', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Fetch: ${node.name}\n`));
-      });
+    tree.on('toggle', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Toggled: ${node.id}\n`));
+    });
 
-      tree.on('fetch-error', (node, error) => {
-        console.error(error);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Fetch error for ${node.name}: ${error.message}\n`));
-      });
+    tree.on('open', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Open: ${node.id}\n`));
+    });
 
-      tree.on('fetched', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Fetched: ${node.name}\n`));
-      });
+    tree.on('fetch', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Fetch: ${node.id}\n`));
+    });
 
-      tree.on('close', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Closed: ${node.name}\n`));
-      });
+    tree.on('fetch-error', (node, error) => {
+      console.error(error);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Fetch error for ${node.id}: ${error.message}\n`));
+    });
 
-       // Plugins events
-      tree.on('checkbox-change', (node) => {
-        console.log(node);
-        const log = document.getElementById('log');
-        log.appendChild(document.createTextNode(`Checkbox changed: ${node.name}\n`));
-      });
-    </script>
-  </body>
+    tree.on('fetched', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Fetched: ${node.id}\n`));
+    });
+
+    tree.on('close', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Closed: ${node.id}\n`));
+    });
+
+    // Plugins events
+    tree.on('checkbox-change', (node) => {
+      console.log(node);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Checkbox changed: ${node.id}\n`));
+    });
+
+    tree.on('edit', (payload) => {
+      console.log(payload);
+      const log = document.getElementById('log');
+      log.appendChild(document.createTextNode(`Edit: ${payload.id} - Old Value: ${payload.oldValue} - New Value: ${payload.newValue}\n`));
+    });
+  </script>
+</body>
+
 </html>

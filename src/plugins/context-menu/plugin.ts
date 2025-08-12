@@ -37,16 +37,16 @@ export default function (this: TreeJS, opts: myType = {}) {
 
       const isFile = !(e.target as HTMLElement).closest('li')?.classList.contains('has-children');
       const isFolder = (e.target as HTMLElement).closest('li')?.classList.contains('has-children');
-      const name = (e.target as HTMLElement).closest('li')?.getAttribute(`${this._data_attribute}name`);
+      const id = (e.target as HTMLElement).closest('li')?.getAttribute(`id`);
 
-      if (!name) {
-        throw new TreeJSTypeError('Required name is null or undefined');
+      if (!id) {
+        throw new TreeJSTypeError('Required id is null or undefined');
       }
 
       if (isFile) {
-        this._fileMenu(name);
+        this._fileMenu(id);
       } else if (isFolder) {
-        this._folderMenu(name);
+        this._folderMenu(id);
       }
 
       contextMenu.style.left = `${e.clientX}px`;
@@ -63,36 +63,36 @@ export default function (this: TreeJS, opts: myType = {}) {
   const binded = init.bind(this);
   this.on('initialize', binded);
 
-  this._folderMenu = (name: string) => {
+  this._folderMenu = (id: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
+      <button ${this._data_attribute}id="${id}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}id="${id}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}id="${id}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder + this.t('remove_folder')}</button>`;
+      <button ${this._data_attribute}id="${id}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder + this.t('remove_folder')}</button>`;
   };
 
-  this._fileMenu = (name: string) => {
+  this._fileMenu = (id: string) => {
     contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
+      <button ${this._data_attribute}id="${id}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}id="${id}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}id="${id}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
       <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}${this.t('remove_file')}</button>`;
+      <button ${this._data_attribute}id="${id}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile + this.t('remove_file')}</button>`;
   };
 
   this._bindContextMenuEvents = () => {
     contextMenu.querySelector('#create-folder')?.addEventListener('click', (event: Event) => {
       const pointerEvent = event as PointerEvent;
       const $button = pointerEvent.currentTarget as HTMLButtonElement;
-      const name = $button.getAttribute(`${this._data_attribute}name`);
-      const $parent = document.querySelector(`li[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
-      if (name && $parent) {
+      const id = $button.getAttribute(`${this._data_attribute}id`);
+      const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
+      if (id && $parent) {
         this.createFolder('New folder', '', $parent);
         return;
       }
 
-      throw new TreeJSTypeError('Required name is null or undefined or parent not found');
+      throw new TreeJSTypeError('Required id is null or undefined or parent not found');
     });
     contextMenu.querySelector('#remove-folder')?.addEventListener('click', this._removeFolder);
     contextMenu.querySelector('#create-file')?.addEventListener('click', this._createFile);
@@ -100,20 +100,20 @@ export default function (this: TreeJS, opts: myType = {}) {
     contextMenu.querySelector('#rename')?.addEventListener('click', (event: Event) => {
       const pointerEvent = event as PointerEvent;
       const $button = pointerEvent.currentTarget as HTMLButtonElement;
-      const name = $button.getAttribute(`${this._data_attribute}name`);
-      if (!name) {
-        throw new TreeJSTypeError('Required name is null or undefined');
+      const id = $button.getAttribute(`${this._data_attribute}id`);
+      if (!id) {
+        throw new TreeJSTypeError('Required id is null or undefined');
       }
-      this.edit(name);
+      this.edit(id);
     });
   };
 
-  this.createFolder = (label: string, name?: string, parent?: HTMLLIElement) => {
+  this.createFolder = (label: string, id?: string, parent?: HTMLLIElement) => {
     if (!parent) {
       throw new TreeJSTypeError('Required parent is null or undefined');
     }
     const isFolder = parent.classList.contains('has-children');
-    const $folder = createLiElement(this._li_class, true, this._anchor_class, label, name);
+    const $folder = createLiElement(this._li_class, true, this._anchor_class, label, id);
 
     if (isFolder) {
       const ul = parent.querySelector('ul');

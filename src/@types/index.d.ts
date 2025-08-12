@@ -40,9 +40,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   initialize: (payload: { target: TreeElement }) => void;
   select: (payload: {
     /**
-     * The name of selected item
+     * The id of selected item
      */
-    name: string;
+    id: string;
     /**
      * The target HTML element of the selected item
      */
@@ -50,9 +50,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   }) => void;
   open: (payload: {
     /**
-     * The name of the item opened
+     * The id of the item opened
      */
-    name: string;
+    id: string;
     /**
      * The target HTML element of the opened item
      */
@@ -60,9 +60,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   }) => void;
   close: (payload: {
     /**
-     * The name of the item closed
+     * The id of the item closed
      */
-    name: string;
+    id: string;
     /**
      * The target HTML element of the closed item
      */
@@ -70,9 +70,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   }) => void;
   fetch: (payload: {
     /**
-     * The name of the item being fetched
+     * The id of the item being fetched
      */
-    name: string;
+    id: string;
     /**
      * The target HTML element of the item being fetched
      */
@@ -84,9 +84,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   }) => void;
   fetched: (payload: {
     /**
-     * The name of the item that was fetched
+     * The id of the item that was fetched
      */
-    name: string;
+    id: string;
     /**
      * The response object from the fetch operation
      */
@@ -102,9 +102,9 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
      */
     error: string;
     /**
-     * The name of the item that encountered an error during fetch
+     * The id of the item that encountered an error during fetch
      */
-    name: string;
+    id: string;
     /**
      * The target HTML element of the item that encountered an error during fetch
      */
@@ -116,9 +116,17 @@ export interface TreeJSEvents extends Record<string, (...args: any[]) => any> {
   }) => void;
   edit: (payload: {
     /**
-     * The name of the item being edited
+     * The old value of the item being edited
      */
-    name: string;
+    oldValue: string;
+    /**
+     * The new value of the item being edited
+     */
+    newValue: string;
+    /**
+     * The id of the item being edited
+     */
+    id: string;
     /**
      * The target HTML element of the item being edited
      */

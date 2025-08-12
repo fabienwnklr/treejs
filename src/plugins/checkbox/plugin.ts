@@ -1,11 +1,12 @@
 import { TreeJS } from '@/TreeJS';
 import { createCheckbox } from '@/utils/dom';
 // import { ... } from '@/utils/dom'
-import { _getLiName, deepMerge } from '@/utils/functions';
+import { _getLiName, createId, deepMerge } from '@/utils/functions';
 import type { CheckboxJSON, CheckboxOptions } from './@types';
 
 // importing style
 import './plugin.scss';
+import { TreeJSError } from '@/utils/error';
 
 /**
  * @name Checkbox
@@ -40,8 +41,12 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
       const anchorWrapper = $li.querySelector(`.${this._anchor_class}`);
       if (!anchorWrapper || !anchorWrapper.textContent) return;
       $li.classList.add(`${this._li_class}--checkbox`);
-      const name = _getLiName($li, anchorWrapper);
-      $checkbox = createCheckbox(name, this._prefix, parentChecked);
+      const id = $li.getAttribute('id')
+
+      if (!id) {
+        throw new TreeJSError('Checkbox plugin: missing id attribute');
+      }
+      $checkbox = createCheckbox(id, this._prefix, parentChecked);
       anchorWrapper.prepend($checkbox);
 
       const checked: CheckboxJSON = {};

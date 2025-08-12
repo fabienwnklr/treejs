@@ -52,6 +52,12 @@ export function _getLiName($li: HTMLLIElement, textNode?: Node | undefined | nul
   return $li.dataset.treejsName ? $li.dataset.treejsName : sanitizeString(textNode?.textContent || '');
 }
 
+export function createId($li?: HTMLLIElement): string {
+  const id = sanitizeString($li?.firstChild?.textContent?.trim() || Math.random().toString(36).slice(2, 9)) + '-' + Math.random().toString(36).slice(2, 9)
+  $li?.setAttribute('id', id);
+  return id;
+}
+
 /**
  * Check if options object is valid from default options
  * @param options
@@ -125,20 +131,17 @@ export function bindAllMethods<T extends object>(instance: T): void {
   }
 }
 
-export function collectFolderNames(root: HTMLElement, toOpen: Set<string>) {
-  // Trouve tous les <li> qui contiennent un <ul> (direct ou pas)
-  const liWithUl = root.querySelectorAll('li:has(> ul)');
+export function collectFolderChildren(root: HTMLElement, toOpen: Set<HTMLLIElement>) {
+  const liWithUl = root.querySelectorAll('li:has(> ul)') as NodeListOf<HTMLLIElement>;
 
   liWithUl.forEach((li) => {
-    const name = _getLiName(li as HTMLLIElement, findNodeByType(li.childNodes, '#text'));
-    if (name) {
-      toOpen.add(name);
-    }
 
-    // Appel récursif sur l'élément UL enfant direct
+    toOpen.add(li);
+
+    // recursive call
     const ul = li.querySelector(':scope > ul');
     if (ul) {
-      collectFolderNames(ul as HTMLElement, toOpen);
+      collectFolderChildren(ul as HTMLElement, toOpen);
     }
   });
 }

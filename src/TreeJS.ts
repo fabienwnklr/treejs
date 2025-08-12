@@ -14,9 +14,9 @@ import {
 } from '@utils/dom';
 import { TreeJSError, TreeJSTypeError } from '@utils/error';
 import {
-  _getLiName,
   bindAllMethods,
-  collectFolderNames,
+  collectFolderChildren,
+  createId,
   deepMerge,
   getAttributes,
   isValidOptions,
@@ -64,8 +64,8 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    */
   _available_ul_attributes = [
     {
-      description: 'Name of the node, used to identify the node in the tree.',
-      name: 'name',
+      description: 'ID of the node, used to identify the node in the tree.',
+      name: 'id',
       type: 'string',
     },
     {
@@ -86,8 +86,8 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       type: 'boolean',
     },
     {
-      description: 'Name of the node, used to identify the node in the tree.',
-      name: 'name',
+      description: 'ID of the node, used to identify the node in the tree.',
+      name: 'id',
       type: 'string',
     },
     {
@@ -228,14 +228,14 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * @param {NodeListOf<HTMLLIElement>} $liList - NodeListOf HTMLLIElement
    */
   private _buildList($liList: NodeListOf<HTMLLIElement>): void {
-    const toOpen = new Set<string>();
+    const toOpen = new Set<HTMLLIElement>();
 
     for (const $li of $liList) {
       const textNode = findNodeByType($li.childNodes, '#text');
-      const name = _getLiName($li, textNode);
+      const id = $li.getAttribute('id') ?? createId($li);
 
-      if (!name) {
-        throw new TreeJSError(`Can not find or create name from li element`);
+      if (!id) {
+        throw new TreeJSError(`Can not find or create id from li element`);
       }
 
       const LIAttributes = getAttributes(this._data_attribute, $li);
@@ -274,19 +274,18 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
         $li.replaceChild($anchor, textNode);
       }
 
-      $li.setAttribute(`${this._data_attribute}name`, name);
-
       if (open) {
-        toOpen.add(name);
+        toOpen.add($li);
       }
+
       if (openChild && $child) {
-        collectFolderNames($child, toOpen);
+        collectFolderChildren($child, toOpen);
       }
     }
 
-    toOpen.forEach((name) => {
+    toOpen.forEach(($li) => {
       const func = () => {
-        this.open(name);
+        this.open($li.id);
         this.off('initialize', func);
       };
       this.on('initialize', func);
@@ -323,8 +322,8 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     const $li = (event.currentTarget as HTMLElement).closest(`.${this._li_class}`) as HTMLLIElement;
     if ($li) {
-      const name = $li.getAttribute(`${this._data_attribute}name`) || '';
-      this.toggle(name);
+      const id = $li.getAttribute('id') || '';
+      this.toggle(id);
     }
   }
 
@@ -336,7 +335,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     const $li = (event.currentTarget as HTMLElement).closest(`.${this._li_class}`) as HTMLLIElement;
     if ($li) {
-      const name = $li.getAttribute(`${this._data_attribute}name`) || '';
+      const id = $li.getAttribute('id') || '';
       if ($li.hasAttribute(`${this._data_attribute}onselect`)) {
         const onSelect = $li.getAttribute(`${this._data_attribute}onselect`);
         if (onSelect) {
@@ -345,21 +344,21 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
         }
       }
       this.trigger('select', {
-        name: name,
+        id: id,
         target: $li,
       });
     }
   }
 
   /**
-   * Get the state of a node by its name
-   * @param name - The name of the node
+   * Get the state of a node by its id
+   * @param id - The id of the node
    * @returns The state of the node open/closed, or undefined if the node does not exist
    */
-  getState(name: string): 'open' | 'closed' | undefined {
-    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+  getState(id: string): 'open' | 'closed' | undefined {
+    const $li = this.$list.querySelector(`#${id}`) as HTMLLIElement;
     if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
+      throw new TreeJSError(`cannot find element with id ${id}`);
     }
 
     if ($li.classList.contains('has-children')) {
@@ -369,41 +368,47 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
   }
 
   /**
-   * Toggle a node by its name
-   * @param name - The name of the node to toggle
+   * Toggle a node by its id
+   * @param id - The id of the node to toggle
    * @throws {TreeJSError} if the node does not exist or is not a parent node.
    */
-  toggle(name: string): void {
-    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+  toggle(id: string): void {
+    const $li = this.$list.querySelector(`#${id}`) as HTMLLIElement;
     if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
+      throw new TreeJSError(`cannot find element with id ${id}`);
     }
 
     if (!$li.classList.contains('has-children')) {
-      throw new TreeJSError(`element with name ${name} is not a parent node`);
+      throw new TreeJSError(`element with id ${id} is not a parent node`);
     }
 
     const isHidden = $li.classList.contains('hide');
     if (isHidden) {
-      this.open(name);
+      this.open(id);
     } else {
-      this.close(name);
+      this.close(id);
     }
   }
 
   /**
-   * Open a node by its name
+   * Open a node by its id
    * This method will throw an error if the node does not exist or is not a parent node.
-   * @param name - The name of the node to open
+   * @param id - The id of the node to open
    * @throws {TreeJSError} if the node does not exist or is not a
    */
-  open(name: string): void {
-    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
-    if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
+  open(id: string): void {
+    if (!id) {
+      throw new TreeJSError(`invalid id`);
     }
+
+    const $li = this.$list.querySelector(`#${id}`) as HTMLLIElement;
+
+    if (!$li) {
+      throw new TreeJSError(`cannot find element with id ${id}`);
+    }
+
     if (!$li.classList.contains('has-children')) {
-      throw new TreeJSError(`element with name ${name} is not a parent node`);
+      throw new TreeJSError(`element with id ${id} is not a parent node`);
     }
 
     const isHidden = $li.classList.contains('hide');
@@ -451,7 +456,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     if ($li.classList.contains('has-children') && needFetch) {
       const uri = $li.getAttribute(`${this._data_attribute}fetch-url`) || '';
-      if (isHidden && !this._data[name] && !this._loading[name]) {
+      if (isHidden && !this._data[id] && !this._loading[id]) {
         this._loadFromURI(uri, $li);
       }
     }
@@ -459,27 +464,27 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     $li.classList.add('show');
 
     this.trigger('open', {
-      name: name,
+      id,
       target: $li,
     });
   }
 
   /**
-   * Close a node by its name
+   * Close a node by its id
    *
-   * @param name - The name of the node to close
+   * @param id - The id of the node to close
    * @throws {TreeJSError} if the node does not exist or is not a parent node.
    *
    * This method will close the node and hide its children.
    * It will also trigger the `close` event.
    */
-  close(name: string): void {
-    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+  close(id: string): void {
+    const $li = this.$list.querySelector(`#${id}`) as HTMLLIElement;
     if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
+      throw new TreeJSError(`cannot find element with id ${id}`);
     }
     if (!$li.classList.contains('has-children')) {
-      throw new TreeJSError(`element with name ${name} is not a parent node`);
+      throw new TreeJSError(`element with id ${id} is not a parent node`);
     }
 
     const isHidden = $li.classList.contains('hide');
@@ -536,7 +541,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     $li.classList.add('hide');
 
     this.trigger('close', {
-      name: name,
+      id,
       target: $li,
     });
   }
@@ -566,20 +571,16 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
   private async _loadFromURI(uri: string, $li: HTMLLIElement): Promise<void> {
     if (!uri) {
-      throw new TreeJSError(
-        `Invalid URI for element with name ${$li.getAttribute(
-          `${this._data_attribute}name`
-        )}. Please provide a valid URI.`
-      );
+      throw new TreeJSError(`Invalid URI for element with id ${$li.getAttribute('id')}. Please provide a valid URI.`);
     }
 
-    const name = $li.getAttribute(`${this._data_attribute}name`);
+    const id = $li.getAttribute('id');
 
-    if (!name) {
-      throw new TreeJSError(`Element with name ${name} does not exist.`);
+    if (!id) {
+      throw new TreeJSError(`Element with id ${id} does not exist.`);
     }
 
-    this._loading[name || ''] = true;
+    this._loading[id] = true;
     let $ul = $li.querySelector('ul');
     if (!$ul) {
       $ul = document.createElement('ul');
@@ -601,7 +602,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     $ul.style.height = $ul.scrollHeight + 'px';
 
     this.trigger('fetch', {
-      name: name,
+      id,
       target: $li,
       uri,
     });
@@ -609,10 +610,10 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     const data = await fetch(uri);
     if (!data.ok) {
       const error = await data.text();
-      this._loading[name || ''] = false;
+      this._loading[id] = false;
       this.trigger('fetch-error', {
         error,
-        name,
+        id,
         target: $li,
         uri,
       });
@@ -625,8 +626,8 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     const isHTML = data.headers.get('content-type')?.includes('text/html');
     const response = isJSON ? await data.json() : await data.text();
 
-    this._data[name || ''] = response;
-    this._loading[name || ''] = false;
+    this._data[id] = response;
+    this._loading[id] = false;
 
     let html: HTMLLIElement;
     if (isJSON) {
@@ -649,7 +650,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     $ul.appendChild(html);
 
     this.trigger('fetched', {
-      name: name,
+      id,
       response: data,
       target: $li,
     });
@@ -657,33 +658,44 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     this._bindEvents();
   }
 
-  edit(name: string): void {
-    if (!name) {
-      throw new TreeJSTypeError('Required name is null or undefined');
+  edit(id: string): void {
+    if (!id) {
+      throw new TreeJSTypeError('Required id is null or undefined');
     }
 
-    const $li = this.$list.querySelector(`.${this._li_class}[${this._data_attribute}name="${name}"]`) as HTMLLIElement;
+    const $li = this.$list.querySelector(`.${this._li_class}[id="${id}"]`) as HTMLLIElement;
     if (!$li) {
-      throw new TreeJSError(`cannot find element with name ${name}`);
+      throw new TreeJSError(`cannot find element with id ${id}`);
     }
 
     const $liLabel = $li.querySelector(`.${this._anchor_class}-label`) as HTMLSpanElement;
 
     if (!$liLabel) {
-      throw new TreeJSError(`element with name ${name} does not have a label`);
+      throw new TreeJSError(`element with id ${id} does not have a label`);
     }
+    const oldValue = $liLabel.textContent.trim() || '';
+
     $liLabel.classList.add('editing');
     $liLabel.setAttribute('contenteditable', 'true');
     $liLabel.setAttribute('spellcheck', 'false');
     $liLabel.setAttribute('tabindex', '1');
     $liLabel.focus();
+    // Select text inside label
+    const range = document.createRange();
+    range.selectNodeContents($liLabel);
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(range);
 
     $liLabel.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
       e.stopPropagation();
     });
 
+    let fromKeyDown = false;
+
     $liLabel.addEventListener('blur', (e) => {
+      if (fromKeyDown) return;
       e.stopImmediatePropagation();
       e.stopPropagation();
       $liLabel.classList.remove('editing');
@@ -692,26 +704,57 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       $liLabel.removeAttribute('tabindex');
 
       this.trigger('edit', {
-        name,
+        id,
+        newValue: $liLabel.textContent.trim() || '',
+        oldValue,
         target: $li,
       });
     });
 
-    $liLabel.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+    $liLabel.addEventListener(
+      'keydown',
+      (e) => {
+        fromKeyDown = true;
+        const target = e.target as HTMLElement;
+        if (target.isContentEditable && e.code === 'Space') {
+          e.preventDefault();
+          const selection = window.getSelection();
+          if (!selection || !selection.rangeCount) return;
+
+          const range = selection.getRangeAt(0);
+
+          // create node
+          const spaceNode = document.createTextNode('\u00A0'); // espace insécable pour être sûr qu'il soit visible
+          range.insertNode(spaceNode);
+
+          // Déplace le curseur après l'espace
+          range.setStartAfter(spaceNode);
+          range.setEndAfter(spaceNode);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+
         e.stopImmediatePropagation();
         e.stopPropagation();
-        $liLabel.classList.remove('editing');
-        $liLabel.removeAttribute('contenteditable');
-        $liLabel.removeAttribute('spellcheck');
-        $liLabel.removeAttribute('tabindex');
 
-        this.trigger('edit', {
-          name,
-          target: $li,
-        });
-      }
-    });
+        if (e.key === 'Enter') {
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          $liLabel.classList.remove('editing');
+          $liLabel.removeAttribute('contenteditable');
+          $liLabel.removeAttribute('spellcheck');
+          $liLabel.removeAttribute('tabindex');
+
+          this.trigger('edit', {
+            id,
+            newValue: $liLabel.textContent.trim() || '',
+            oldValue,
+            target: $li,
+          });
+        }
+      },
+      true
+    );
   }
 }
 
