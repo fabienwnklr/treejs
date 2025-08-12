@@ -16,6 +16,7 @@ import { TreeJSError, TreeJSTypeError } from '@utils/error';
 import {
   _getLiName,
   bindAllMethods,
+  collectFolderNames,
   deepMerge,
   getAttributes,
   isValidOptions,
@@ -250,6 +251,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       $li.classList.add(this._li_class);
       const $child = $li.querySelector('ul');
       const open = Boolean($li?.getAttribute(`${this._data_attribute}open`) === 'true');
+      const openChild = Boolean($li?.getAttribute(`${this._data_attribute}open-child`) === 'true');
       const fetchUrl = $li?.getAttribute(`${this._data_attribute}fetch-url`) || '';
       const $anchor = createAnchorElement(textNode, this._anchor_class);
 
@@ -276,6 +278,9 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
       if (open) {
         toOpen.add(name);
+      }
+      if (openChild && $child) {
+        collectFolderNames($child, toOpen);
       }
     }
 

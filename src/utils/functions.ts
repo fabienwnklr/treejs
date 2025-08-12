@@ -1,3 +1,5 @@
+import { findNodeByType } from "./dom";
+
 /**
  * @description Method to check if an item is an object. Date and Function are considered
  * an object, so if you need to exclude those, please update the method accordingly.
@@ -121,4 +123,22 @@ export function bindAllMethods<T extends object>(instance: T): void {
       (instance as any)[key] = value.bind(instance);
     }
   }
+}
+
+export function collectFolderNames(root: HTMLElement, toOpen: Set<string>) {
+  // Trouve tous les <li> qui contiennent un <ul> (direct ou pas)
+  const liWithUl = root.querySelectorAll('li:has(> ul)');
+
+  liWithUl.forEach((li) => {
+    const name = _getLiName(li as HTMLLIElement, findNodeByType(li.childNodes, '#text'));
+    if (name) {
+      toOpen.add(name);
+    }
+
+    // Appel récursif sur l'élément UL enfant direct
+    const ul = li.querySelector(':scope > ul');
+    if (ul) {
+      collectFolderNames(ul as HTMLElement, toOpen);
+    }
+  });
 }
