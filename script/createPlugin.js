@@ -67,12 +67,15 @@ export default function(this: TreeJS, options: ${pluginNameCamelCase}Options) {
   // Merge default options with user options
   const mergedOptions = deepMerge(defaultOptions, options);
 
-  // Your plugin code goes here
-
-  this.on('initialize', () => {
-    // Initialization code for the plugin
+  function init(this: TreeJS) {
+    // Your plugin code goes here
     console.log('${pluginNameCamelCase} plugin initialized with options:', mergedOptions);
-  });
+    
+    this.off('initialize', binded);
+  }
+
+  const binded = init.bind(this);
+  this.on('initialize', binded);
 
   // Return an object with plugin methods of others, or empty object if no methods
   return {};

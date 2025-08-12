@@ -24,25 +24,7 @@ export default function (this: TreeJS, opts: myType = {}) {
   const contextMenu = document.createElement('div');
   contextMenu.classList.add(`${this._prefix}contextmenu`);
 
-  this._folderMenu = (name: string) => {
-    contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
-      <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder + this.t('remove_folder')}</button>`;
-  };
-
-  this._fileMenu = (name: string) => {
-    contextMenu.innerHTML = `
-      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
-      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
-      <hr />
-      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}${this.t('remove_file')}</button>`;
-  };
-
-  this.on('initialize', () => {
+  function init(this: TreeJS) {
     const body = document.body;
 
     const closeContextMenu = (e: MouseEvent) => {
@@ -75,7 +57,29 @@ export default function (this: TreeJS, opts: myType = {}) {
     };
     this.$list.addEventListener('contextmenu', openContextMenu);
     window.addEventListener('click', closeContextMenu);
-  });
+    this.off('initialize', binded);
+  }
+
+  const binded = init.bind(this);
+  this.on('initialize', binded);
+
+  this._folderMenu = (name: string) => {
+    contextMenu.innerHTML = `
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
+      <hr />
+      <button ${this._data_attribute}name="${name}" id="remove-folder" class="${this._prefix}contextmenu-btn danger">${removeFolder + this.t('remove_folder')}</button>`;
+  };
+
+  this._fileMenu = (name: string) => {
+    contextMenu.innerHTML = `
+      <button ${this._data_attribute}name="${name}" id="rename" class="${this._prefix}contextmenu-btn">${edit + this.t('rename')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-folder" class="${this._prefix}contextmenu-btn">${createFolder + this.t('create_folder')}</button>
+      <button ${this._data_attribute}name="${name}" id="create-file" class="${this._prefix}contextmenu-btn">${createFile + this.t('create_file')}</button>
+      <hr />
+      <button ${this._data_attribute}name="${name}" id="remove-file" class="${this._prefix}contextmenu-btn danger">${removeFile}${this.t('remove_file')}</button>`;
+  };
 
   this._bindContextMenuEvents = () => {
     contextMenu.querySelector('#create-folder')?.addEventListener('click', (event: Event) => {
