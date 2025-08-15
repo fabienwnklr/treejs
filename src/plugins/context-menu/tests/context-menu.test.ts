@@ -22,13 +22,15 @@ describe('Plugin - Context menu', () => {
     expect(Tree.plugins.loaded['context-menu']).toBeDefined();
   });
 
-  it('should open context menu on right click and close on click outside', () => {
+  it('should open context menu on right click and close on click outside', async () => {
     const body = document.body;
     const firstItem = document.getElementById('first') as HTMLLIElement;
     firstItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    // await for the context menu to be rendered
+    await new Promise((resolve) => setTimeout(resolve, 100));
     const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
     // context menu should be visible
-    expect(contextMenu).toBeDefined();
+    expect(contextMenu).not.toBeNull();
     expect(contextMenu.style.display).not.toBe('none');
 
     body.dispatchEvent(new MouseEvent('click', { bubbles: true }));

@@ -1,6 +1,7 @@
 $primary: #1565C0 !default;
 $bg-primary: rgba(darken($primary, 5%) , .2);
 $bg-primary-selected: rgba(darken($primary, 20%), .1);
+$hover-primary-selected: rgba(darken($primary, 20%), .2);
 $text-primary: darken($primary, 10%);
 $prefix: 'treejs';
 $danger: #b92e2e !default;

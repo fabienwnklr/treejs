@@ -7,8 +7,8 @@ describe('Plugin - Checkbox', () => {
     <li id="first">
       First
       <ul>
-        <li>First child</li>
-        <li>Second child</li>
+        <li id="first-child">First child</li>
+        <li id="second-child">Second child</li>
       </ul>
     </li>
     <li id="second">Second</li>

@@ -70,7 +70,7 @@
       <ul id="tree" class="treejs">
         <li data-treejs-onselect="console.log('First')">First</li>
         <li>Second</li>
-        <li data-treejs-open="true">
+        <li id="third" data-treejs-open="true">
           Third (open on init without child)
           <ul>
             <li>Third Child 1</li>
@@ -137,7 +137,7 @@
     import { TreeJS } from '/src/TreeJS.ts';
 
 
-    const tree = TreeJS.init({ openOnDblClick: false, plugins: ['context-menu'] });
+    const tree = TreeJS.init({ openOnDblClick: false, plugins: ['context-menu', 'checkbox'] });
     window.TREE = tree;
     window.TreeJS = TreeJS;
 
@@ -187,7 +187,7 @@
     tree.on('checkbox-change', (node) => {
       console.log(node);
       const log = document.getElementById('log');
-      log.appendChild(document.createTextNode(`Checkbox changed: ${node.id}\n`));
+      log.appendChild(document.createTextNode(`Checkbox changed: ${node.name}\n`));
     });
 
     tree.on('edit', (payload) => {

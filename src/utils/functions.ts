@@ -1,4 +1,4 @@
-import { findNodeByType } from "./dom";
+import { findNodeByType } from './dom';
 
 /**
  * @description Method to check if an item is an object. Date and Function are considered
@@ -53,7 +53,10 @@ export function _getLiName($li: HTMLLIElement, textNode?: Node | undefined | nul
 }
 
 export function createId($li?: HTMLLIElement): string {
-  const id = sanitizeString($li?.firstChild?.textContent?.trim() || Math.random().toString(36).slice(2, 9)) + '-' + Math.random().toString(36).slice(2, 9)
+  const id =
+    sanitizeString($li?.firstChild?.textContent?.trim() || Math.random().toString(36).slice(2, 9)) +
+    '-' +
+    Math.random().toString(36).slice(2, 9);
   $li?.setAttribute('id', id);
   return id;
 }
@@ -94,8 +97,8 @@ export function getAttributes(data_prefix: string, $el: HTMLElement): Record<str
 
 /**
  * Check if attributes are valid
- * @param attributes
- * @param attributesList
+ * @param attributes Attributes to validate
+ * @param attributesList List of valid attributes with their names, types and descriptions
  * @returns {boolean}
  */
 export function validateAttributes(
@@ -118,6 +121,15 @@ export function validateAttributes(
   return true;
 }
 
+/**
+ * Bind all methods of a class instance to the instance itself.
+ * This is useful to ensure that methods can be called with the correct context,
+ * especially when passing methods as callbacks.
+ * This function iterates over all properties of the instance's prototype,
+ * checks if they are functions, and binds them to the instance.
+ * @template T Type of the class instance
+ * @param instance Instance of a class to bind all methods to
+ */
 export function bindAllMethods<T extends object>(instance: T): void {
   const proto = Object.getPrototypeOf(instance);
 
@@ -131,11 +143,18 @@ export function bindAllMethods<T extends object>(instance: T): void {
   }
 }
 
+/**
+ * This function recursively collects all <li> elements that have a child <ul>
+ * and adds them to the provided Set.
+ * It starts from the root element and traverses through all child <ul> elements.
+ *
+ * @param root Root element to start collecting children from
+ * @param toOpen Set to collect all <li> elements that have a child <ul>
+ */
 export function collectFolderChildren(root: HTMLElement, toOpen: Set<HTMLLIElement>) {
   const liWithUl = root.querySelectorAll('li:has(> ul)') as NodeListOf<HTMLLIElement>;
 
   liWithUl.forEach((li) => {
-
     toOpen.add(li);
 
     // recursive call

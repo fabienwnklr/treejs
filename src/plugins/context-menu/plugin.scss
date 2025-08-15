@@ -30,10 +30,6 @@
     &.danger:hover {
       background-color: var(--#{$prefix}-bg-danger);
       color: var(--#{$prefix}-text-danger);
-
-      svg {
-        fill: var(--#{$prefix}-text-danger);
-      }
     }
   }
 

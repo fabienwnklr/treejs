@@ -649,13 +649,13 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     $ul.innerHTML = '';
     $ul.appendChild(html);
 
+    this._bindEvents();
+
     this.trigger('fetched', {
       id,
       response: data,
       target: $li,
     });
-
-    this._bindEvents();
   }
 
   edit(id: string): void {

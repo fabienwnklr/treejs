@@ -48,6 +48,7 @@
   padding-bottom: 2px;
   padding-left: 15px;
 
+
   .#{$prefix}-anchor {
     background-color: transparent;
     border: none;
@@ -58,6 +59,7 @@
     transition: background-color 0.4s;
     cursor: pointer;
     border-radius: 0.3rem;
+      width: 100%;
 
     &:hover,
     &:focus {
@@ -79,6 +81,10 @@
     &.show>.#{$prefix}-anchor {
       background-color: $bg-primary-selected;
       color: inherit;
+
+      &:hover {
+        background-color: $hover-primary-selected;
+      }
     }
 
     .#{$prefix}-child {
