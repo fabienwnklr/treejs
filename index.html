@@ -137,7 +137,9 @@
     import { TreeJS } from '/src/TreeJS.ts';
 
 
-    const tree = TreeJS.init({ openOnDblClick: false, plugins: ['context-menu', 'checkbox'] });
+    const tree = TreeJS.init({ openOnDblClick: false, plugins: [{ name: 'context-menu', options: {
+      chooseFolderId: true
+    } }, 'checkbox'] });
     window.TREE = tree;
     window.TreeJS = TreeJS;
 

@@ -14,8 +14,8 @@ import { TreeJSTypeError } from '@/utils/error';
 
 /**
  * Context menu plugin
- * @param this
- * @param opts
+ * @param {TreeJS} this - The TreeJS instance
+ * @param {ContextMenuOptions} [opts={}] - Options for the context menu
  */
 export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
   const defaultOpts: ContextMenuOptions = {
@@ -24,7 +24,7 @@ export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
     chooseFolderId: false,
     chooseFolderLabel: false,
   };
-  opts = deepMerge<ContextMenuOptions>(opts, defaultOpts);
+  opts = { ...defaultOpts, ...opts };
 
   const contextMenu = document.createElement('div');
   contextMenu.classList.add(`${this._prefix}contextmenu`);
@@ -93,26 +93,10 @@ export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
       const id = $button.getAttribute(`${this._data_attribute}id`);
       const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
       if (id && $parent) {
-        if (opts.chooseFolderLabel && !opts.chooseFolderId) {
-          const label = prompt(this.t('choose_folder_label'), 'New folder');
-          if (label === null) return; // User cancelled
-          this.createFolder(label, $parent, id);
-          return;
-        }
-
-        if (opts.chooseFolderId && !opts.chooseFolderLabel) {
-          const label = prompt(this.t('choose_folder_id'), 'New folder');
-          if (label === null) return; // User cancelled
-          this.createFolder(label, $parent, id);
-          return;
-        }
-
-        if (opts.chooseFolderLabel && opts.chooseFolderId) {
-          const label = prompt(this.t('choose_folder_label'), 'New folder');
-          if (label === null) return; // User cancelled
-          const id = prompt(this.t('choose_folder_id'), 'New folder');
+        if (opts.chooseFolderId) {
+          const id = prompt(this.t('choose_folder_id'), '');
           if (id === null) return; // User cancelled
-          this.createFolder(label, $parent, id);
+          this.createFolder('New folder', $parent, id);
           return;
         }
 

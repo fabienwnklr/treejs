@@ -1,7 +1,11 @@
 {
- "rename": "Renommer",
- "create_folder": "Créer un dossier",
- "remove_folder": "Supprimer le dossier",
- "create_file": "Créer un fichier",
- "remove_file": "Supprimer le fichier"
+    "rename": "Renommer",
+    "create_folder": "Créer un dossier",
+    "remove_folder": "Supprimer le dossier",
+    "create_file": "Créer un fichier",
+    "remove_file": "Supprimer le fichier",
+    "choose_folder_id": "Choisir l'ID du dossier",
+    "choose_folder_label": "Choisir le libellé du dossier",
+    "choose_file_id": "Choisir l'ID du fichier",
+    "choose_file_label": "Choisir le libellé du fichier"
 }

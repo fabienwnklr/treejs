@@ -1,7 +1,11 @@
 {
- "rename": "Rename",
- "create_folder": "Create Folder",
- "remove_folder": "Remove Folder",
- "create_file": "Create File",
- "remove_file": "Remove File"
+    "rename": "Rename",
+    "create_folder": "Create Folder",
+    "remove_folder": "Remove Folder",
+    "create_file": "Create File",
+    "remove_file": "Remove File",
+    "choose_folder_id": "Choose Folder ID",
+    "choose_folder_label": "Choose Folder Label",
+    "choose_file_id": "Choose File ID",
+    "choose_file_label": "Choose File Label"
 }
