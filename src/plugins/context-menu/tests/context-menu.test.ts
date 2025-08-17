@@ -23,7 +23,6 @@ describe('Plugin - Context menu', () => {
   });
 
   it('should open context menu on right click and close on click outside', async () => {
-    const body = document.body;
     const firstItem = document.getElementById('first') as HTMLLIElement;
     firstItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
     // await for the context menu to be rendered
@@ -33,7 +32,7 @@ describe('Plugin - Context menu', () => {
     expect(contextMenu).not.toBeNull();
     expect(contextMenu.style.display).not.toBe('none');
 
-    body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     const contextMenuAfterClick = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
     // context menu should be hidden
     expect(contextMenuAfterClick).toBeNull();

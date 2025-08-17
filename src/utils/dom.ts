@@ -30,7 +30,22 @@ export function createCheckbox(name: string, prefix: string, checked: boolean = 
 }
 
 export function stringToHTMLElement<T>(string: string): T {
-  return new DOMParser().parseFromString(string, 'text/html').body.firstChild as T;
+  if (!string || typeof string !== 'string') {
+    throw new TreeJSTypeError('stringToHTMLElement: string must be a non-empty string');
+  }
+
+  // Check if parsed string is valid HTML
+  if (!string.trim().startsWith('<')) {
+    throw new TreeJSTypeError('stringToHTMLElement: string must be a valid HTML string');
+  }
+
+  const htmlElement = new DOMParser().parseFromString(string, 'text/html').body.firstChild;
+
+  if (!htmlElement) {
+    throw new TreeJSTypeError('stringToHTMLElement: failed to parse string as HTML, check the input string');
+  }
+
+  return htmlElement as T;
 }
 
 /**

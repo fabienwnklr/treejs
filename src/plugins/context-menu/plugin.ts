@@ -5,7 +5,7 @@ import removeFile from '@/Icons/remove-file.svg?raw';
 import removeFolder from '@/Icons/remove-folder.svg?raw';
 import { TreeJS } from '@/TreeJS';
 import { deepMerge } from '@/utils/functions';
-import type { myType } from './@types';
+import type { ContextMenuOptions } from './@types';
 
 // importing style
 import './plugin.scss';
@@ -17,9 +17,14 @@ import { TreeJSTypeError } from '@/utils/error';
  * @param this
  * @param opts
  */
-export default function (this: TreeJS, opts: myType = {}) {
-  const defaultOpts: myType = { prop1: '' };
-  opts = deepMerge<myType>(opts, defaultOpts);
+export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
+  const defaultOpts: ContextMenuOptions = {
+    chooseFileId: false,
+    chooseFileLabel: false,
+    chooseFolderId: false,
+    chooseFolderLabel: false,
+  };
+  opts = deepMerge<ContextMenuOptions>(opts, defaultOpts);
 
   const contextMenu = document.createElement('div');
   contextMenu.classList.add(`${this._prefix}contextmenu`);
@@ -88,7 +93,30 @@ export default function (this: TreeJS, opts: myType = {}) {
       const id = $button.getAttribute(`${this._data_attribute}id`);
       const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
       if (id && $parent) {
-        this.createFolder('New folder', '', $parent);
+        if (opts.chooseFolderLabel && !opts.chooseFolderId) {
+          const label = prompt(this.t('choose_folder_label'), 'New folder');
+          if (label === null) return; // User cancelled
+          this.createFolder(label, $parent, id);
+          return;
+        }
+
+        if (opts.chooseFolderId && !opts.chooseFolderLabel) {
+          const label = prompt(this.t('choose_folder_id'), 'New folder');
+          if (label === null) return; // User cancelled
+          this.createFolder(label, $parent, id);
+          return;
+        }
+
+        if (opts.chooseFolderLabel && opts.chooseFolderId) {
+          const label = prompt(this.t('choose_folder_label'), 'New folder');
+          if (label === null) return; // User cancelled
+          const id = prompt(this.t('choose_folder_id'), 'New folder');
+          if (id === null) return; // User cancelled
+          this.createFolder(label, $parent, id);
+          return;
+        }
+
+        this.createFolder('New folder', $parent);
         return;
       }
 
@@ -108,23 +136,22 @@ export default function (this: TreeJS, opts: myType = {}) {
     });
   };
 
-  this.createFolder = (label: string, id?: string, parent?: HTMLLIElement) => {
+  this.createFolder = (label: string, parent?: HTMLLIElement, id?: string) => {
     if (!parent) {
       throw new TreeJSTypeError('Required parent is null or undefined');
     }
     const isFolder = parent.classList.contains('has-children');
     const $folder = stringToHTMLElement<HTMLLIElement>(
-      `
-      <li>${label}</li>` + (isFolder ? '<ul></ul>' : '')
+      `<li${id ? ` id="${id}" ` : ' '}class="${this._li_class}">${label}<ul></ul></li>`
     );
+
+    if (!$folder) {
+      throw new TreeJSTypeError('Failed to create folder element, check the HTML structure');
+    }
 
     const $liList = $folder.parentElement?.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
 
-    this._buildList($liList);
-
-    if (this.plugins.loaded.checkbox) {
-      this.plugins.loaded.checkbox._buildCheckboxes($liList, parent);
-    }
+    this._buildList($liList, parent);
 
     if (isFolder) {
       const ul = parent.querySelector('ul');

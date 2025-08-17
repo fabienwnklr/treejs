@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { TreeJS } from '@/TreeJS';
 import type { TreeElement } from '@/@types';
 
-describe('TreeJS', () => {
+describe('TreeJS', async () => {
   document.body.innerHTML = `
   <ul id="tree">
     <li id="first" data-treejs-onselect="console.log('First')">
@@ -34,6 +34,11 @@ describe('TreeJS', () => {
 
   const Tree = new TreeJS('tree');
   const $tree = document.getElementById('tree') as TreeElement;
+
+  await new Promise((resolve) => {
+    // Wait for the TreeJS to initialize
+    Tree.on('initialize', resolve);
+  });
 
   it('Basic initialization', () => {
     expect(Tree).toBeInstanceOf(TreeJS);

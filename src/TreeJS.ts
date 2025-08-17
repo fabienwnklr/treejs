@@ -227,7 +227,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * Build the list from the NodeListOf HTMLLIElement.
    * @param {NodeListOf<HTMLLIElement>} $liList - NodeListOf HTMLLIElement
    */
-  protected _buildList($liList: NodeListOf<HTMLLIElement>): void {
+  protected _buildList($liList: NodeListOf<HTMLLIElement>, $parent?: HTMLLIElement): void {
     const toOpen = new Set<HTMLLIElement>();
 
     for (const $li of $liList) {
@@ -281,6 +281,10 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
       if (openChild && $child) {
         collectFolderChildren($child, toOpen);
       }
+    }
+
+    if (this.plugins.loaded.checkbox) {
+      this.plugins.loaded.checkbox._buildCheckboxes($liList, $parent);
     }
 
     toOpen.forEach(($li) => {
@@ -640,11 +644,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
     const $liList = html.parentElement?.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
 
-    this._buildList($liList);
-
-    if (this.plugins.loaded.checkbox) {
-      this.plugins.loaded.checkbox._buildCheckboxes($liList, $li);
-    }
+    this._buildList($liList, $li);
 
     $ul.innerHTML = '';
     $ul.appendChild(html);
