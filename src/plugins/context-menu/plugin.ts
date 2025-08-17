@@ -9,7 +9,7 @@ import type { myType } from './@types';
 
 // importing style
 import './plugin.scss';
-import { createLiElement } from '@/utils/dom';
+import { stringToHTMLElement } from '@/utils/dom';
 import { TreeJSTypeError } from '@/utils/error';
 
 /**
@@ -113,7 +113,18 @@ export default function (this: TreeJS, opts: myType = {}) {
       throw new TreeJSTypeError('Required parent is null or undefined');
     }
     const isFolder = parent.classList.contains('has-children');
-    const $folder = createLiElement(this._li_class, true, this._anchor_class, label, id);
+    const $folder = stringToHTMLElement<HTMLLIElement>(
+      `
+      <li>${label}</li>` + (isFolder ? '<ul></ul>' : '')
+    );
+
+    const $liList = $folder.parentElement?.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
+
+    this._buildList($liList);
+
+    if (this.plugins.loaded.checkbox) {
+      this.plugins.loaded.checkbox._buildCheckboxes($liList, parent);
+    }
 
     if (isFolder) {
       const ul = parent.querySelector('ul');
@@ -124,6 +135,8 @@ export default function (this: TreeJS, opts: myType = {}) {
       parent.after($folder);
     }
 
+    // Update the list of items
+    this.$liList = this.$list.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
     // then bind event to the new folder
     this._bindEvents();
   };

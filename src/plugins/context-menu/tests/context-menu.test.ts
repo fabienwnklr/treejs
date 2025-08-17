@@ -70,4 +70,26 @@ describe('Plugin - Context menu', () => {
       expect(button.getAttribute(`${Tree._data_attribute}name`)).toBeDefined();
     });
   });
+
+  it('should create new folder from context menu', () => {
+    const itemsCountBefore = Tree.$liList.length;
+    const $itemsBefore = Array.from(Tree.$liList);
+    const secondItem = document.getElementById('second') as HTMLLIElement;
+    secondItem.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true }));
+    const contextMenu = document.querySelector('.treejs-contextmenu') as HTMLDivElement;
+    const createFolderButton = contextMenu.querySelector('#create-folder') as HTMLButtonElement;
+    createFolderButton.click();
+    // await for the input to be rendered
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const itemsCountAfter = Tree.$liList.length;
+        const $itemsAfter = Tree.$liList;
+        // Get the new folder created, not present in the list before
+        const newFolder = Array.from($itemsAfter).find((item) => !$itemsBefore.includes(item));
+        expect(newFolder).toBeDefined();
+        expect(itemsCountAfter).toBe(itemsCountBefore + 1);
+        resolve(null);
+      }, 100);
+    });
+  });
 });

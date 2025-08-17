@@ -1,7 +1,7 @@
 import { TreeJS } from '@/TreeJS';
 import { createCheckbox } from '@/utils/dom';
 // import { ... } from '@/utils/dom'
-import { _getLiName, createId, deepMerge } from '@/utils/functions';
+import { _getLiName, deepMerge } from '@/utils/functions';
 import type { CheckboxJSON, CheckboxOptions } from './@types';
 
 // importing style

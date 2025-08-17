@@ -30,8 +30,8 @@ import { Icons } from '@/Icons';
 // Translation
 import { resources } from '@/locales';
 // !! Plugins !!
-import Checkbox from './plugins/checkbox/plugin';
-import ContextMenu from './plugins/context-menu/plugin';
+import Checkbox from '@/plugins/checkbox/plugin';
+import ContextMenu from '@/plugins/context-menu/plugin';
 
 const locale = navigator.language || 'en';
 
@@ -227,7 +227,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * Build the list from the NodeListOf HTMLLIElement.
    * @param {NodeListOf<HTMLLIElement>} $liList - NodeListOf HTMLLIElement
    */
-  private _buildList($liList: NodeListOf<HTMLLIElement>): void {
+  protected _buildList($liList: NodeListOf<HTMLLIElement>): void {
     const toOpen = new Set<HTMLLIElement>();
 
     for (const $li of $liList) {

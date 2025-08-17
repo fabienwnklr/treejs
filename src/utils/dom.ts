@@ -172,44 +172,44 @@ export function createAnchorElement(textNode: Node, anchorClass: string): HTMLBu
   return $anchor;
 }
 
-export function createLiElement(
-  liClass: string,
-  hasChildren: boolean,
-  anchorClass: string,
-  label: string,
-  id?: string,
-  open?: boolean
-): HTMLLIElement {
-  if (!id) {
-    id = createId();
-  }
-  const $li = stringToHTMLElement<HTMLLIElement>(
-    `<li class="${liClass}${hasChildren ? ' has-children' : ''}" id="${id}"></li>`
-  );
-  if (open) {
-    $li.classList.add('show');
-  } else {
-    $li.classList.add('hide');
-  }
-  const $anchor = createAnchorElement(document.createTextNode(label), anchorClass);
+// export function createLiElement(
+//   liClass: string,
+//   hasChildren: boolean,
+//   anchorClass: string,
+//   label: string,
+//   id?: string,
+//   open?: boolean
+// ): HTMLLIElement {
+//   if (!id) {
+//     id = createId();
+//   }
+//   const $li = stringToHTMLElement<HTMLLIElement>(
+//     `<li class="${liClass}${hasChildren ? ' has-children' : ''}" id="${id}"></li>`
+//   );
+//   if (open) {
+//     $li.classList.add('show');
+//   } else {
+//     $li.classList.add('hide');
+//   }
+//   const $anchor = createAnchorElement(document.createTextNode(label), anchorClass);
 
-  // Add icons
-  if (hasChildren) {
-    const folderIcon = Icons.get('folder', '');
-    $anchor.prepend(folderIcon);
-  } else {
-    const fileIcon = Icons.get('file', '');
-    $anchor.prepend(fileIcon);
-  }
+//   // Add icons
+//   if (hasChildren) {
+//     const folderIcon = Icons.get('folder', '');
+//     $anchor.prepend(folderIcon);
+//   } else {
+//     const fileIcon = Icons.get('file', '');
+//     $anchor.prepend(fileIcon);
+//   }
 
-  const chevronIcon = Icons.get('chevron', '');
-  $anchor.append(chevronIcon);
+//   const chevronIcon = Icons.get('chevron', '');
+//   $anchor.append(chevronIcon);
 
-  if (hasChildren) {
-    $li.appendChild(document.createElement('ul'));
-  }
+//   if (hasChildren) {
+//     $li.appendChild(document.createElement('ul'));
+//   }
 
-  $li.appendChild($anchor);
+//   $li.appendChild($anchor);
 
-  return $li;
-}
+//   return $li;
+// }
