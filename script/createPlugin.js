@@ -6,9 +6,29 @@ import path from 'path';
 
 const pluginName = process.argv[2];
 
+function hasFilesRecursive(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isFile()) {
+      return true; // trouvé un fichier → stop direct
+    }
+
+    if (entry.isDirectory()) {
+      const found = hasFilesRecursive(fullPath);
+      if (found) return true;
+    }
+  }
+
+  return false; // aucun fichier trouvé
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 try {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
 
   function camelize(str) {
     return str
@@ -31,9 +51,13 @@ try {
   // check if plugin name exists
   const pluginDir = path.join(__dirname, '..', 'src', 'plugins', pluginName);
   if (fs.existsSync(pluginDir)) {
-    // console error with red color
-    console.error(`\x1b[31mPlugin ${pluginName} already exists. Please choose a different name.\x1b[0m`);
-    process.exit(1);
+    // if no files exist in the directory, remove it
+    if (hasFilesRecursive(pluginDir) == false) {
+      fs.rmdirSync(pluginDir, { recursive: true });
+    } else {
+      console.error(`\x1b[31mPlugin ${pluginName} already exists. Please choose a different name.\x1b[0m`);
+      process.exit(1);
+    }
   }
 
   const typesDir = path.join(pluginDir, '@types');
@@ -45,12 +69,13 @@ try {
   const pluginFilePath = path.join(pluginDir, 'plugin.ts');
   const typesFilePath = path.join(typesDir, 'index.d.ts');
 
-  const pluginTemplate = `import { deepMerge } from '@utils/functions';
+  const pluginTemplate = `import { deepMerge } from '@/utils/functions';
 import { TreeJS } from '@/TreeJS';
 import type { ${pluginNameCamelCase}Options } from './@types';
 
 ${useStyle ? "import './plugin.scss';\n" : ''}
-/** * ${pluginNameCamelCase} plugin for TreeJS
+/**
+ * ${pluginNameCamelCase} plugin for TreeJS
  * @name ${pluginNameCamelCase}
  * @description Adds ${pluginName} functionality to the TreeJS instance.
  * @version 1.0.0
@@ -58,7 +83,7 @@ ${useStyle ? "import './plugin.scss';\n" : ''}
  * @param {TreeJS} this - The TreeJS instance
  * @param {${pluginNameCamelCase}Options} options - Plugin options
  */
-export default function(this: TreeJS, options: ${pluginNameCamelCase}Options) {
+export default function (this: TreeJS, options: ${pluginNameCamelCase}Options) {
   // Default options
   const defaultOptions: ${pluginNameCamelCase}Options = {
     // Define default options here
