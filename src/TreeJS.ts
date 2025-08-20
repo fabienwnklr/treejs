@@ -12,6 +12,7 @@ import { resources } from '@/locales';
 // !! Plugins !!
 import Checkbox from '@/plugins/checkbox/plugin';
 import ContextMenu from '@/plugins/context-menu/plugin';
+import Dialog from '@/plugins/dialog/plugin';
 import { TreeJSConsole } from '@/utils/console';
 import {
   animateHeight,
@@ -760,3 +761,4 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
 
 TreeJS.define('checkbox', Checkbox);
 TreeJS.define('context-menu', ContextMenu);
+TreeJS.define('dialog', Dialog);

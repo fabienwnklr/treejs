@@ -19,7 +19,7 @@ export interface TreeJSOptions {
   };
 }
 
-export type AvailablePlugins = 'context-menu' | 'checkbox';
+export type AvailablePlugins = 'context-menu' | 'checkbox' | 'dialog';;
 
 export interface TreeJSJSON {
   label: string;
