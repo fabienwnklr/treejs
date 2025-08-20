@@ -53,7 +53,7 @@ try {
   if (fs.existsSync(pluginDir)) {
     // if no files exist in the directory, remove it
     if (hasFilesRecursive(pluginDir) == false) {
-      fs.rmdirSync(pluginDir, { recursive: true });
+      fs.rmSync(pluginDir, { recursive: true });
     } else {
       console.error(`\x1b[31mPlugin ${pluginName} already exists. Please choose a different name.\x1b[0m`);
       process.exit(1);
@@ -162,7 +162,7 @@ describe('Plugin - ${pluginNameCamelCase}', () => {
   // Add plugin to TreeJS
   const treeJSFilePath = path.join(__dirname, '..', 'src', 'TreeJS.ts');
   const treeJSContent = fs.readFileSync(treeJSFilePath, 'utf8');
-  const pluginImport = `import ${pluginNameCamelCase} from './plugins/${pluginName}/plugin';\n`;
+  const pluginImport = `import ${pluginNameCamelCase} from '@/plugins/${pluginName}/plugin';\n`;
   // Check if the import already exists
   if (!treeJSContent.includes(pluginImport)) {
     const importRegex = /^(import[\s\S]+?from\s+['"][^'"]+['"];?|import\s+['"][^'"]+['"];?)$/gm;
@@ -174,7 +174,7 @@ describe('Plugin - ${pluginNameCamelCase}', () => {
       lastImportEnd = importRegex.lastIndex;
     }
     const updatedCode =
-      treeJSContent.slice(0, lastImportEnd) +
+      treeJSContent.slice(0, lastImportEnd) + "\n" +
       pluginImport +
       treeJSContent.slice(lastImportEnd);
 
@@ -214,7 +214,7 @@ describe('Plugin - ${pluginNameCamelCase}', () => {
   // Remove created directories and files if any
   const pluginDir = path.join(__dirname, '..', 'src', 'plugins', pluginName);
   if (fs.existsSync(pluginDir)) {
-    fs.rmdirSync(pluginDir, { recursive: true });
+    fs.rmSync(pluginDir, { recursive: true });
   }
 
   process.exit(1);
