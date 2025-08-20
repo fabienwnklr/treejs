@@ -1,8 +1,8 @@
-import { TreeJSConsole } from '@utils/console';
-import { TreeJSTypeError } from '@utils/error';
 import { s } from 'vitest/dist/reporters-5f784f42.js';
 import type { TreeJSJSON } from '@/@types';
 import { Icons } from '@/Icons';
+import { TreeJSConsole } from '@/utils/console';
+import { TreeJSTypeError } from '@/utils/error';
 import { createId, sanitizeString } from './functions';
 
 /**

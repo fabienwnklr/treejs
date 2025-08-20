@@ -1,5 +1,3 @@
-import { stringToHTMLElement } from '@utils/dom';
-import { TreeJSError } from '@utils/error';
 import chevron from '@/Icons/chevron.svg?raw';
 import createFile from '@/Icons/create-file.svg?raw';
 import createfolder from '@/Icons/create-folder.svg?raw';
@@ -9,6 +7,8 @@ import folder from '@/Icons/folder.svg?raw';
 import folderOpen from '@/Icons/folder-open.svg?raw';
 import removeFile from '@/Icons/remove-file.svg?raw';
 import removefolder from '@/Icons/remove-folder.svg?raw';
+import { stringToHTMLElement } from '@/utils/dom';
+import { TreeJSError } from '@/utils/error';
 import type { IconType } from './@types/icon';
 export class Icons {
   static _prefix = '';

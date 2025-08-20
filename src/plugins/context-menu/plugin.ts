@@ -4,7 +4,6 @@ import edit from '@/Icons/edit.svg?raw';
 import removeFile from '@/Icons/remove-file.svg?raw';
 import removeFolder from '@/Icons/remove-folder.svg?raw';
 import { TreeJS } from '@/TreeJS';
-import { deepMerge } from '@/utils/functions';
 import type { ContextMenuOptions } from './@types';
 
 // importing style

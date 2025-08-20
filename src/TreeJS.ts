@@ -1,8 +1,18 @@
 import './scss/style.scss';
 
-import MicroEvent from '@lib/MicroEvent';
-import MicroPlugin from '@lib/MicroPlugin';
-import { TreeJSConsole } from '@utils/console';
+import i18n from 'i18next';
+// !! Types !! \\
+import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
+import { TreeJSDefaultsOptions } from '@/constants';
+import { Icons } from '@/Icons';
+import MicroEvent from '@/lib/MicroEvent';
+import MicroPlugin from '@/lib/MicroPlugin';
+// Translation
+import { resources } from '@/locales';
+// !! Plugins !!
+import Checkbox from '@/plugins/checkbox/plugin';
+import ContextMenu from '@/plugins/context-menu/plugin';
+import { TreeJSConsole } from '@/utils/console';
 import {
   animateHeight,
   createAnchorElement,
@@ -11,8 +21,8 @@ import {
   parseNode,
   skeletonLoader,
   stringToHTMLElement,
-} from '@utils/dom';
-import { TreeJSError, TreeJSTypeError } from '@utils/error';
+} from '@/utils/dom';
+import { TreeJSError, TreeJSTypeError } from '@/utils/error';
 import {
   bindAllMethods,
   collectFolderChildren,
@@ -21,17 +31,7 @@ import {
   getAttributes,
   isValidOptions,
   validateAttributes,
-} from '@utils/functions';
-import i18n from 'i18next';
-// !! Types !! \\
-import type { TreeElement, TreeJSEvents, TreeJSJSON, TreeJSOptions } from '@/@types';
-import { TreeJSDefaultsOptions } from '@/constants';
-import { Icons } from '@/Icons';
-// Translation
-import { resources } from '@/locales';
-// !! Plugins !!
-import Checkbox from '@/plugins/checkbox/plugin';
-import ContextMenu from '@/plugins/context-menu/plugin';
+} from '@/utils/functions';
 
 const locale = navigator.language || 'en';
 

@@ -26,9 +26,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '@plugins': resolve(__dirname, './src/plugins'),
-      '@utils': resolve(__dirname, './src/utils'),
-      '@lib': resolve(__dirname, './src/lib'),
     },
   },
   test: {
