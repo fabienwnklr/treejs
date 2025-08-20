@@ -176,6 +176,12 @@ describe('Plugin - ${pluginNameCamelCase}', () => {
   }
   fs.writeFileSync(typesIndexFilePath, typesIndexContent);
 
+  // create README.md
+  const readmeFilePath = path.join(pluginDir, 'README.md');
+  const readmeContent = `# TreeJS - ${pluginName}`;
+
+  fs.writeFileSync(readmeFilePath, readmeContent);
+
   console.log(`\x1b[34mPlugin ${pluginName} created successfully to ${pluginFilePath} !\x1b[0m`);
 
 } catch (error) {

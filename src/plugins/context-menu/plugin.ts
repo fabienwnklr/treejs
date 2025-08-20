@@ -15,16 +15,16 @@ import { TreeJSTypeError } from '@/utils/error';
 /**
  * Context menu plugin
  * @param {TreeJS} this - The TreeJS instance
- * @param {ContextMenuOptions} [opts={}] - Options for the context menu
+ * @param {ContextMenuOptions} [options={}] - Options for the context menu
  */
-export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
+export default function (this: TreeJS, options: ContextMenuOptions = {}) {
   const defaultOpts: ContextMenuOptions = {
     chooseFileId: false,
     chooseFileLabel: false,
     chooseFolderId: false,
     chooseFolderLabel: false,
   };
-  opts = { ...defaultOpts, ...opts };
+  options = { ...defaultOpts, ...options };
 
   const contextMenu = document.createElement('div');
   contextMenu.classList.add(`${this._prefix}contextmenu`);
@@ -93,12 +93,12 @@ export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
       const id = $button.getAttribute(`${this._data_attribute}id`);
       const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
       if (id && $parent) {
-        if (opts.chooseFolderId) {
-          const id = prompt(this.t('choose_folder_id'), '');
-          if (id === null) return; // User cancelled
-          this.createFolder('New folder', $parent, id);
-          return;
-        }
+        // if (options.chooseFolderId) {
+        //   const id = prompt(this.t('choose_folder_id'), '');
+        //   if (id === null) return; // User cancelled
+        //   this.createFolder('New folder', $parent, id);
+        //   return;
+        // }
 
         this.createFolder('New folder', $parent);
         return;
@@ -168,6 +168,6 @@ export default function (this: TreeJS, opts: ContextMenuOptions = {}) {
   // };
 
   return {
-    options: opts,
+    options: options,
   };
 }
