@@ -82,19 +82,19 @@ ${useStyle ? "import './plugin.scss';\n" : ''}
  * @param {TreeJS} this - The TreeJS instance
  * @param {${pluginNameCamelCase}Options} options - Plugin options
  */
-export default function (this: TreeJS, options: ${pluginNameCamelCase}Options) {
+export default function (this: TreeJS, options: Partial<${pluginNameCamelCase}Options>) {
   // Default options
   const defaultOptions: ${pluginNameCamelCase}Options = {
     // Define default options here
   };
 
   // Merge default options with user options
-  const mergedOptions = { ...defaultOptions, ...options };
+  options = { ...defaultOptions, ...options };
 
   function init(this: TreeJS) {
     // Your plugin code goes here
-    console.log('${pluginNameCamelCase} plugin initialized with options:', mergedOptions);
-    
+    console.log('${pluginNameCamelCase} plugin initialized with options:', options);
+
     this.off('initialize', binded);
   }
 
@@ -109,7 +109,9 @@ export default function (this: TreeJS, options: ${pluginNameCamelCase}Options) {
   fs.writeFileSync(pluginFilePath, pluginTemplate);
 
   // Create @types/index.d.ts file
-  const typesTemplate = `import type { TreeJS } from '@/TreeJS';
+  const typesTemplate = `declare module '@/TreeJS' {
+  interface TreeJS extends ${pluginNameCamelCase}Plugin {}
+}
 export type ${pluginNameCamelCase}Options = {
   // Define your plugin options here
   prop1?: string; // Example option

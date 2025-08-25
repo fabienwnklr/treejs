@@ -20,7 +20,6 @@ export type CheckboxJSON = {
   };
 };
 
-import type { TreeJSEvents } from '@/@types';
 
 declare module '@/@types' {
   interface TreeJSEvents {
