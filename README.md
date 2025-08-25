@@ -4,6 +4,9 @@ TreeJS is a lightweight JavaScript component for displaying and manipulating dat
 
 TreeJS is strongly typed and performs thorough data validation to make usage as clear and safe as possible, reducing complexity and clarifying expectations.
 
+> [!NOTE]
+> If you want to implement icons please use [lucide.dev](https://lucide.dev/icons/)
+
 ## Installation
 
 ```bash
