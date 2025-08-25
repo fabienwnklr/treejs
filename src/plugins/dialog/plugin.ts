@@ -43,7 +43,7 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
     if (existingDialog) {
       // Dialog with id already exists, open it
       existingDialog.showModal();
-      return;
+      return existingDialog;
     }
 
     const $dialog = stringToHTMLElement<HTMLDialogElement>(
@@ -74,6 +74,8 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
 
       this.trigger('dialog-open', { $dialog, id });
     }
+
+    return $dialog;
   };
 
   this.openDialog = (id: string) => {
