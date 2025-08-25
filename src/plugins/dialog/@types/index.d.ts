@@ -18,7 +18,7 @@ export type UniqueDialogOptions = {
 
 export interface DialogPlugin {
   _dialogs: HTMLDialogElement[];
-  createDialog(content: string, options: Partial<UniqueDialogOptions>): void;
+  createDialog(content: string, options: Partial<UniqueDialogOptions>): HTMLDialogElement;
   openDialog(id: string): void;
   closeDialog(id: string): void;
   setDialogContent(content: string): void;
