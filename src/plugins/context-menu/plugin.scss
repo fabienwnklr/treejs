@@ -7,7 +7,7 @@
   padding: 0.5rem;
   background-color: #fff;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  border-radius: 1rem;
+  border-radius: $radius;
   animation: open 0.3s;
   transform-origin: top left;
 
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     transition: background-color .2s ease;
-    border-radius: 0.5rem;
+    border-radius: $radius;
 
     &:not(.danger):hover {
       background-color: var(--#{$prefix}-bg-primary);

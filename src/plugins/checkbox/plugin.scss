@@ -11,7 +11,7 @@
       opacity: 1;
       appearance: none;
       border: 1px solid var(--#{$prefix}-primary);
-      border-radius: 3px;
+      border-radius: $radius;
       background: #fff;
       position: relative;
       margin-right: 0.4rem;

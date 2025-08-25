@@ -1,7 +1,8 @@
 import { TreeJS } from '@/TreeJS';
-import type { DialogOptions } from './@types';
+import type { DialogOptions, UniqueDialogOptions } from './@types';
 
 import './plugin.scss';
+import IconClose from '@/icons/close.svg?raw';
 import { stringToHTMLElement } from '@/utils/dom';
 import { TreeJSError } from '@/utils/error';
 import { createId } from '@/utils/functions';
@@ -25,20 +26,54 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
   options = { ...defaultOptions, ...options };
   this._dialogs = [];
 
-  this.createDialog = (content: string, id?: string, autoOpen: boolean = true) => {
+  this.createDialog = (content: string, dialogOptions: Partial<UniqueDialogOptions>) => {
     if (!content) {
       throw new TreeJSError('Dialog content is required to create a dialog');
     }
+
+    const defaultDialogOptions = { autoOpen: true, footer: false as false, id: createId(), title: false as false };
+    dialogOptions = { ...defaultDialogOptions, ...dialogOptions };
+    let { id, autoOpen, title, footer } = dialogOptions;
     if (!id) {
       id = createId();
     }
+
+    // Check if dialog with id exists
+    const existingDialog = this._dialogs.find((dialog) => dialog.id === id);
+    if (existingDialog) {
+      // Dialog with id already exists, open it
+      existingDialog.showModal();
+      return;
+    }
+
     const $dialog = stringToHTMLElement<HTMLDialogElement>(
-      `<dialog class="${this._prefix}dialog" id="${id}" ${autoOpen ? 'open' : ''}>${content}</dialog>`
+      `<dialog class="${this._prefix}dialog" id="${id}">
+        <div class="${this._prefix}dialog-header">
+          ${title ? `<h1 class="${this._prefix}dialog-title">${title}</h1>` : ''}
+          <button class="${this._prefix}dialog-close" label="${this.t('close')}">
+            ${IconClose}
+          </button>
+        </div>
+        <div class="${this._prefix}dialog-content">
+          ${content}
+        </div>
+        ${footer ? `<div class="${this._prefix}dialog-footer">${footer}</div>` : ''}
+      </dialog>`
     );
 
     this._dialogs.push($dialog);
 
     document.body.appendChild($dialog);
+
+    $dialog.querySelector(`.${this._prefix}dialog-close`)?.addEventListener('click', () => {
+      $dialog.close();
+    });
+
+    if (autoOpen) {
+      $dialog.showModal();
+
+      this.trigger('dialog-open', { $dialog, id });
+    }
   };
 
   this.openDialog = (id: string) => {
@@ -48,6 +83,8 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
     const $dialog = this._dialogs.find((dialog) => dialog.id === id);
     if ($dialog) {
       $dialog.showModal();
+
+      this.trigger('dialog-open', { $dialog, id });
     }
   };
 

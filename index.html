@@ -194,6 +194,21 @@
       console.log(payload);
       log.appendChild(document.createTextNode(`Edit: ${payload.id} - Old Value: ${payload.oldValue} - New Value: ${payload.newValue}\n`));
     });
+
+    Tree.on('dialog-open', (payload) => {
+      console.log(payload);
+      log.appendChild(document.createTextNode(`Dialog opened: ${payload.id}\n`));
+    });
+
+    Tree.on('dialog-close', (payload) => {
+      console.log(payload);
+      log.appendChild(document.createTextNode(`Dialog closed: ${payload.id}\n`));
+    });
+
+    Tree.on('dialog-content-set', (payload) => {
+      console.log(payload);
+      log.appendChild(document.createTextNode(`Dialog content set: ${payload.content}\n`));
+    });
   </script>
 </body>
 
