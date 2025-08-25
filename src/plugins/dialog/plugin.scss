@@ -5,11 +5,11 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     border-radius: $radius;
     position: relative;
-    padding-top: 2rem;
+    padding: 0;
     min-width: 300px;
 
     .#{$prefix}-dialog-header {
-        position: absolute;
+        position: sticky;
         top: 0;
         left: 0;
         width: 100%;
@@ -54,7 +54,7 @@
     }
 
     .#{$prefix}-dialog-content {
-        padding: 0.7rem 0.1rem;
+        padding: 0.7rem 1rem;
         box-sizing: border-box;
         max-height: 70vh;
         overflow-y: auto;
@@ -62,8 +62,20 @@
     }
 
     .#{$prefix}-dialog-footer {
-        padding: 0.7rem 0.1rem;
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 0.7rem 1rem;
         box-sizing: border-box;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+        height: 2rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        box-sizing: border-box;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        padding-left: 1rem;
     }
 }
