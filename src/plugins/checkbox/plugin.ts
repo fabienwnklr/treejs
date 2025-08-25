@@ -1,7 +1,7 @@
 import { TreeJS } from '@/TreeJS';
 import { createCheckbox } from '@/utils/dom';
 // import { ... } from '@/utils/dom'
-import { _getLiName, deepMerge } from '@/utils/functions';
+import { _getLiName } from '@/utils/functions';
 import type { CheckboxJSON, CheckboxOptions } from './@types';
 
 // importing style
@@ -14,11 +14,11 @@ import { TreeJSError } from '@/utils/error';
  * @version 1.0.0
  * @author Your Name
  * @param {TreeJS} this - The TreeJS instance
- * @param {CheckboxOptions} [opts={}] - Plugin options
+ * @param {CheckboxOptions} [options={}] - Plugin options
  */
-export default function (this: TreeJS, opts: CheckboxOptions = {}) {
+export default function (this: TreeJS, options: CheckboxOptions = {}) {
   const defaultOpts: CheckboxOptions = {};
-  opts = deepMerge<CheckboxOptions>(opts, defaultOpts);
+  options = { ...defaultOpts, ...options };
 
   this.on('initialize', () => {
     if (this.$liList) {
@@ -116,7 +116,7 @@ export default function (this: TreeJS, opts: CheckboxOptions = {}) {
     _buildCheckboxes: this._buildCheckboxes,
     getCheckedCheckboxes: this.getCheckedCheckboxes,
     name: 'checkbox',
-    options: opts,
+    options: options,
     toggleAllCheckboxes: this.toggleAllCheckboxes,
     toggleCheckbox: this.toggleCheckbox,
   };

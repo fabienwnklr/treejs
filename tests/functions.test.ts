@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   _getLiName,
-  deepMerge,
   getAttributes,
   isObject,
   validateAttributes,
@@ -12,12 +11,6 @@ import {
 describe('Unit tests', () => {
   it('isObject', () => {
     expect(isObject({})).toBe(true);
-  });
-
-  it('deepMerge', () => {
-    expect(deepMerge({ a: 1 }, { b: 2 })).toEqual({ a: 1, b: 2 });
-    expect(deepMerge({ a: { b: 1 } }, { a: { c: 2 } })).toEqual({ a: { b: 1, c: 2 } });
-    expect(deepMerge({ a: { b: 1 } }, { a: { c: { d: 2 } } })).toEqual({ a: { b: 1, c: { d: 2 } } });
   });
 
   it('sanitizeString', () => {

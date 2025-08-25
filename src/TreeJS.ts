@@ -28,7 +28,6 @@ import {
   bindAllMethods,
   collectFolderChildren,
   createId,
-  deepMerge,
   getAttributes,
   isValidOptions,
   validateAttributes,
@@ -144,7 +143,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     isValidOptions(options, TreeJSDefaultsOptions);
 
     this.$list.treejs = this;
-    this.options = deepMerge<TreeJSOptions>(TreeJSDefaultsOptions, options);
+    this.options = { ...TreeJSDefaultsOptions, ...options };
 
     Icons._prefix = this._prefix;
     Icons._icon_class = this._icon_class;
@@ -185,7 +184,7 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
    * @see {@link TreeJSOptions} for available options.
    * @see {@link TreeJSDefaultsOptions} for default options.
    */
-  static init(options: Partial<TreeJSOptions> = {}): TreeJS | TreeJS[] {
+  static init(options: Partial<TreeJSOptions> = {}): TreeJS[] {
     if (typeof options !== 'object') {
       throw new TreeJSError(`options must be an object, actual is ${typeof options}`);
     }
@@ -194,18 +193,14 @@ export class TreeJS extends MicroPlugin(MicroEvent<TreeJSEvents>) {
     if ($trees.length === 0) {
       throw new TreeJSError('No ul.treejs elements found in the document.');
     }
-    // Initialize each tree with the provided options
+
     const trees = Array.from($trees).map(($tree) => new TreeJS($tree, options));
 
-    if (trees.length === 1) {
-      // If only one tree is found, return the instance directly
-      return trees[0];
-    }
-    // If multiple trees are found, return an array of instances
     return trees;
   }
 
   /**
+   * @private
    * Bind `this` to event handlers
    * used to ensure that `this` refers to the TreeJS instance when the event handler is called
    */

@@ -69,8 +69,7 @@ try {
   const pluginFilePath = path.join(pluginDir, 'plugin.ts');
   const typesFilePath = path.join(typesDir, 'index.d.ts');
 
-  const pluginTemplate = `import { deepMerge } from '@/utils/functions';
-import { TreeJS } from '@/TreeJS';
+  const pluginTemplate = `import { TreeJS } from '@/TreeJS';
 import type { ${pluginNameCamelCase}Options } from './@types';
 
 ${useStyle ? "import './plugin.scss';\n" : ''}
@@ -90,7 +89,7 @@ export default function (this: TreeJS, options: ${pluginNameCamelCase}Options) {
   };
 
   // Merge default options with user options
-  const mergedOptions = deepMerge(defaultOptions, options);
+  const mergedOptions = { ...defaultOptions, ...options };
 
   function init(this: TreeJS) {
     // Your plugin code goes here

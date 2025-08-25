@@ -142,59 +142,56 @@
     } }, 'checkbox', 'dialog'] });
     window.TREE = tree;
     window.TreeJS = TreeJS;
+    const log = document.getElementById('log');
+
+    tree.on('initialize', () => {
+      console.log('Tree initialized');
+      log.appendChild(document.createTextNode(`Initialized\n`));
+    });
 
     tree.on('select', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Selected: ${node.id}\n`));
     });
 
     tree.on('toggle', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Toggled: ${node.id}\n`));
     });
 
     tree.on('open', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Open: ${node.id}\n`));
     });
 
     tree.on('fetch', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Fetch: ${node.id}\n`));
     });
 
     tree.on('fetch-error', (node, error) => {
       console.error(error);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Fetch error for ${node.id}: ${error.message}\n`));
     });
 
     tree.on('fetched', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Fetched: ${node.id}\n`));
     });
 
     tree.on('close', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Closed: ${node.id}\n`));
     });
 
     // Plugins events
     tree.on('checkbox-change', (node) => {
       console.log(node);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Checkbox changed: ${node.name}, checked: ${node.checked} , has children: ${node.hasChild}\n`));
     });
 
     tree.on('edit', (payload) => {
       console.log(payload);
-      const log = document.getElementById('log');
       log.appendChild(document.createTextNode(`Edit: ${payload.id} - Old Value: ${payload.oldValue} - New Value: ${payload.newValue}\n`));
     });
   </script>

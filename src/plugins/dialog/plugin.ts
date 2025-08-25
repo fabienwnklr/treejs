@@ -1,4 +1,3 @@
-import { deepMerge } from '@/utils/functions';
 import { TreeJS } from '@/TreeJS';
 import type { DialogOptions } from './@types';
 
@@ -20,12 +19,12 @@ export default function (this: TreeJS, options: DialogOptions) {
   };
 
   // Merge default options with user options
-  const mergedOptions = deepMerge(defaultOptions, options);
+  const mergedOptions = { ...defaultOptions, ...options };
 
   function init(this: TreeJS) {
     // Your plugin code goes here
     console.log('Dialog plugin initialized with options:', mergedOptions);
-    
+
     this.off('initialize', binded);
   }
 
