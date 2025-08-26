@@ -7,5 +7,9 @@
     "choose_folder_id": "Choisir l'ID du dossier",
     "choose_folder_label": "Choisir le libellé du dossier",
     "choose_file_id": "Choisir l'ID du fichier",
-    "choose_file_label": "Choisir le libellé du fichier"
+    "choose_file_label": "Choisir le libellé du fichier",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "folder_id": "ID du dossier"
 }

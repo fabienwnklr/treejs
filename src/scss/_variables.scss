@@ -6,6 +6,10 @@ $text-primary: darken($primary, 10%);
 $prefix: 'treejs';
 $danger: #b92e2e !default;
 $bg-danger: rgba($danger, .7);
+$text-on-danger: #fff;
+$success: #2e7d32 !default;
+$bg-success: rgba($success, .7);
+$text-on-success: #fff;
 $text-danger: #fff;
 $radius: 0.3rem;
 

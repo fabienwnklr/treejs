@@ -7,5 +7,9 @@
     "choose_folder_id": "Choose Folder ID",
     "choose_folder_label": "Choose Folder Label",
     "choose_file_id": "Choose File ID",
-    "choose_file_label": "Choose File Label"
+    "choose_file_label": "Choose File Label",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "folder_id": "Folder ID"
 }

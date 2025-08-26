@@ -26,7 +26,7 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
   options = { ...defaultOptions, ...options };
   this._dialogs = [];
 
-  this.createDialog = (content: string, dialogOptions: Partial<UniqueDialogOptions>) => {
+  this.createDialog = (content: string, dialogOptions?: Partial<UniqueDialogOptions>) => {
     if (!content) {
       throw new TreeJSError('Dialog content is required to create a dialog');
     }
@@ -50,9 +50,11 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
       `<dialog class="${this._prefix}dialog" id="${id}">
         <div class="${this._prefix}dialog-header">
           ${title ? `<h1 class="${this._prefix}dialog-title">${title}</h1>` : ''}
-          <button class="${this._prefix}dialog-close" label="${this.t('close')}">
-            ${IconClose}
-          </button>
+          <form method="dialog">
+            <button class="${this._prefix}dialog-close" label="${this.t('close')}">
+              ${IconClose}
+            </button>
+          </form>
         </div>
         <div class="${this._prefix}dialog-content">
           ${content}
@@ -65,17 +67,67 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
 
     document.body.appendChild($dialog);
 
-    $dialog.querySelector(`.${this._prefix}dialog-close`)?.addEventListener('click', () => {
-      $dialog.close();
-    });
-
     if (autoOpen) {
       $dialog.showModal();
 
       this.trigger('dialog-open', { $dialog, id });
     }
 
+    $dialog.addEventListener('close', () => {
+      const result = $dialog.returnValue;
+      this.trigger('dialog-close', { $dialog, result });
+    });
+
     return $dialog;
+  };
+
+  this.createPrompt = async function formPrompt(
+    fields: { name: string; label: string; type?: string }[],
+    title?: string
+  ): Promise<Record<string, string> | null> {
+    return new Promise((resolve, reject) => {
+      const form = `<form method="dialog">
+      ${fields
+        .map(
+          (field) => `
+        <div class="${this._prefix}dialog-field-wrapper">
+          <label class="${this._prefix}dialog-label" for="${field.name}">${field.label}</label>
+          <input autocomplete="off" class="${this._prefix}dialog-input" type="${field.type || 'text'}" name="${field.name}" id="${field.name}" required>
+        </div>
+      `
+        )
+        .join('')}
+        <button class="${this._prefix}dialog-button cancel" type="button">${this.t('cancel')}</button>
+        <button class="${this._prefix}dialog-button ${this._prefix}bg-success" type="submit">${this.t('confirm')}</button>
+    </form>`;
+
+
+      const $dialog = this.createDialog(form, { title });
+
+      const cancelBtn = $dialog.querySelector('button.cancel') as HTMLButtonElement;
+      cancelBtn.addEventListener('click', () => {
+        $dialog.close();
+        $dialog.remove();
+        resolve(null);
+      });
+
+
+      const $form = $dialog.querySelector(`.${this._prefix}dialog-content form`) as HTMLFormElement;
+      // gestion du submit
+      $form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData($form);
+        const values: Record<string, string> = {};
+        formData.forEach((value, key) => {
+          values[key] = value.toString();
+        });
+        $dialog.close();
+        $dialog.remove();
+        resolve(values);
+      });
+
+      $dialog.showModal();
+    });
   };
 
   this.openDialog = (id: string) => {

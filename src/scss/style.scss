@@ -1,5 +1,15 @@
 @use 'variables' as *;
 
+// Global class
+.#{$prefix}-bg-success {
+  background-color: $bg-success !important;
+  color: $text-on-success !important;
+
+  &:hover {
+    background-color: darken($bg-success, 5%) !important;
+  }
+}
+
 .#{$prefix}-ul {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   list-style: none;

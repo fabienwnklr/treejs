@@ -24,15 +24,16 @@
 
         .#{$prefix}-dialog-title {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            // flex start align
             flex-grow: 1;
             text-align: left;
         }
 
         &:has(.#{$prefix}-dialog-title) {
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
         }
 
         .#{$prefix}-dialog-close {
@@ -59,6 +60,36 @@
         max-height: 70vh;
         overflow-y: auto;
         margin: 0;
+
+        .#{$prefix}-dialog-field-wrapper {
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-direction: column;
+
+            .#{$prefix}-dialog-label {
+                margin-bottom: 0.2rem;
+                font-weight: normal;
+            }
+
+            .#{$prefix}-dialog-input {
+                padding: 0.4rem;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: $radius;
+                font-size: 1rem;
+            }
+        }
+
+        .#{$prefix}-dialog-button {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: $radius;
+            font-size: 1rem;
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+        }
     }
 
     .#{$prefix}-dialog-footer {

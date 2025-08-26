@@ -202,7 +202,7 @@
 
     Tree.on('dialog-close', (payload) => {
       console.log(payload);
-      log.appendChild(document.createTextNode(`Dialog closed: ${payload.id}\n`));
+      log.appendChild(document.createTextNode(`Dialog closed: ${payload.$dialog.id}\n`));
     });
 
     Tree.on('dialog-content-set', (payload) => {

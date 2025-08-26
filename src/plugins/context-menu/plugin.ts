@@ -86,18 +86,18 @@ export default function (this: TreeJS, options: ContextMenuOptions = {}) {
   };
 
   this._bindContextMenuEvents = () => {
-    contextMenu.querySelector('#create-folder')?.addEventListener('click', (event: Event) => {
+    contextMenu.querySelector('#create-folder')?.addEventListener('click', async (event: Event) => {
       const pointerEvent = event as PointerEvent;
       const $button = pointerEvent.currentTarget as HTMLButtonElement;
       const id = $button.getAttribute(`${this._data_attribute}id`);
       const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
       if (id && $parent) {
-        // if (options.chooseFolderId) {
-        //   const id = prompt(this.t('choose_folder_id'), '');
-        //   if (id === null) return; // User cancelled
-        //   this.createFolder('New folder', $parent, id);
-        //   return;
-        // }
+        if (options.chooseFolderId) {
+          const res = await this.createPrompt([{ label: this.t('folder_id'), name: 'id' }], this.t('choose_folder_id'));
+          if (res === null) return; // User cancelled
+          this.createFolder('New folder', $parent, res.id);
+          return;
+        }
 
         this.createFolder('New folder', $parent);
         return;

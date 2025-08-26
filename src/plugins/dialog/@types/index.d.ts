@@ -14,11 +14,15 @@ export type UniqueDialogOptions = {
   id: string;
   autoOpen: boolean;
   footer: false | string;
-}
+};
 
 export interface DialogPlugin {
   _dialogs: HTMLDialogElement[];
-  createDialog(content: string, options: Partial<UniqueDialogOptions>): HTMLDialogElement;
+  createDialog(content: string, options?: Partial<UniqueDialogOptions>): HTMLDialogElement;
+  createPrompt(
+    fields: { name: string; label: string; type?: string }[],
+    title?: string
+  ): Promise<null | Record<string, string>>;
   openDialog(id: string): void;
   closeDialog(id: string): void;
   setDialogContent(content: string): void;
@@ -26,11 +30,8 @@ export interface DialogPlugin {
 
 declare module '@/@types' {
   interface TreeJSEvents {
-    'dialog-open': (payload: {
-      id: string;
-      $dialog: HTMLDialogElement;
-    }) => void;
-    'dialog-close': () => void;
+    'dialog-open': (payload: { id: string; $dialog: HTMLDialogElement }) => void;
+    'dialog-close': (payload: { $dialog: HTMLDialogElement; result: string | undefined }) => void;
     'dialog-content-set': (payload: {
       /**
        * The new content of the dialog.
