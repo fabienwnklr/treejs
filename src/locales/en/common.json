@@ -11,5 +11,8 @@
     "close": "Close",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "folder_id": "Folder ID"
+    "folder_id": "Folder ID",
+    "folder_label": "Folder Label",
+    "file_id": "File ID",
+    "file_label": "File Label"
 }

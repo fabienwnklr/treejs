@@ -81,11 +81,11 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
     return $dialog;
   };
 
-  this.createPrompt = async function formPrompt(
+  this.createPrompt = async function formPrompt<T = Record<string, string>>(
     fields: { name: string; label: string; type?: string }[],
     title?: string
-  ): Promise<Record<string, string> | null> {
-    return new Promise((resolve, reject) => {
+  ): Promise<T | null> {
+    return new Promise((resolve) => {
       const form = `<form method="dialog">
       ${fields
         .map(
@@ -101,8 +101,7 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
         <button class="${this._prefix}dialog-button ${this._prefix}bg-success" type="submit">${this.t('confirm')}</button>
     </form>`;
 
-
-      const $dialog = this.createDialog(form, { title });
+      const $dialog = this.createDialog(form, { autoOpen: false, title });
 
       const cancelBtn = $dialog.querySelector('button.cancel') as HTMLButtonElement;
       cancelBtn.addEventListener('click', () => {
@@ -110,7 +109,6 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
         $dialog.remove();
         resolve(null);
       });
-
 
       const $form = $dialog.querySelector(`.${this._prefix}dialog-content form`) as HTMLFormElement;
       // gestion du submit
@@ -123,7 +121,7 @@ export default function (this: TreeJS, options: Partial<DialogOptions>) {
         });
         $dialog.close();
         $dialog.remove();
-        resolve(values);
+        resolve(values as T);
       });
 
       $dialog.showModal();

@@ -7,11 +7,12 @@ $prefix: 'treejs';
 $danger: #b92e2e !default;
 $bg-danger: rgba($danger, .7);
 $text-on-danger: #fff;
-$success: #2e7d32 !default;
+$success: #198d1e !default;
 $bg-success: rgba($success, .7);
 $text-on-success: #fff;
 $text-danger: #fff;
 $radius: 0.3rem;
+$font-size: 1rem;
 
 :root {
     --#{$prefix}-primary: #{$primary};

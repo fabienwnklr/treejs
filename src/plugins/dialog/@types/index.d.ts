@@ -16,13 +16,18 @@ export type UniqueDialogOptions = {
   footer: false | string;
 };
 
+export type Field = {
+  name: string;
+  label: string;
+};
+
 export interface DialogPlugin {
   _dialogs: HTMLDialogElement[];
   createDialog(content: string, options?: Partial<UniqueDialogOptions>): HTMLDialogElement;
-  createPrompt(
-    fields: { name: string; label: string; type?: string }[],
+  createPrompt<T>(
+    fields: Field[],
     title?: string
-  ): Promise<null | Record<string, string>>;
+  ): Promise<null | T>;
   openDialog(id: string): void;
   closeDialog(id: string): void;
   setDialogContent(content: string): void;

@@ -92,10 +92,15 @@ export default function (this: TreeJS, options: ContextMenuOptions = {}) {
       const id = $button.getAttribute(`${this._data_attribute}id`);
       const $parent = document.querySelector(`li[id="${id}"]`) as HTMLLIElement;
       if (id && $parent) {
-        if (options.chooseFolderId) {
-          const res = await this.createPrompt([{ label: this.t('folder_id'), name: 'id' }], this.t('choose_folder_id'));
+        if (options.chooseFolderId || options.chooseFolderLabel) {
+          const fields = [
+            options.chooseFolderId && { label: this.t('folder_id'), name: 'id' },
+            options.chooseFolderLabel && { label: this.t('folder_label'), name: 'label' },
+          ].filter(Boolean) as { label: string; name: string }[];
+
+          const res = await this.createPrompt<{ label?: string; id?: string }>(fields, this.t('create_folder'));
           if (res === null) return; // User cancelled
-          this.createFolder('New folder', $parent, res.id);
+          this.createFolder(res.label ?? 'New folder', $parent, res.id);
           return;
         }
 

@@ -13,7 +13,7 @@
 .#{$prefix}-ul {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   list-style: none;
-  font-size: 1rem;
+  font-size: $font-size;
   position: relative;
   font-weight: 400;
   line-height: 1.5;
